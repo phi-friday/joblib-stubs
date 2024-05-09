@@ -1,0 +1,3 @@
+from concurrent.futures import Future as _BaseFuture
+
+class Future(_BaseFuture): ...
