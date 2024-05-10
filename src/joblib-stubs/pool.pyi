@@ -4,6 +4,7 @@ from multiprocessing.pool import Pool
 from pickle import Pickler
 
 import typing_extensions
+from _memmapping_reducer import WindowsError as WindowsError
 from _typeshed import Incomplete, SupportsWrite
 
 from ._memmapping_reducer import TemporaryResourcesManager as TemporaryResourcesManager
@@ -11,8 +12,6 @@ from ._memmapping_reducer import _MmapMode
 from ._memmapping_reducer import get_memmapping_reducers as get_memmapping_reducers
 from ._multiprocessing_helpers import assert_spawning as assert_spawning
 from ._multiprocessing_helpers import mp as mp
-
-WindowsError: type[BaseException | None]
 
 class CustomizablePickler(Pickler):
     dispatch: Incomplete

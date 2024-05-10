@@ -2,15 +2,13 @@ import typing
 from abc import ABCMeta, abstractmethod
 from datetime import datetime, timedelta
 
-from _typeshed import Incomplete
-
-from . import numpy_pickle as numpy_pickle
-from ._memmapping_reducer import _MmapMode
-from .backports import concurrency_safe_rename as concurrency_safe_rename
-from .disk import memstr_to_bytes as memstr_to_bytes
-from .disk import mkdirp as mkdirp
-from .disk import rm_subdirs as rm_subdirs
-from .logger import format_time as format_time
+from joblib import numpy_pickle as numpy_pickle
+from joblib._memmapping_reducer import _MmapMode
+from joblib.backports import concurrency_safe_rename as concurrency_safe_rename
+from joblib.disk import memstr_to_bytes as memstr_to_bytes
+from joblib.disk import mkdirp as mkdirp
+from joblib.disk import rm_subdirs as rm_subdirs
+from joblib.logger import format_time as format_time
 
 class _ItemInfo(typing.TypedDict, total=True):
     location: str
@@ -38,7 +36,7 @@ class StoreBackendBase(metaclass=ABCMeta):
     def configure(
         self,
         location: str,
-        verbose: int = 0,
+        verbose: int = ...,
         backend_options: dict[str, typing.Any] | None = ...,
     ) -> None: ...
 
@@ -46,12 +44,12 @@ class StoreBackendMixin:
     def load_item(
         self,
         call_id: tuple[str, ...],
-        verbose: int = 1,
-        timestamp: float | None = None,
-        metadata: typing.Mapping[str, typing.Any] | None = None,
-    ) -> CacheItemInfo: ...
+        verbose: int = ...,
+        timestamp: float | None = ...,
+        metadata: typing.Mapping[str, typing.Any] | None = ...,
+    ) -> typing.Any: ...
     def dump_item(
-        self, call_id: tuple[str, ...], item: CacheItemInfo, verbose: int = 1
+        self, call_id: tuple[str, ...], item: typing.Any, verbose: int = ...
     ) -> None: ...
     def clear_item(self, call_id: tuple[str, ...]) -> None: ...
     def contains_item(self, call_id: tuple[str, ...]) -> bool: ...
@@ -63,7 +61,7 @@ class StoreBackendMixin:
     def contains_path(self, call_id: tuple[str, ...]) -> bool: ...
     def clear_path(self, call_id: tuple[str, ...]) -> None: ...
     def store_cached_func_code(
-        self, call_id: tuple[str, ...], func_code: Incomplete | None = None
+        self, call_id: tuple[str, ...], func_code: str | None = ...
     ) -> None: ...
     def get_cached_func_code(self, call_id: tuple[str, ...]) -> str: ...
     def get_cached_func_info(self, call_id: tuple[str, ...]) -> _ItemInfo: ...
@@ -71,18 +69,11 @@ class StoreBackendMixin:
     def enforce_store_limits(
         self,
         bytes_limit: int | str | None,
-        items_limit: int | None = None,
-        age_limit: timedelta | None = None,
+        items_limit: int | None = ...,
+        age_limit: timedelta | None = ...,
     ) -> None: ...
 
 class FileSystemStoreBackend(StoreBackendBase, StoreBackendMixin):
-    location: str
     compress: bool
     mmap_mode: _MmapMode
     verbose: int
-    def configure(
-        self,
-        location: str,
-        verbose: int = 1,
-        backend_options: typing.Mapping[str, typing.Any] | None = None,
-    ) -> None: ...

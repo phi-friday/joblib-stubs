@@ -5,7 +5,7 @@ from _memmapping_reducer import _MmapMode
 from _typeshed import StrOrBytesPath
 
 class Version:
-    def __init__(self, vstring: str | None = None) -> None: ...
+    def __init__(self, vstring: str | None = ...) -> None: ...
     def __eq__(self, other: object) -> bool: ...
     def __lt__(self, other: object) -> bool: ...
     def __le__(self, other: object) -> bool: ...
@@ -20,12 +20,12 @@ class LooseVersion(Version):
 
 def make_memmap(
     filename: str,
-    dtype: str = "uint8",
-    mode: _MmapMode = "r+",
-    offset: int = 0,
-    shape: int | tuple[int, ...] | None = None,
-    order: str = "C",
-    unlink_on_gc_collect: bool = False,
+    dtype: str = ...,
+    mode: _MmapMode = ...,
+    offset: int = ...,
+    shape: int | tuple[int, ...] | None = ...,
+    order: str = ...,
+    unlink_on_gc_collect: bool = ...,
 ) -> np.memmap: ...
 
 access_denied_errors: tuple[int, int]

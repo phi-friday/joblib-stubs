@@ -2,7 +2,7 @@ import ast
 import typing
 from dataclasses import dataclass
 
-from ._multiprocessing_helpers import mp as mp
+from joblib._multiprocessing_helpers import mp as mp
 
 operators: dict[ast.AST, typing.Callable[[typing.Any, typing.Any], typing.Any]]
 

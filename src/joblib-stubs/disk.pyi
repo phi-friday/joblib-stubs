@@ -1,8 +1,7 @@
 import typing
 
+from _memmapping_reducer import WindowsError as WindowsError
 from _typeshed import StrOrBytesPath
-
-WindowsError: type[OSError]
 
 def disk_used(path: StrOrBytesPath) -> int: ...
 def memstr_to_bytes(text: str) -> int: ...
@@ -16,7 +15,7 @@ def rm_subdirs(
     onerror: typing.Callable[
         [typing.Callable[..., typing.Any], str, typing.Any], object
     ]
-    | None = None,
+    | None = ...,
 ) -> None: ...
 def delete_folder(
     folder_path: StrOrBytesPath,
@@ -24,5 +23,5 @@ def delete_folder(
         [typing.Callable[..., typing.Any], str, typing.Any], object
     ]
     | None = None,
-    allow_non_empty: bool = True,
+    allow_non_empty: bool = ...,
 ) -> None: ...
