@@ -27,6 +27,7 @@ build-backend = "hatchling.build"
 managed = true
 dev-dependencies = [
     "joblib>=1.4.2",
+    "numpy>=1.24.4",
 ]
 
 [tool.hatch.metadata]
