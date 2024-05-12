@@ -1,15 +1,33 @@
-from _typeshed import Incomplete
+import typing
+from pickle import Pickler
 from pickle import loads as loads
 
-__all__ = ['dump', 'dumps', 'loads', 'register', 'set_loky_pickler']
+from _typeshed import SupportsWrite
+from joblib.pool import _Reducer
 
-def register(type_, reduce_function) -> None: ...
+__all__ = ["dump", "dumps", "loads", "register", "set_loky_pickler"]
+
+DEFAULT_ENV: str
+ENV_LOKY_PICKLER: str
+
+def register[T](type_: type[T], reduce_function: _Reducer[T]) -> None: ...
 
 class _C:
     def f(self) -> None: ...
     @classmethod
     def h(cls) -> None: ...
 
-def set_loky_pickler(loky_pickler: Incomplete | None = None) -> None: ...
-def dump(obj, file, reducers: Incomplete | None = None, protocol: Incomplete | None = None) -> None: ...
-def dumps(obj, reducers: Incomplete | None = None, protocol: Incomplete | None = None): ...
+def set_loky_pickler(loky_pickler: str | None = ...) -> None: ...
+def get_loky_pickler_name() -> str: ...
+def get_loky_pickler() -> type[Pickler]: ...
+def dump(
+    obj: typing.Any,
+    file: SupportsWrite[bytes],
+    reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+    protocol: int | None = ...,
+) -> None: ...
+def dumps(
+    obj: typing.Any,
+    reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+    protocol: int | None = ...,
+) -> memoryview: ...

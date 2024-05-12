@@ -1,8 +1,18 @@
-from .reduction import register as register
-from _typeshed import Incomplete
+import typing
+from multiprocessing import resource_sharer
+from multiprocessing.connection import Connection
 
-HAVE_SEND_HANDLE: Incomplete
+from joblib.externals.loky.backend.reduction import register as register
 
-def DupFd(fd): ...
-def rebuild_connection(df, readable, writable): ...
-def reduce_connection(conn): ...
+HAVE_SEND_HANDLE: bool
+
+def DupFd(fd: int) -> resource_sharer.DupFd: ...  # noqa: N802
+def rebuild_connection(
+    df: resource_sharer.DupFd, readable: bool, writable: bool
+) -> Connection: ...
+def reduce_connection(
+    conn: Connection,
+) -> tuple[
+    typing.Callable[[resource_sharer.DupFd, bool, bool], Connection],
+    tuple[resource_sharer.DupFd, bool, bool],
+]: ...

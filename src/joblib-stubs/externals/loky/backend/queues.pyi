@@ -1,12 +1,26 @@
-from _typeshed import Incomplete
-from multiprocessing.queues import Full as Full, Queue as mp_Queue, SimpleQueue as mp_SimpleQueue
+import typing
+from multiprocessing.context import BaseContext
+from multiprocessing.queues import Queue as mp_Queue
+from multiprocessing.queues import SimpleQueue as mp_SimpleQueue
+from queue import Full
 
-__all__ = ['Queue', 'SimpleQueue', 'Full']
+from joblib.pool import _Reducer
 
-class Queue(mp_Queue):
-    def __init__(self, maxsize: int = 0, reducers: Incomplete | None = None, ctx: Incomplete | None = None) -> None: ...
+__all__ = ["Queue", "SimpleQueue", "Full"]
 
-class SimpleQueue(mp_SimpleQueue):
-    def __init__(self, reducers: Incomplete | None = None, ctx: Incomplete | None = None) -> None: ...
+class Queue[T](mp_Queue[T]):
+    def __init__(
+        self,
+        maxsize: int = ...,
+        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+        ctx: BaseContext | None = ...,
+    ) -> None: ...
+
+class SimpleQueue[T](mp_SimpleQueue[T]):
+    def __init__(
+        self,
+        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+        ctx: BaseContext | None = ...,
+    ) -> None: ...
     def close(self) -> None: ...
-    def put(self, obj) -> None: ...
+    def put(self, obj: T) -> None: ...

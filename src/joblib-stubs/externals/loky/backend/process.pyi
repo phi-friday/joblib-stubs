@@ -1,14 +1,35 @@
-from _typeshed import Incomplete
+import typing
 from multiprocessing.process import BaseProcess
 
 class LokyProcess(BaseProcess):
-    env: Incomplete
-    authkey: Incomplete
-    init_main_module: Incomplete
-    def __init__(self, group: Incomplete | None = None, target: Incomplete | None = None, name: Incomplete | None = None, args=(), kwargs={}, daemon: Incomplete | None = None, init_main_module: bool = False, env: Incomplete | None = None) -> None: ...
+    _start_method: typing.Literal["loky"]
+    env: dict[str, str]
+    authkey: bytes
+    init_main_module: bool
+    def __init__(
+        self,
+        group: None = ...,
+        target: typing.Callable[..., typing.Any] | None = ...,
+        name: str | None = ...,
+        args: typing.Iterable[typing.Any] = ...,
+        kwargs: typing.Mapping[str, typing.Any] = ...,
+        daemon: bool | None = ...,
+        init_main_module: bool = ...,
+        env: dict[str, str] | None = ...,
+    ) -> None: ...
 
 class LokyInitMainProcess(LokyProcess):
-    def __init__(self, group: Incomplete | None = None, target: Incomplete | None = None, name: Incomplete | None = None, args=(), kwargs={}, daemon: Incomplete | None = None) -> None: ...
+    _start_method: typing.Literal["loky_init_main"]
+
+    def __init__(
+        self,
+        group: None = ...,
+        target: typing.Callable[..., typing.Any] | None = ...,
+        name: str | None = ...,
+        args: typing.Iterable[typing.Any] = ...,
+        kwargs: typing.Mapping[str, typing.Any] = ...,
+        daemon: bool | None = ...,
+    ) -> None: ...
 
 class AuthenticationKey(bytes):
-    def __reduce__(self): ...
+    def __reduce__(self) -> tuple[AuthenticationKey, tuple[bytes]]: ...
