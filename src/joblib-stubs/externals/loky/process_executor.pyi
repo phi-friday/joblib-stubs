@@ -170,7 +170,7 @@ class ProcessPoolExecutor(Executor):
         max_workers: int | None = ...,
         job_reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
         result_reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
-        timeout: int | None = ...,
+        timeout: float | None = ...,
         context: BaseContext | None = ...,
         initializer: typing.Callable[..., typing.Any] | None = ...,
         initargs: tuple[typing.Any, ...] = ...,
@@ -183,7 +183,7 @@ class ProcessPoolExecutor(Executor):
         self,
         fn: typing.Callable[..., T],
         *iterables: typing.Iterable[typing.Any],
-        timeout: int | None = ...,
+        timeout: float | None = ...,
         chunksize: int = ...,
         **kwargs: typing.Any,
     ) -> typing.Generator[T, typing.Any, None]: ...

@@ -39,7 +39,7 @@ class DaskDistributedBackend(
     MAX_IDEAL_BATCH_DURATION: typing.ClassVar[float]
     client: Client
     data_futures: dict[int, Future]
-    wait_for_workers_timeout: int
+    wait_for_workers_timeout: float
     submit_kwargs: dict[str, typing.Any]
     waiting_futures: typing.Iterator[Future]
     def __init__(
@@ -48,7 +48,7 @@ class DaskDistributedBackend(
         scatter: _ScatterIterItem | typing.Any | None = ...,
         client: Client | None = ...,
         loop: IOLoop | None = ...,
-        wait_for_workers_timeout: int = ...,
+        wait_for_workers_timeout: float = ...,
         **submit_kwargs: typing.Any,
     ) -> None: ...
     def __reduce__(self) -> tuple[type[DaskDistributedBackend], tuple[()]]: ...

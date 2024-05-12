@@ -140,7 +140,7 @@ class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic
         parallel: Parallel[_R] | None = ...,
         prefer: _Prefer | None = ...,
         require: _Require | None = ...,
-        idle_worker_timeout: int = ...,
+        idle_worker_timeout: float = ...,
         **memmappingexecutor_args: typing.Any,
     ) -> int: ...
     def terminate(self) -> None: ...

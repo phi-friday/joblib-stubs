@@ -13,7 +13,7 @@ type _Context = str | BaseContext
 def get_reusable_executor(
     max_workers: int | None = ...,
     context: _Context | None = ...,
-    timeout: int = ...,
+    timeout: float = ...,
     kill_workers: bool = ...,
     reuse: str = ...,
     job_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]] | None = ...,
@@ -31,7 +31,7 @@ class _ReusablePoolExecutor(ProcessPoolExecutor):
         submit_resize_lock: threading.RLock,
         max_workers: int | None = ...,
         context: _Context | None = ...,
-        timeout: int | None = ...,
+        timeout: float | None = ...,
         executor_id: int = ...,
         job_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]]
         | None = ...,
@@ -46,7 +46,7 @@ class _ReusablePoolExecutor(ProcessPoolExecutor):
         cls,
         max_workers: int | None = ...,
         context: _Context | None = ...,
-        timeout: int = ...,
+        timeout: float = ...,
         kill_workers: bool = ...,
         reuse: str = ...,
         job_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]]

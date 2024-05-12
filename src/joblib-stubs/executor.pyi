@@ -16,7 +16,7 @@ class MemmappingExecutor(_ReusablePoolExecutor):
     def get_memmapping_executor(
         cls,
         n_jobs: int,
-        timeout: int = ...,
+        timeout: float = ...,
         initializer: typing.Callable[..., typing.Any] | None = ...,
         initargs: tuple[typing.Any, ...] = ...,
         env: dict[str, str] | None = ...,
