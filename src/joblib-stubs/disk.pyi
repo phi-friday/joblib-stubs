@@ -1,7 +1,7 @@
 import typing
 
-from _memmapping_reducer import WindowsError as WindowsError
 from _typeshed import StrOrBytesPath
+from joblib._memmapping_reducer import WindowsError as WindowsError
 
 def disk_used(path: StrOrBytesPath) -> int: ...
 def memstr_to_bytes(text: str) -> int: ...

@@ -2,8 +2,8 @@ import re
 import typing
 
 import numpy as np
-from _memmapping_reducer import _MmapMode
 from _typeshed import StrOrBytesPath
+from joblib._memmapping_reducer import _MmapMode
 
 class Version:
     def __init__(self, vstring: str | None = ...) -> None: ...

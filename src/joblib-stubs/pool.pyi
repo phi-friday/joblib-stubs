@@ -4,11 +4,11 @@ from multiprocessing.pool import Pool
 from pickle import Pickler, Unpickler
 
 import typing_extensions
-from _memmapping_reducer import WindowsError as WindowsError
 from _typeshed import SupportsWrite
 from joblib._memmapping_reducer import (
     TemporaryResourcesManager as TemporaryResourcesManager,
 )
+from joblib._memmapping_reducer import WindowsError as WindowsError
 from joblib._memmapping_reducer import _MmapMode
 from joblib._memmapping_reducer import (
     get_memmapping_reducers as get_memmapping_reducers,
