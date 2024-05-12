@@ -1,23 +1,23 @@
-from ._cloudpickle_wrapper import (
+from joblib._cloudpickle_wrapper import (
     wrap_non_picklable_objects as wrap_non_picklable_objects,
 )
-from .compressor import register_compressor as register_compressor
-from .hashing import hash as hash  # noqa: A001
-from .logger import Logger as Logger
-from .logger import PrintTime as PrintTime
-from .memory import MemorizedResult as MemorizedResult
-from .memory import Memory as Memory
-from .memory import expires_after as expires_after
-from .memory import register_store_backend as register_store_backend
-from .numpy_pickle import dump as dump
-from .numpy_pickle import load as load
-from .parallel import Parallel as Parallel
-from .parallel import cpu_count as cpu_count
-from .parallel import delayed as delayed
-from .parallel import effective_n_jobs as effective_n_jobs
-from .parallel import parallel_backend as parallel_backend
-from .parallel import parallel_config as parallel_config
-from .parallel import register_parallel_backend as register_parallel_backend
+from joblib.compressor import register_compressor as register_compressor
+from joblib.hashing import hash as hash  # noqa: A001
+from joblib.logger import Logger as Logger
+from joblib.logger import PrintTime as PrintTime
+from joblib.memory import MemorizedResult as MemorizedResult
+from joblib.memory import Memory as Memory
+from joblib.memory import expires_after as expires_after
+from joblib.memory import register_store_backend as register_store_backend
+from joblib.numpy_pickle import dump as dump
+from joblib.numpy_pickle import load as load
+from joblib.parallel import Parallel as Parallel
+from joblib.parallel import cpu_count as cpu_count
+from joblib.parallel import delayed as delayed
+from joblib.parallel import effective_n_jobs as effective_n_jobs
+from joblib.parallel import parallel_backend as parallel_backend
+from joblib.parallel import parallel_config as parallel_config
+from joblib.parallel import register_parallel_backend as register_parallel_backend
 
 __all__ = [
     "Memory",
