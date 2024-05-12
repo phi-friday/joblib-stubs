@@ -89,8 +89,8 @@ class _ResultItem[T]:
     def __init__(
         self,
         work_id: int,
-        exception: BaseException | None = None,
-        result: T | None = None,
+        exception: BaseException | None = ...,
+        result: T | None = ...,
     ) -> None: ...
 
 class _CallItem[**P, T]:

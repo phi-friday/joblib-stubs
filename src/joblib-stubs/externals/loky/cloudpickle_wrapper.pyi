@@ -3,10 +3,10 @@ import typing
 from joblib.externals.cloudpickle import dumps as dumps
 from joblib.externals.cloudpickle import loads as loads
 
-WRAP_CACHE: dict[typing.Any, CloudpickledObjectWrapper[typing.Any]] = {}
+WRAP_CACHE: dict[typing.Any, CloudpickledObjectWrapper[typing.Any]]
 
 class CloudpickledObjectWrapper[T]:
-    def __init__(self, obj: T, keep_wrapper: bool = False) -> None: ...
+    def __init__(self, obj: T, keep_wrapper: bool = ...) -> None: ...
     def __reduce__(
         self,
     ) -> tuple[
@@ -19,5 +19,5 @@ class CallableObjectWrapper[**P, T](CloudpickledObjectWrapper[typing.Callable[P,
     def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T: ...
 
 def wrap_non_picklable_objects[T](
-    obj: T, keep_wrapper: bool = True
+    obj: T, keep_wrapper: bool = ...
 ) -> CloudpickledObjectWrapper[T]: ...

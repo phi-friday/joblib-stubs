@@ -61,32 +61,32 @@ class Pickler(pickle.Pickler):
     def __init__(
         self,
         file: SupportsWrite[bytes],
-        protocol: int | None = None,
-        buffer_callback: _BufferCallback | None = None,
+        protocol: int | None = ...,
+        buffer_callback: _BufferCallback | None = ...,
     ) -> None: ...
     dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]
     def reducer_override(self, obj: typing.Any) -> typing.Any: ...
     def save_global(
         self,
         obj: typing.Any,
-        name: str | None = None,
+        name: str | None = ...,
         pack: typing.Callable[
             typing_extensions.Concatenate[str | bytes, ...], bytes
         ] = ...,
     ) -> None: ...
-    def save_function(self, obj: typing.Any, name: str | None = None) -> None: ...
+    def save_function(self, obj: typing.Any, name: str | None = ...) -> None: ...
     def save_pypy_builtin_func(self, obj: typing.Any) -> None: ...
 
 def dump(
     obj: typing.Any,
     file: SupportsWrite[bytes],
-    protocol: int | None = None,
-    buffer_callback: _BufferCallback | None = None,
+    protocol: int | None = ...,
+    buffer_callback: _BufferCallback | None = ...,
 ) -> None: ...
 def dumps(
     obj: typing.Any,
-    protocol: int | None = None,
-    buffer_callback: _BufferCallback | None = None,
+    protocol: int | None = ...,
+    buffer_callback: _BufferCallback | None = ...,
 ) -> bytes: ...
 
 load = pickle.load

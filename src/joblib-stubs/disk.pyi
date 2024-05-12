@@ -22,6 +22,6 @@ def delete_folder(
     onerror: typing.Callable[
         [typing.Callable[..., typing.Any], str, typing.Any], object
     ]
-    | None = None,
+    | None = ...,
     allow_non_empty: bool = ...,
 ) -> None: ...

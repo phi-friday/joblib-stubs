@@ -120,7 +120,7 @@ TASK_DONE: typing.Literal["Done"]
 TASK_ERROR: typing.Literal["Error"]
 TASK_PENDING: typing.Literal["Pending"]
 
-def cpu_count(only_physical_cores: bool = False) -> int: ...
+def cpu_count(only_physical_cores: bool = ...) -> int: ...
 def delayed[**P, T](
     function: typing.Callable[P, T],
 ) -> typing.Callable[P, _BatchedCall[P, T]]: ...
@@ -161,7 +161,7 @@ class Parallel(Logger, typing.Generic[_R]):
         backend: str | ParallelBackendBase[_R] | None = ...,
         return_as: _ReturnAs = ...,
         verbose: int | None = ...,
-        timeout: float | None = None,
+        timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
@@ -177,7 +177,7 @@ class Parallel(Logger, typing.Generic[_R]):
         n_jobs: int | None = ...,
         backend: str | ParallelBackendBase[_ReturnList] | None = ...,
         verbose: int | None = ...,
-        timeout: float | None = None,
+        timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
@@ -193,7 +193,7 @@ class Parallel(Logger, typing.Generic[_R]):
         backend: str | ParallelBackendBase[_ReturnList] | None = ...,
         return_as: _ReturnList = ...,
         verbose: int | None = ...,
-        timeout: float | None = None,
+        timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
@@ -209,7 +209,7 @@ class Parallel(Logger, typing.Generic[_R]):
         backend: str | ParallelBackendBase[T] | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
         return_as: T = ...,
         verbose: int | None = ...,
-        timeout: float | None = None,
+        timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,

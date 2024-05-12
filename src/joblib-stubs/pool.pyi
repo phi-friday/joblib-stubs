@@ -27,7 +27,7 @@ class CustomizablePickler(Pickler):
     def __init__(
         self,
         writer: SupportsWrite[bytes],
-        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = None,
+        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
         protocol: int = ...,
     ) -> None: ...
     def register[T](
