@@ -6,7 +6,6 @@ from concurrent.futures import Executor
 from concurrent.futures.process import BrokenProcessPool as _BPPException
 from multiprocessing.context import BaseContext
 
-from _typeshed import Incomplete
 from joblib.externals.loky._base import Future as Future
 from joblib.externals.loky.backend import get_context as get_context
 from joblib.externals.loky.backend.context import cpu_count as cpu_count
@@ -52,8 +51,10 @@ class _ExecutorFlags:
 
 _global_shutdown: bool
 _global_shutdown_lock: threading.Lock
-_threads_wakeups: weakref.WeakKeyDictionary
-process_pool_executor_at_exit: Incomplete
+_threads_wakeups: weakref.WeakKeyDictionary[
+    _ExecutorManagerThread, tuple[threading.Lock, _ThreadWakeup | None]
+]
+process_pool_executor_at_exit: typing.Callable[..., typing.Any] | None
 EXTRA_QUEUED_CALLS: int
 
 class _RemoteTraceback(Exception):  # noqa: N818
