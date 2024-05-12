@@ -47,7 +47,9 @@ class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
         | typing.Callable[[AsyncResult[T]], typing.Any]
         | None = ...,
     ) -> futures.Future[T] | AsyncResult[T]: ...
-    def retrieve_result_callback(self, out: typing.Any) -> None: ...
+    def retrieve_result_callback[T](
+        self, out: futures.Future[T] | AsyncResult[T]
+    ) -> T: ...
     parallel: Parallel[_R]
     def configure(
         self,
