@@ -90,7 +90,7 @@ class _ResultItem[T]:
         self,
         work_id: int,
         exception: BaseException | None = ...,
-        result: T | None = ...,
+        result: T | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
     ) -> None: ...
 
 class _CallItem[**P, T]:
