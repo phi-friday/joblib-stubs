@@ -2,6 +2,7 @@ import typing
 from abc import ABCMeta, abstractmethod
 from collections.abc import Generator
 from concurrent import futures
+from multiprocessing.pool import AsyncResult as AsyncResult
 
 from joblib._multiprocessing_helpers import mp as mp
 from joblib.executor import get_memmapping_executor as get_memmapping_executor
@@ -41,8 +42,11 @@ class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
     def apply_async[T](
         self,
         func: typing.Callable[[], T],
-        callback: typing.Callable[[T], typing.Any] | None = ...,
-    ) -> futures.Future[T]: ...
+        callback: typing.Callable[[futures.Future[T] | AsyncResult[T]], typing.Any]
+        | typing.Callable[[futures.Future[T]], typing.Any]
+        | typing.Callable[[AsyncResult[T]], typing.Any]
+        | None = ...,
+    ) -> futures.Future[T] | AsyncResult[T]: ...
     def retrieve_result_callback(self, out: typing.Any) -> None: ...
     parallel: Parallel[_R]
     def configure(
@@ -74,6 +78,11 @@ class SequentialBackend(ParallelBackendBase[_R], typing.Generic[_R]):
     supports_timeout: typing.ClassVar[bool]
     supports_retrieve_callback: typing.ClassVar[bool]
     supports_sharedmem: typing.ClassVar[bool]
+    def apply_async(
+        self,
+        func: typing.Callable[[], typing.Any],
+        callback: typing.Callable[..., typing.Any] | None = ...,
+    ) -> typing.NoReturn: ...
 
 class PoolManagerMixin:
     def effective_n_jobs(self, n_jobs: int) -> int: ...
@@ -81,8 +90,8 @@ class PoolManagerMixin:
     def apply_async[T](
         self,
         func: typing.Callable[[], T],
-        callback: typing.Callable[[T], typing.Any] | None = ...,
-    ) -> futures.Future[T]: ...
+        callback: typing.Callable[[AsyncResult[T]], typing.Any] | None = ...,
+    ) -> AsyncResult[T]: ...
     def retrieve_result_callback(self, out: typing.Any) -> typing.Any: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
 
@@ -134,6 +143,11 @@ class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic
     ) -> int: ...
     def terminate(self) -> None: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
+    def apply_async[T](
+        self,
+        func: typing.Callable[[], T],
+        callback: typing.Callable[[futures.Future[T]], typing.Any] | None = ...,
+    ) -> futures.Future[T]: ...
 
 class FallbackToBackend(Exception):  # noqa: N818
     backend: ParallelBackendBase[typing.Any]

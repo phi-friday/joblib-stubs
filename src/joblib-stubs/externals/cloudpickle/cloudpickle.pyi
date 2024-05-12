@@ -6,6 +6,8 @@ import weakref
 
 import typing_extensions
 from _typeshed import ReadableBuffer, SupportsWrite
+from joblib.pool import _Dispatch as _Dispatch
+from joblib.pool import _Reducer as _Reducer
 
 _PICKLE_BY_VALUE_MODULES: set[str]
 _DYNAMIC_CLASS_TRACKER_BY_CLASS: weakref.WeakKeyDictionary[typing.Any, str]
@@ -52,9 +54,7 @@ class _PickleBuffer:
 type _BufferCallback = typing.Callable[[_PickleBuffer], typing.Any] | None
 
 class Pickler(pickle.Pickler):
-    dispatch_table: typing.ClassVar[
-        dict[typing.Any, typing.Callable[[typing.Any], typing.Any]]
-    ]
+    dispatch_table: typing.ClassVar[dict[type[typing.Any], _Reducer[typing.Any]]]
     def dump(self, obj: typing.Any) -> None: ...
     globals_ref: dict[int, dict[str, typing.Any]]
     proto: int
@@ -64,9 +64,7 @@ class Pickler(pickle.Pickler):
         protocol: int | None = None,
         buffer_callback: _BufferCallback | None = None,
     ) -> None: ...
-    dispatch: typing.ClassVar[
-        dict[type[typing.Any], typing.Callable[[pickle.Unpickler, typing.Any], None]]
-    ]
+    dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]
     def reducer_override(self, obj: typing.Any) -> typing.Any: ...
     def save_global(
         self,

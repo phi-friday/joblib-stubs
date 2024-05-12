@@ -49,7 +49,7 @@ class BinaryZlibFile(io.BufferedIOBase):
     compresslevel: int
     def __init__(
         self,
-        filename: str,
+        filename: str | bytes | typing.BinaryIO,
         mode: typing.Literal["rb", "wb"] = ...,
         compresslevel: int = ...,
     ) -> None: ...

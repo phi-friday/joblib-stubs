@@ -1,4 +1,5 @@
 import re
+import typing
 
 import numpy as np
 from _memmapping_reducer import _MmapMode
@@ -19,14 +20,14 @@ class LooseVersion(Version):
     def parse(self, vstring: str) -> None: ...
 
 def make_memmap(
-    filename: str,
+    filename: StrOrBytesPath,
     dtype: str = ...,
     mode: _MmapMode = ...,
     offset: int = ...,
     shape: int | tuple[int, ...] | None = ...,
     order: str = ...,
     unlink_on_gc_collect: bool = ...,
-) -> np.memmap: ...
+) -> np.memmap[typing.Any, typing.Any]: ...
 
 access_denied_errors: tuple[int, int]
 

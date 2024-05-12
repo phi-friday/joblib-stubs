@@ -4,6 +4,7 @@ import types
 import typing
 
 import typing_extensions
+from joblib.pool import _Dispatch as _Dispatch
 
 Pickler = pickle.Pickler
 type _HashType = typing.Literal["md5", "sha1"]
@@ -29,7 +30,7 @@ class Hasher(Pickler):
             typing_extensions.Concatenate[str | bytes, ...], bytes
         ] = ...,
     ) -> None: ...
-    dispatch: dict[type[typing.Any], typing.Callable[..., typing.Any]]
+    dispatch: dict[type[typing.Any], _Dispatch[typing.Any]]
     def save_set(self, set_items: typing.Iterable[typing.Hashable]) -> None: ...
 
 class NumpyHasher(Hasher):
