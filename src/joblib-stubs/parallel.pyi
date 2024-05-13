@@ -26,7 +26,10 @@ from joblib.logger import short_format_time as short_format_time
 type _ReturnList = typing.Literal["list"]
 type _ReturnGererator = typing.Literal["generator"]
 type _ReturnGereratorUnordered = typing.Literal["generator_unordered"]
-type _ReturnAs = _ReturnList | _ReturnGererator | _ReturnGereratorUnordered
+type _ReturnUnknown = str
+type _ReturnAs = (
+    _ReturnList | _ReturnGererator | _ReturnGereratorUnordered | _ReturnUnknown
+)
 _R = typing_extensions.TypeVar(
     "_R",
     infer_variance=True,
@@ -239,6 +242,22 @@ class Parallel(Logger, typing.Generic[_R]):
     def __new__(
         cls,
         n_jobs: int | None = ...,
+        backend: str | ParallelBackendBase[_ReturnUnknown] | None = ...,
+        return_as: _ReturnUnknown = ...,
+        verbose: int | None = ...,
+        timeout: float | None = ...,
+        pre_dispatch: int | str = ...,
+        batch_size: int | typing.Literal["auto"] = ...,
+        temp_folder: str | None = ...,
+        max_nbytes: int | str | None = ...,
+        mmap_mode: _MmapMode | None = ...,
+        prefer: _Prefer | None = ...,
+        require: _Require | None = ...,
+    ) -> Parallel[_ReturnUnknown]: ...
+    @typing.overload
+    def __new__(
+        cls,
+        n_jobs: int | None = ...,
         backend: str | ParallelBackendBase[typing.Any] | None = ...,
         return_as: _ReturnAs = ...,
         verbose: int | None = ...,
@@ -278,6 +297,10 @@ class Parallel(Logger, typing.Generic[_R]):
         self: Parallel[_ReturnGereratorUnordered],
         iterable: typing.Iterable[_BatchedCall[..., T]],
     ) -> typing.Generator[T, None, None]: ...
+    @typing.overload
+    def __call__[T](
+        self: Parallel[_ReturnUnknown], iterable: typing.Iterable[_BatchedCall[..., T]]
+    ) -> list[T] | typing.Generator[T, None, None]: ...
     @typing.overload
     def __call__[T](
         self: Parallel[typing.Any], iterable: typing.Iterable[_BatchedCall[..., T]]
