@@ -24,8 +24,9 @@ from joblib.logger import Logger as Logger
 from joblib.logger import short_format_time as short_format_time
 
 type _ReturnList = typing.Literal["list"]
-type _ReturnGererator = typing.Literal["generator", "generator_unordered"]
-type _ReturnAs = _ReturnList | _ReturnGererator
+type _ReturnGererator = typing.Literal["generator"]
+type _ReturnGereratorUnordered = typing.Literal["generator_unordered"]
+type _ReturnAs = _ReturnList | _ReturnGererator | _ReturnGereratorUnordered
 _R = typing_extensions.TypeVar(
     "_R",
     infer_variance=True,
@@ -203,11 +204,11 @@ class Parallel(Logger, typing.Generic[_R]):
         require: _Require | None = ...,
     ) -> Parallel[_ReturnList]: ...
     @typing.overload
-    def __new__[T: _ReturnGererator](
+    def __new__(
         cls,
         n_jobs: int | None = ...,
-        backend: str | ParallelBackendBase[T] | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
-        return_as: T = ...,
+        backend: str | ParallelBackendBase[_ReturnGererator] | None = ...,
+        return_as: _ReturnGererator = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
@@ -217,7 +218,23 @@ class Parallel(Logger, typing.Generic[_R]):
         mmap_mode: _MmapMode | None = ...,
         prefer: _Prefer | None = ...,
         require: _Require | None = ...,
-    ) -> Parallel[T]: ...
+    ) -> Parallel[_ReturnGererator]: ...
+    @typing.overload
+    def __new__(
+        cls,
+        n_jobs: int | None = ...,
+        backend: str | ParallelBackendBase[_ReturnGereratorUnordered] | None = ...,
+        return_as: _ReturnGereratorUnordered = ...,
+        verbose: int | None = ...,
+        timeout: float | None = ...,
+        pre_dispatch: int | str = ...,
+        batch_size: int | typing.Literal["auto"] = ...,
+        temp_folder: str | None = ...,
+        max_nbytes: int | str | None = ...,
+        mmap_mode: _MmapMode | None = ...,
+        prefer: _Prefer | None = ...,
+        require: _Require | None = ...,
+    ) -> Parallel[_ReturnGereratorUnordered]: ...
     @typing.overload
     def __new__(
         cls,
@@ -254,6 +271,11 @@ class Parallel(Logger, typing.Generic[_R]):
     @typing.overload
     def __call__[T](
         self: Parallel[_ReturnGererator],
+        iterable: typing.Iterable[_BatchedCall[..., T]],
+    ) -> typing.Generator[T, None, None]: ...
+    @typing.overload
+    def __call__[T](
+        self: Parallel[_ReturnGereratorUnordered],
         iterable: typing.Iterable[_BatchedCall[..., T]],
     ) -> typing.Generator[T, None, None]: ...
     @typing.overload
