@@ -3,6 +3,7 @@ import typing
 from pathlib import Path
 
 import numpy as np
+from _typeshed import SupportsRead, SupportsWrite
 from joblib._memmapping_reducer import _MmapMode
 from joblib.backports import make_memmap as make_memmap
 from joblib.compressor import LZ4_NOT_INSTALLED_ERROR as LZ4_NOT_INSTALLED_ERROR
@@ -73,12 +74,16 @@ class NumpyUnpickler(Unpickler):
 
 def dump(
     value: typing.Any,
-    filename: str | Path,
+    filename: str | Path | SupportsWrite[bytes],
     compress: int | bool | tuple[str, int] = ...,
     protocol: int | None = ...,
     cache_size: int | None = ...,
 ) -> list[str] | None: ...
 def load_temporary_memmap(
-    filename: str | Path, mmap_mode: _MmapMode, unlink_on_gc_collect: bool
+    filename: str | Path | SupportsRead[bytes],
+    mmap_mode: _MmapMode,
+    unlink_on_gc_collect: bool,
 ) -> typing.Any: ...
-def load(filename: str | Path, mmap_mode: _MmapMode | None = ...) -> typing.Any: ...
+def load(
+    filename: str | Path | SupportsRead[bytes], mmap_mode: _MmapMode | None = ...
+) -> typing.Any: ...
