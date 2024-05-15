@@ -5,7 +5,7 @@ from multiprocessing.queues import SimpleQueue as mp_SimpleQueue
 from queue import Full
 
 import typing_extensions
-from joblib.pool import _Reducer
+from joblib._typeshed import Reducer
 
 __all__ = ["Queue", "SimpleQueue", "Full"]
 
@@ -15,14 +15,14 @@ class Queue(mp_Queue[_T], typing.Generic[_T]):
     def __init__(
         self,
         maxsize: int = ...,
-        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+        reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
         ctx: BaseContext | None = ...,
     ) -> None: ...
 
 class SimpleQueue(mp_SimpleQueue[_T], typing.Generic[_T]):
     def __init__(
         self,
-        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+        reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
         ctx: BaseContext | None = ...,
     ) -> None: ...
     def close(self) -> None: ...

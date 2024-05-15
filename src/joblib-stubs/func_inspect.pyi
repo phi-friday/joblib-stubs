@@ -2,22 +2,13 @@ import types
 import typing
 
 import typing_extensions
+from joblib._typeshed import FullArgSpec
 from joblib.logger import pformat as pformat
 
 _P = typing_extensions.ParamSpec("_P")
 
 full_argspec_fields: str
-
-class _FullArgSpec(typing.NamedTuple):
-    args: list[str]
-    varargs: str
-    varkw: str
-    defaults: tuple[typing.Any, ...]
-    kwonlyargs: list[str]
-    kwonlydefaults: dict[str, typing.Any] | None
-    annotations: dict[str, typing.Any] | None
-
-full_argspec_type = _FullArgSpec
+full_argspec_type = FullArgSpec
 
 def get_func_code(func: types.FunctionType) -> tuple[str, str, int]: ...
 def get_func_name(

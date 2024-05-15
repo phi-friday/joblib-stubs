@@ -1,6 +1,7 @@
 import typing
 from multiprocessing.context import BaseContext
 
+from joblib._typeshed import Reducer
 from joblib.externals.loky.backend.process import (
     LokyInitMainProcess as LokyInitMainProcess,
 )
@@ -15,7 +16,6 @@ from joblib.externals.loky.backend.synchronize import Event as _Event
 from joblib.externals.loky.backend.synchronize import Lock as _Lock
 from joblib.externals.loky.backend.synchronize import RLock as _RLock
 from joblib.externals.loky.backend.synchronize import Semaphore as _Semaphore
-from joblib.pool import _Reducer
 
 _MAX_WINDOWS_WORKERS: int
 START_METHODS: list[str]
@@ -34,10 +34,10 @@ class LokyContext(BaseContext):
     def Queue(  # noqa: N802
         self,
         maxsize: int = ...,
-        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+        reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
     ) -> _Queue[typing.Any]: ...
     def SimpleQueue(  # noqa: N802
-        self, reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...
+        self, reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...
     ) -> _SimpleQueue[typing.Any]: ...
     def Semaphore(self, value: int = ...) -> _Semaphore: ...  # noqa: N802
     def BoundedSemaphore(self, value: int) -> _BoundedSemaphore: ...  # noqa: N802

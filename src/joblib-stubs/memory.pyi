@@ -6,6 +6,7 @@ from joblib import hashing as hashing
 from joblib._store_backends import CacheWarning as CacheWarning
 from joblib._store_backends import FileSystemStoreBackend as FileSystemStoreBackend
 from joblib._store_backends import StoreBackendBase as StoreBackendBase
+from joblib._typeshed import AnyAwaitable, AnyAwaitableCallable, MmapMode
 from joblib.func_inspect import filter_args as filter_args
 from joblib.func_inspect import format_call as format_call
 from joblib.func_inspect import format_signature as format_signature
@@ -20,14 +21,6 @@ _P = typing_extensions.ParamSpec("_P")
 
 FIRST_LINE_TEXT: str
 _STORE_BACKENDS: dict[str, type[StoreBackendBase]]
-_MmepMode: typing_extensions.TypeAlias = typing.Literal["r+", "r", "w+", "c"]
-_AnyAwaitable: typing_extensions.TypeAlias = (
-    typing.Awaitable[_T] | typing.Coroutine[typing.Any, typing.Any, _T]
-)
-_AnyAwaitableCallable: typing_extensions.TypeAlias = (
-    typing.Callable[_P, typing.Awaitable[_T]]
-    | typing.Callable[_P, typing.Coroutine[typing.Any, typing.Any, _T]]
-)
 
 class _CacheFunc(typing.Protocol):
     @typing.overload
@@ -36,16 +29,16 @@ class _CacheFunc(typing.Protocol):
         func: None,
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
-        mmap_mode: _MmepMode | bool = ...,
+        mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
     ) -> _CacheFunc: ...
     @typing.overload
     def __call__(
         self,
-        func: _AnyAwaitableCallable[_P, _T],
+        func: AnyAwaitableCallable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
-        mmap_mode: _MmepMode | bool = ...,
+        mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
     ) -> AsyncMemorizedFunc[_P, _T]: ...
     @typing.overload
@@ -54,7 +47,7 @@ class _CacheFunc(typing.Protocol):
         func: typing.Callable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
-        mmap_mode: _MmepMode | bool = ...,
+        mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
     ) -> MemorizedFunc[_P, _T]: ...
 
@@ -68,7 +61,7 @@ def register_store_backend(
 
 class MemorizedResult(Logger, typing.Generic[_T]):
     store_backend: StoreBackendBase
-    mmap_mode: _MmepMode
+    mmap_mode: MmapMode
     metadata: dict[str, typing.Any]
     duration: float
     verbose: int
@@ -78,7 +71,7 @@ class MemorizedResult(Logger, typing.Generic[_T]):
         location: str,
         call_id: tuple[str, ...],
         backend: str = ...,
-        mmap_mode: _MmepMode | None = ...,
+        mmap_mode: MmapMode | None = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
         metadata: dict[str, typing.Any] | None = ...,
@@ -115,18 +108,18 @@ class NotMemorizedFunc(typing.Generic[_P, _T]):
     def check_call_in_cache(self, *args: typing.Any, **kwargs: typing.Any) -> bool: ...
 
 class AsyncNotMemorizedFunc(
-    NotMemorizedFunc[_P, _AnyAwaitable[_T]], typing.Generic[_P, _T]
+    NotMemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P, _T]
 ):
-    func: _AnyAwaitableCallable[_P, _T]
-    def __init__(self, func: _AnyAwaitableCallable[_P, _T]) -> None: ...
-    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _AnyAwaitable[_T]: ...
+    func: AnyAwaitableCallable[_P, _T]
+    def __init__(self, func: AnyAwaitableCallable[_P, _T]) -> None: ...
+    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> AnyAwaitable[_T]: ...
     async def call_and_shelve(  # type: ignore[override]
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> NotMemorizedResult[_T]: ...
-    def call(self) -> tuple[_AnyAwaitable[_T], dict[typing.Any, typing.Any]]: ...  # type: ignore[override]
+    def call(self) -> tuple[AnyAwaitable[_T], dict[typing.Any, typing.Any]]: ...  # type: ignore[override]
 
 class MemorizedFunc(Logger, typing.Generic[_P, _T]):
-    mmap_mode: _MmepMode
+    mmap_mode: MmapMode
     compress: bool | int
     func: typing.Callable[_P, _T]
     cache_validation_callback: typing.Callable[..., typing.Any] | None
@@ -141,7 +134,7 @@ class MemorizedFunc(Logger, typing.Generic[_P, _T]):
         location: str,
         backend: str = ...,
         ignore: list[str] | None = ...,
-        mmap_mode: _MmepMode | None = ...,
+        mmap_mode: MmapMode | None = ...,
         compress: bool | int = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
@@ -161,15 +154,15 @@ class MemorizedFunc(Logger, typing.Generic[_P, _T]):
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> tuple[MemorizedResult[_T] | NotMemorizedResult[_T], dict[str, typing.Any]]: ...
 
-class AsyncMemorizedFunc(MemorizedFunc[_P, _AnyAwaitable[_T]], typing.Generic[_P, _T]):
-    func: _AnyAwaitableCallable[_P, _T]
+class AsyncMemorizedFunc(MemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P, _T]):
+    func: AnyAwaitableCallable[_P, _T]
     def __init__(
         self,
-        func: _AnyAwaitableCallable[_P, _T],
+        func: AnyAwaitableCallable[_P, _T],
         location: str,
         backend: str = ...,
         ignore: list[str] | None = ...,
-        mmap_mode: _MmepMode | None = ...,
+        mmap_mode: MmapMode | None = ...,
         compress: bool | int = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
@@ -186,7 +179,7 @@ class AsyncMemorizedFunc(MemorizedFunc[_P, _AnyAwaitable[_T]], typing.Generic[_P
     ) -> tuple[MemorizedResult[_T] | NotMemorizedResult[_T], dict[str, typing.Any]]: ...
 
 class Memory(Logger):
-    mmap_mode: _MmepMode
+    mmap_mode: MmapMode
     timestamp: float
     bytes_limit: int | str
     backend: str
@@ -198,7 +191,7 @@ class Memory(Logger):
         self,
         location: str | None = ...,
         backend: str = ...,
-        mmap_mode: _MmepMode | None = ...,
+        mmap_mode: MmapMode | None = ...,
         compress: bool | int = ...,
         verbose: int = ...,
         bytes_limit: int | str | None = ...,
@@ -210,16 +203,16 @@ class Memory(Logger):
         func: None,
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
-        mmap_mode: _MmepMode | bool = ...,
+        mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
     ) -> _CacheFunc: ...
     @typing.overload
     def cache(
         self,
-        func: _AnyAwaitableCallable[_P, _T],
+        func: AnyAwaitableCallable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
-        mmap_mode: _MmepMode | bool = ...,
+        mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
     ) -> AsyncMemorizedFunc[_P, _T]: ...
     @typing.overload
@@ -228,7 +221,7 @@ class Memory(Logger):
         func: typing.Callable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
-        mmap_mode: _MmepMode | bool = ...,
+        mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
     ) -> MemorizedFunc[_P, _T]: ...
     def clear(self, warn: bool = ...) -> None: ...
@@ -242,7 +235,7 @@ class Memory(Logger):
     # non-awaitable -> non-awaitable
     @typing.overload
     def eval(
-        self, func: _AnyAwaitableCallable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
+        self, func: AnyAwaitableCallable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
     ) -> typing.Coroutine[
         typing.Any, typing.Any, _T | NotMemorizedResult[_T] | MemorizedResult[_T]
     ]: ...

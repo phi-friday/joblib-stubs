@@ -6,8 +6,7 @@ import weakref
 
 import typing_extensions
 from _typeshed import ReadableBuffer, SupportsWrite
-from joblib.pool import _Dispatch as _Dispatch
-from joblib.pool import _Reducer as _Reducer
+from joblib._typeshed import Dispatch, EmptyCellValueClass, Reducer
 
 _T = typing_extensions.TypeVar("_T")
 
@@ -39,12 +38,7 @@ def dynamic_subimport(
 ) -> types.ModuleType: ...
 def instance(cls: type[_T]) -> _T: ...
 
-# decorated by `instance`
-class _EmptyCellValueClass:
-    @classmethod
-    def __reduce__(cls) -> str: ...
-
-_empty_cell_value: _EmptyCellValueClass
+_empty_cell_value: EmptyCellValueClass
 
 class _PickleBuffer:
     def __init__(self, buffer: ReadableBuffer) -> None: ...
@@ -58,7 +52,7 @@ _BufferCallback: typing_extensions.TypeAlias = (
 )
 
 class Pickler(pickle.Pickler):
-    dispatch_table: typing.ClassVar[dict[type[typing.Any], _Reducer[typing.Any]]]  # type: ignore[misc]
+    dispatch_table: typing.ClassVar[dict[type[typing.Any], Reducer[typing.Any]]]  # type: ignore[misc]
     def dump(self, obj: typing.Any) -> None: ...
     globals_ref: dict[int, dict[str, typing.Any]]
     proto: int
@@ -68,7 +62,7 @@ class Pickler(pickle.Pickler):
         protocol: int | None = ...,
         buffer_callback: _BufferCallback | None = ...,
     ) -> None: ...
-    dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]
+    dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]
     def reducer_override(self, obj: typing.Any) -> typing.Any: ...
     def save_global(
         self,

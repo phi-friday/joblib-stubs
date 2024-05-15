@@ -7,20 +7,15 @@ import typing_extensions
 from dask.distributed import Client as Client
 from dask.distributed import Future as Future
 from distributed.deploy.cluster import Cluster as Cluster
+from joblib._typeshed import DaskScatterIterItem, DaskTaskItem, ReturnAs
 from joblib.parallel import AutoBatchingMixin as AutoBatchingMixin
 from joblib.parallel import Parallel as Parallel
 from joblib.parallel import ParallelBackendBase as ParallelBackendBase
-from joblib.parallel import _ReturnAs as _ReturnAs
 from joblib.parallel import parallel_config as parallel_config
 from tornado.ioloop import IOLoop as IOLoop
 
 _T = typing_extensions.TypeVar("_T")
-_P = typing_extensions.ParamSpec("_P")
-_R = typing_extensions.TypeVar(
-    "_R",
-    default=typing.Literal["list"],
-    bound="_ReturnAs",  # noqa: PYI020
-)
+_R = typing_extensions.TypeVar("_R", default=typing.Literal["list"], bound=ReturnAs)
 
 def is_weakrefable(obj: typing.Any) -> bool: ...
 
@@ -31,17 +26,9 @@ class _WeakKeyDictionary:
     def __len__(self) -> int: ...
     def clear(self) -> None: ...
 
-_TaskItem: typing_extensions.TypeAlias = tuple[
-    typing.Callable[_P, _T], list[typing.Any], dict[str, typing.Any]
-]
-
 class Batch(typing.Generic[_T]):
-    def __init__(self, tasks: list[_TaskItem[..., _T]]) -> None: ...
-    def __call__(self, tasks: list[_TaskItem[..., _T]] | None = ...) -> list[_T]: ...
-
-_ScatterIterItem: typing_extensions.TypeAlias = (
-    list[typing.Any] | dict[typing.Any, typing.Any]
-)
+    def __init__(self, tasks: list[DaskTaskItem[..., _T]]) -> None: ...
+    def __call__(self, tasks: list[DaskTaskItem[..., _T]] | None = ...) -> list[_T]: ...
 
 class DaskDistributedBackend(
     AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic[_R]
@@ -55,7 +42,7 @@ class DaskDistributedBackend(
     def __init__(
         self,
         scheduler_host: str | Cluster | None = ...,
-        scatter: _ScatterIterItem | typing.Any | None = ...,
+        scatter: DaskScatterIterItem | typing.Any | None = ...,
         client: Client | None = ...,
         loop: IOLoop | None = ...,
         wait_for_workers_timeout: float = ...,

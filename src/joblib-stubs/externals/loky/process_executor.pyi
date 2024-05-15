@@ -7,6 +7,7 @@ from concurrent.futures.process import BrokenProcessPool as _BPPException
 from multiprocessing.context import BaseContext
 
 import typing_extensions
+from joblib._typeshed import Process, RebuildExc, Reducer
 from joblib.externals.loky._base import Future as Future
 from joblib.externals.loky.backend import get_context as get_context
 from joblib.externals.loky.backend.context import cpu_count as cpu_count
@@ -18,12 +19,10 @@ from joblib.externals.loky.backend.reduction import (
 from joblib.externals.loky.backend.reduction import set_loky_pickler as set_loky_pickler
 from joblib.externals.loky.backend.synchronize import Lock as Lock
 from joblib.externals.loky.backend.synchronize import RLock as RLock
-from joblib.externals.loky.backend.utils import _Process as _Process
 from joblib.externals.loky.backend.utils import (
     get_exitcodes_terminated_worker as get_exitcodes_terminated_worker,
 )
 from joblib.externals.loky.backend.utils import kill_process_tree as kill_process_tree
-from joblib.pool import _Reducer
 
 MAX_DEPTH: int
 _CURRENT_DEPTH: int
@@ -65,17 +64,13 @@ class _RemoteTraceback(Exception):  # noqa: N818
     tb: str
     def __init__(self, tb: typing.Any = ...) -> None: ...
 
-_RebuildExc: typing_extensions.TypeAlias = typing.Callable[
-    [_BaseExceptionT, str], _BaseExceptionT
-]
-
 class _ExceptionWithTraceback(typing.Generic[_BaseExceptionT]):
     exc: _BaseExceptionT
     tb: str
     def __init__(self, exc: _BaseExceptionT) -> None: ...
     def __reduce__(
         self,
-    ) -> tuple[_RebuildExc[_BaseExceptionT], tuple[_BaseExceptionT, str]]: ...
+    ) -> tuple[RebuildExc[_BaseExceptionT], tuple[_BaseExceptionT, str]]: ...
 
 class _WorkItem(typing.Generic[_P, _T]):
     future: futures.Future[_T]
@@ -127,7 +122,7 @@ class _SafeQueue(Queue[_T], typing.Generic[_T]):
         pending_work_items: dict[int, _WorkItem[..., _T]] | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
         running_work_items: list[int] | None = ...,
         thread_wakeup: _ThreadWakeup | None = ...,
-        reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+        reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
     ) -> None: ...
 
 class _ExecutorManagerThread(threading.Thread):
@@ -135,7 +130,7 @@ class _ExecutorManagerThread(threading.Thread):
     shutdown_lock: threading.Lock
     executor_reference: weakref.ReferenceType[ProcessPoolExecutor]
     executor_flags: _ExecutorFlags
-    processes: dict[int, _Process]
+    processes: dict[int, Process]
     call_queue: _SafeQueue[_CallItem[..., typing.Any]] | None
     result_queue: SimpleQueue[_ResultItem[typing.Any]] | None
     work_ids_queue: Queue[int]
@@ -176,8 +171,8 @@ class ProcessPoolExecutor(Executor):
     def __init__(
         self,
         max_workers: int | None = ...,
-        job_reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
-        result_reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
+        job_reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
+        result_reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
         timeout: float | None = ...,
         context: BaseContext | None = ...,
         initializer: typing.Callable[..., typing.Any] | None = ...,

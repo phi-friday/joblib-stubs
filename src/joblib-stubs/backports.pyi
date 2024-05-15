@@ -3,7 +3,7 @@ import typing
 
 import numpy as np
 from _typeshed import StrOrBytesPath
-from joblib._memmapping_reducer import _MmapMode
+from joblib._typeshed import MmapMode
 
 class Version:
     def __init__(self, vstring: str | None = ...) -> None: ...
@@ -22,7 +22,7 @@ class LooseVersion(Version):
 def make_memmap(
     filename: StrOrBytesPath,
     dtype: str = ...,
-    mode: _MmapMode = ...,
+    mode: MmapMode = ...,
     offset: int = ...,
     shape: int | tuple[int, ...] | None = ...,
     order: str = ...,

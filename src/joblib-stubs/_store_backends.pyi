@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import typing_extensions
 from joblib import numpy_pickle as numpy_pickle
-from joblib._memmapping_reducer import _MmapMode
+from joblib._typeshed import ItemInfo, MmapMode
 from joblib.backports import concurrency_safe_rename as concurrency_safe_rename
 from joblib.disk import memstr_to_bytes as memstr_to_bytes
 from joblib.disk import mkdirp as mkdirp
@@ -12,9 +12,6 @@ from joblib.disk import rm_subdirs as rm_subdirs
 from joblib.logger import format_time as format_time
 
 _T = typing_extensions.TypeVar("_T")
-
-class _ItemInfo(typing.TypedDict, total=True):
-    location: str
 
 class CacheItemInfo(typing.NamedTuple):
     path: str
@@ -58,7 +55,7 @@ class StoreBackendMixin:
     ) -> None: ...
     def clear_item(self, call_id: tuple[str, ...]) -> None: ...
     def contains_item(self, call_id: tuple[str, ...]) -> bool: ...
-    def get_item_info(self, call_id: tuple[str, ...]) -> _ItemInfo: ...
+    def get_item_info(self, call_id: tuple[str, ...]) -> ItemInfo: ...
     def get_metadata(self, call_id: tuple[str, ...]) -> dict[str, typing.Any]: ...
     def store_metadata(
         self, call_id: tuple[str, ...], metadata: dict[str, typing.Any]
@@ -69,7 +66,7 @@ class StoreBackendMixin:
         self, call_id: tuple[str, ...], func_code: str | None = ...
     ) -> None: ...
     def get_cached_func_code(self, call_id: tuple[str, ...]) -> str: ...
-    def get_cached_func_info(self, call_id: tuple[str, ...]) -> _ItemInfo: ...
+    def get_cached_func_info(self, call_id: tuple[str, ...]) -> ItemInfo: ...
     def clear(self) -> None: ...
     def enforce_store_limits(
         self,
@@ -80,7 +77,7 @@ class StoreBackendMixin:
 
 class FileSystemStoreBackend(StoreBackendBase, StoreBackendMixin):
     compress: bool
-    mmap_mode: _MmapMode
+    mmap_mode: MmapMode
     verbose: int
     # mypy
     def create_location(self, location: str) -> None: ...

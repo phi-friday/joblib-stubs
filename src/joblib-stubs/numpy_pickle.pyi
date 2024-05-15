@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 from _typeshed import SupportsRead, SupportsWrite
-from joblib._memmapping_reducer import _MmapMode
+from joblib._typeshed import Dispatch, MmapMode
 from joblib.backports import make_memmap as make_memmap
 from joblib.compressor import LZ4_NOT_INSTALLED_ERROR as LZ4_NOT_INSTALLED_ERROR
 from joblib.compressor import BinaryZlibFile as BinaryZlibFile
@@ -22,7 +22,6 @@ from joblib.numpy_pickle_compat import load_compatibility as load_compatibility
 from joblib.numpy_pickle_utils import BUFFER_SIZE as BUFFER_SIZE
 from joblib.numpy_pickle_utils import Pickler as Pickler
 from joblib.numpy_pickle_utils import Unpickler as Unpickler
-from joblib.pool import _Dispatch as _Dispatch
 from numpy.typing import DTypeLike, NDArray
 
 NUMPY_ARRAY_ALIGNMENT_BYTES: int
@@ -50,7 +49,7 @@ class NumpyArrayWrapper:
     def read(self, unpickler: Unpickler) -> NDArray[typing.Any]: ...
 
 class NumpyPickler(Pickler):
-    dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]
+    dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]
     file_handle: typing.BinaryIO
     buffered: bool
     np: types.ModuleType
@@ -58,8 +57,8 @@ class NumpyPickler(Pickler):
     def save(self, obj: typing.Any) -> None: ...
 
 class NumpyUnpickler(Unpickler):
-    # dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]  # noqa: ERA001, E501
-    mmap_mode: _MmapMode
+    # dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]  # noqa: ERA001, E501
+    mmap_mode: MmapMode
     file_handle: typing.BinaryIO
     filename: str
     compat_mode: bool
@@ -68,7 +67,7 @@ class NumpyUnpickler(Unpickler):
         self,
         filename: str,
         file_handle: typing.BinaryIO,
-        mmap_mode: _MmapMode | None = ...,
+        mmap_mode: MmapMode | None = ...,
     ) -> None: ...
     def load_build(self) -> None: ...
 
@@ -81,9 +80,9 @@ def dump(
 ) -> list[str] | None: ...
 def load_temporary_memmap(
     filename: str | Path | SupportsRead[bytes],
-    mmap_mode: _MmapMode,
+    mmap_mode: MmapMode,
     unlink_on_gc_collect: bool,
 ) -> typing.Any: ...
 def load(
-    filename: str | Path | SupportsRead[bytes], mmap_mode: _MmapMode | None = ...
+    filename: str | Path | SupportsRead[bytes], mmap_mode: MmapMode | None = ...
 ) -> typing.Any: ...

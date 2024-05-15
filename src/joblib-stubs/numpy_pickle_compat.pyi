@@ -1,9 +1,8 @@
 import types
 import typing
 
-from joblib._memmapping_reducer import _MmapMode
+from joblib._typeshed import MmapMode
 from joblib.numpy_pickle_utils import Unpickler as Unpickler
-from joblib.pool import _Dispatch as _Dispatch
 from numpy.typing import NDArray
 
 _MAX_LEN: int
@@ -38,15 +37,15 @@ class ZNDArrayWrapper(NDArrayWrapper):
     def read(self, unpickler: Unpickler) -> NDArray[typing.Any]: ...
 
 class ZipNumpyUnpickler(Unpickler):
-    # dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]  # noqa: ERA001, E501
-    mmap_mode: _MmapMode
+    # dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]  # noqa: ERA001, E501
+    mmap_mode: MmapMode
     file_handle: typing.BinaryIO
     np: types.ModuleType
     def __init__(
         self,
         filename: str,
         file_handle: typing.BinaryIO,
-        mmap_mode: _MmapMode | None = ...,
+        mmap_mode: MmapMode | None = ...,
     ) -> None: ...
     def load_build(self) -> None: ...
 

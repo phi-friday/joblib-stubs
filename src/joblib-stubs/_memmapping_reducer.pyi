@@ -3,6 +3,8 @@ import typing
 import numpy as np
 import typing_extensions
 from _typeshed import StrOrBytesPath
+from joblib._typeshed import ArrayMemmapForwardReducerReduceKwargs, MmapMode
+from joblib._typeshed import WindowsError as WindowsError
 from joblib.backports import make_memmap as make_memmap
 from joblib.disk import delete_folder as delete_folder
 from joblib.externals.loky.backend import resource_tracker as resource_tracker
@@ -11,9 +13,6 @@ from joblib.numpy_pickle import load as load
 from joblib.numpy_pickle import load_temporary_memmap as load_temporary_memmap
 from numpy.typing import ArrayLike, NDArray
 
-_MmapMode: typing_extensions.TypeAlias = typing.Literal["r+", "r", "w+", "c"]
-
-WindowsError: type[OSError | None]
 SYSTEM_SHARED_MEM_FS: str
 SYSTEM_SHARED_MEM_FS_MIN_SIZE: int
 FOLDER_PERMISSIONS: int
@@ -36,17 +35,13 @@ def reduce_array_memmap_backward(
     typing_extensions.Unpack[tuple[typing.Any, ...]],
 ]: ...
 
-class _ArrayMemmapForwardReducerReduceKwargs(typing.TypedDict, total=True):
-    verbose: int
-    prewarm: bool
-
 class ArrayMemmapForwardReducer:
     verbose: int
     def __init__(
         self,
         max_nbytes: int,
         temp_folder_resolver: typing.Callable[..., typing.Any] | None,
-        mmap_mode: _MmapMode,
+        mmap_mode: MmapMode,
         unlink_on_gc_collect: bool,
         verbose: int = ...,
         prewarm: bool = ...,
@@ -55,8 +50,8 @@ class ArrayMemmapForwardReducer:
         self,
     ) -> tuple[
         type[ArrayMemmapForwardReducer],
-        tuple[int, None, _MmapMode, bool],
-        _ArrayMemmapForwardReducerReduceKwargs,
+        tuple[int, None, MmapMode, bool],
+        ArrayMemmapForwardReducerReduceKwargs,
     ]: ...
     def __call__(
         self, a: typing.Any
@@ -70,7 +65,7 @@ def get_memmapping_reducers(
     backward_reducers: dict[type[typing.Any], ArrayMemmapForwardReducer] | None = ...,
     temp_folder_resolver: typing.Callable[..., typing.Any] | None = ...,
     max_nbytes: float = ...,
-    mmap_mode: _MmapMode = ...,
+    mmap_mode: MmapMode = ...,
     verbose: int = ...,
     prewarm: bool = ...,
     unlink_on_gc_collect: bool = ...,

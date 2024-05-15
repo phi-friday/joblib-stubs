@@ -5,7 +5,6 @@ from multiprocessing.context import BaseContext
 from multiprocessing.pool import AsyncResult as AsyncResult
 
 import typing_extensions
-from joblib._memmapping_reducer import _MmapMode
 from joblib._multiprocessing_helpers import mp as mp
 from joblib._parallel_backends import AutoBatchingMixin as AutoBatchingMixin
 from joblib._parallel_backends import FallbackToBackend as FallbackToBackend
@@ -14,8 +13,17 @@ from joblib._parallel_backends import MultiprocessingBackend as MultiprocessingB
 from joblib._parallel_backends import ParallelBackendBase as ParallelBackendBase
 from joblib._parallel_backends import SequentialBackend as SequentialBackend
 from joblib._parallel_backends import ThreadingBackend as ThreadingBackend
-from joblib._parallel_backends import _Prefer as _Prefer
-from joblib._parallel_backends import _Require as _Require
+from joblib._typeshed import (
+    BatchedCall,
+    MmapMode,
+    Prefer,
+    Require,
+    ReturnAs,
+    ReturnGererator,
+    ReturnGereratorUnordered,
+    ReturnList,
+    ReturnUnknown,
+)
 from joblib._utils import _Sentinel
 from joblib._utils import eval_expr as eval_expr
 from joblib.disk import memstr_to_bytes as memstr_to_bytes
@@ -25,21 +33,7 @@ from joblib.logger import short_format_time as short_format_time
 
 _T = typing_extensions.TypeVar("_T")
 _P = typing_extensions.ParamSpec("_P")
-
-_ReturnList: typing_extensions.TypeAlias = typing.Literal["list"]
-_ReturnGererator: typing_extensions.TypeAlias = typing.Literal["generator"]
-_ReturnGereratorUnordered: typing_extensions.TypeAlias = typing.Literal[
-    "generator_unordered"
-]
-_ReturnUnknown: typing_extensions.TypeAlias = str
-_ReturnAs: typing_extensions.TypeAlias = (
-    _ReturnList | _ReturnGererator | _ReturnGereratorUnordered | _ReturnUnknown
-)
-_R = typing_extensions.TypeVar(
-    "_R",
-    default=typing.Literal["list"],
-    bound="_ReturnAs",  # noqa: PYI020
-)
+_R = typing_extensions.TypeVar("_R", default=typing.Literal["list"], bound=ReturnAs)
 
 IS_PYPY: bool
 BACKENDS: dict[str, type[ParallelBackendBase[typing.Any]]]
@@ -52,7 +46,7 @@ VALID_BACKEND_HINTS: tuple[str | None, ...]
 VALID_BACKEND_CONSTRAINTS: tuple[str | None, ...]
 
 def get_active_backend(
-    prefer: _Prefer | None = ..., require: _Require | None = ..., verbose: int = ...
+    prefer: Prefer | None = ..., require: Require | None = ..., verbose: int = ...
 ) -> tuple[ParallelBackendBase[typing.Any], int]: ...
 
 class parallel_config:  # noqa: N801
@@ -66,9 +60,9 @@ class parallel_config:  # noqa: N801
         verbose: int | None = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
         inner_max_num_threads: int | None = ...,
         **backend_params: typing.Any,
     ) -> None: ...
@@ -96,15 +90,11 @@ class parallel_backend(parallel_config, typing.Generic[_R]):  # noqa: N801
 DEFAULT_MP_CONTEXT: BaseContext | None
 method: str | None
 
-_BatchedCall: typing_extensions.TypeAlias = tuple[
-    typing.Callable[_P, _T], tuple[typing.Any, ...], dict[str, typing.Any]
-]
-
 class BatchedCalls:
-    items: list[_BatchedCall[..., typing.Any]]
+    items: list[BatchedCall[..., typing.Any]]
     def __init__(
         self,
-        iterator_slice: typing.Iterable[_BatchedCall[..., typing.Any]],
+        iterator_slice: typing.Iterable[BatchedCall[..., typing.Any]],
         backend_and_jobs: ParallelBackendBase[typing.Any]
         | tuple[ParallelBackendBase[typing.Any], int],
         reducer_callback: typing.Callable[[], typing.Any] | None = ...,
@@ -116,7 +106,7 @@ class BatchedCalls:
     ) -> tuple[
         type[BatchedCalls],
         tuple[
-            list[_BatchedCall[..., typing.Any]],
+            list[BatchedCall[..., typing.Any]],
             tuple[ParallelBackendBase[typing.Any], int | None],
             None,
             dict[typing.Any, typing.Any],
@@ -131,7 +121,7 @@ TASK_PENDING: typing.Literal["Pending"]
 def cpu_count(only_physical_cores: bool = ...) -> int: ...
 def delayed(
     function: typing.Callable[_P, _T],
-) -> typing.Callable[_P, _BatchedCall[_P, _T]]: ...
+) -> typing.Callable[_P, BatchedCall[_P, _T]]: ...
 
 class BatchCompletionCallBack(typing.Generic[_T]):
     dispatch_timestamp: float
@@ -167,112 +157,112 @@ class Parallel(Logger, typing.Generic[_R]):
         self,
         n_jobs: int | None = ...,
         backend: str | ParallelBackendBase[_R] | None = ...,
-        return_as: _ReturnAs = ...,
+        return_as: ReturnAs = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
     ) -> None: ...
     #
     @typing.overload
     def __new__(
         cls,
         n_jobs: int | None = ...,
-        backend: str | ParallelBackendBase[_ReturnList] | None = ...,
+        backend: str | ParallelBackendBase[ReturnList] | None = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
-    ) -> Parallel[_ReturnList]: ...
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
+    ) -> Parallel[ReturnList]: ...
     @typing.overload
     def __new__(
         cls,
         n_jobs: int | None = ...,
-        backend: str | ParallelBackendBase[_ReturnList] | None = ...,
-        return_as: _ReturnList = ...,
+        backend: str | ParallelBackendBase[ReturnList] | None = ...,
+        return_as: ReturnList = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
-    ) -> Parallel[_ReturnList]: ...
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
+    ) -> Parallel[ReturnList]: ...
     @typing.overload
     def __new__(
         cls,
         n_jobs: int | None = ...,
-        backend: str | ParallelBackendBase[_ReturnGererator] | None = ...,
-        return_as: _ReturnGererator = ...,
+        backend: str | ParallelBackendBase[ReturnGererator] | None = ...,
+        return_as: ReturnGererator = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
-    ) -> Parallel[_ReturnGererator]: ...
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
+    ) -> Parallel[ReturnGererator]: ...
     @typing.overload
     def __new__(
         cls,
         n_jobs: int | None = ...,
-        backend: str | ParallelBackendBase[_ReturnGereratorUnordered] | None = ...,
-        return_as: _ReturnGereratorUnordered = ...,
+        backend: str | ParallelBackendBase[ReturnGereratorUnordered] | None = ...,
+        return_as: ReturnGereratorUnordered = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
-    ) -> Parallel[_ReturnGereratorUnordered]: ...
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
+    ) -> Parallel[ReturnGereratorUnordered]: ...
     @typing.overload
     def __new__(
         cls,
         n_jobs: int | None = ...,
-        backend: str | ParallelBackendBase[_ReturnUnknown] | None = ...,
-        return_as: _ReturnUnknown = ...,
+        backend: str | ParallelBackendBase[ReturnUnknown] | None = ...,
+        return_as: ReturnUnknown = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
-    ) -> Parallel[_ReturnUnknown]: ...
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
+    ) -> Parallel[ReturnUnknown]: ...
     @typing.overload
-    def __new__(  # type: ignore[misc]
+    def __new__(
         cls,
         n_jobs: int | None = ...,
         backend: str | ParallelBackendBase[typing.Any] | None = ...,
-        return_as: _ReturnAs = ...,
+        return_as: ReturnAs = ...,
         verbose: int | None = ...,
         timeout: float | None = ...,
         pre_dispatch: int | str = ...,
         batch_size: int | typing.Literal["auto"] = ...,
         temp_folder: str | None = ...,
         max_nbytes: int | str | None = ...,
-        mmap_mode: _MmapMode | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
+        mmap_mode: MmapMode | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
     ) -> Parallel[typing.Any]: ...
     #
     def __enter__(self) -> typing_extensions.Self: ...
@@ -284,32 +274,31 @@ class Parallel(Logger, typing.Generic[_R]):
     ) -> None: ...
     def dispatch_next(self) -> None: ...
     def dispatch_one_batch(
-        self, iterator: typing.Iterable[_BatchedCall[..., typing.Any]]
+        self, iterator: typing.Iterable[BatchedCall[..., typing.Any]]
     ) -> bool: ...
     def print_progress(self) -> None: ...
     @typing.overload
     def __call__(
-        self: Parallel[_ReturnList], iterable: typing.Iterable[_BatchedCall[..., _T]]
+        self: Parallel[ReturnList], iterable: typing.Iterable[BatchedCall[..., _T]]
     ) -> list[_T]: ...
     @typing.overload
     def __call__(
-        self: Parallel[_ReturnGererator],
-        iterable: typing.Iterable[_BatchedCall[..., _T]],
+        self: Parallel[ReturnGererator], iterable: typing.Iterable[BatchedCall[..., _T]]
     ) -> typing.Generator[_T, None, None]: ...
     @typing.overload
     def __call__(
-        self: Parallel[_ReturnGereratorUnordered],
-        iterable: typing.Iterable[_BatchedCall[..., _T]],
+        self: Parallel[ReturnGereratorUnordered],
+        iterable: typing.Iterable[BatchedCall[..., _T]],
     ) -> typing.Generator[_T, None, None]: ...
     @typing.overload
     def __call__(
-        self: Parallel[_ReturnUnknown], iterable: typing.Iterable[_BatchedCall[..., _T]]
+        self: Parallel[ReturnUnknown], iterable: typing.Iterable[BatchedCall[..., _T]]
     ) -> list[_T] | typing.Generator[_T, None, None]: ...
     @typing.overload
     def __call__(
-        self: Parallel[typing.Any], iterable: typing.Iterable[_BatchedCall[..., _T]]
+        self: Parallel[typing.Any], iterable: typing.Iterable[BatchedCall[..., _T]]
     ) -> list[_T] | typing.Generator[_T, None, None]: ...
     @typing.overload
     def __call__(
-        self, iterable: typing.Iterable[_BatchedCall[..., _T]]
+        self, iterable: typing.Iterable[BatchedCall[..., _T]]
     ) -> list[_T] | typing.Generator[_T, None, None]: ...

@@ -6,6 +6,7 @@ from multiprocessing.pool import AsyncResult as AsyncResult
 
 import typing_extensions
 from joblib._multiprocessing_helpers import mp as mp
+from joblib._typeshed import AnyContainer, Prefer, Require, ReturnAs
 from joblib.executor import get_memmapping_executor as get_memmapping_executor
 from joblib.externals.loky import cpu_count as cpu_count
 from joblib.externals.loky import process_executor as process_executor
@@ -13,21 +14,10 @@ from joblib.externals.loky.process_executor import (
     ShutdownExecutorError as ShutdownExecutorError,
 )
 from joblib.parallel import Parallel as Parallel
-from joblib.parallel import _ReturnAs as _ReturnAs
 from joblib.pool import MemmappingPool as MemmappingPool
 
 _T = typing_extensions.TypeVar("_T")
-_T_co = typing_extensions.TypeVar("_T_co", covariant=True)
-_R = typing_extensions.TypeVar(
-    "_R",
-    default=typing.Literal["list"],
-    bound="_ReturnAs",  # noqa: PYI020
-)
-
-class _AnyContainer(typing.Protocol[_T_co]): ...  # mypy override error
-
-_Prefer: typing_extensions.TypeAlias = typing.Literal["processes", "threads"]
-_Require: typing_extensions.TypeAlias = typing.Literal["sharedmem"]
+_R = typing_extensions.TypeVar("_R", default=typing.Literal["list"], bound=ReturnAs)
 
 class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
     supports_inner_max_num_threads: typing.ClassVar[bool]
@@ -53,9 +43,9 @@ class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
     def apply_async(
         self,
         func: typing.Callable[[], _T],
-        callback: typing.Callable[[_AnyContainer[_T]], typing.Any]  # FIXME: mypy error
+        callback: typing.Callable[[AnyContainer[_T]], typing.Any]  # FIXME: mypy error
         | None = ...,
-    ) -> _AnyContainer[_T]: ...
+    ) -> AnyContainer[_T]: ...
     def retrieve_result_callback(
         self, out: futures.Future[_T] | AsyncResult[_T]
     ) -> _T: ...
@@ -64,8 +54,8 @@ class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
         **backend_args: typing.Any,
     ) -> int: ...
     def start_call(self) -> None: ...
@@ -137,8 +127,8 @@ class MultiprocessingBackend(  # type: ignore[misc] # FIXME
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
         **memmappingpool_args: typing.Any,
     ) -> int: ...
 
@@ -149,8 +139,8 @@ class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
-        prefer: _Prefer | None = ...,
-        require: _Require | None = ...,
+        prefer: Prefer | None = ...,
+        require: Require | None = ...,
         idle_worker_timeout: float = ...,
         **memmappingexecutor_args: typing.Any,
     ) -> int: ...
