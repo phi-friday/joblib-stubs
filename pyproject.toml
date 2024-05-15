@@ -30,6 +30,7 @@ dev-dependencies = [
     "numpy>=1.24.4",
     "dask>=2023.5.0",
     "distributed>=2023.5.0",
+    "mypy>=1.10.0",
 ]
 
 [tool.hatch.metadata]
@@ -43,3 +44,7 @@ pythonVersion = '3.8'
 pythonPlatform = 'Linux'
 diagnostic = 'basic'
 stubPath = "./typings"
+
+[tool.mypy]
+python_version = "3.8"
+strict = true
