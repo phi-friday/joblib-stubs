@@ -1,6 +1,7 @@
 import typing
 from concurrent import futures
 
+import typing_extensions
 from joblib._memmapping_reducer import (
     TemporaryResourcesManager as TemporaryResourcesManager,
 )
@@ -8,6 +9,8 @@ from joblib._memmapping_reducer import (
     get_memmapping_reducers as get_memmapping_reducers,
 )
 from joblib.externals.loky.reusable_executor import _ReusablePoolExecutor
+
+_T = typing_extensions.TypeVar("_T")
 
 def get_memmapping_executor(n_jobs: int, **kwargs: typing.Any) -> futures.Executor: ...
 
@@ -27,9 +30,9 @@ class MemmappingExecutor(_ReusablePoolExecutor):
     def terminate(self, kill_workers: bool = ...) -> None: ...
 
 class _TestingMemmappingExecutor(MemmappingExecutor):
-    def apply_async[T](
-        self, func: typing.Callable[..., T], args: tuple[typing.Any, ...]
-    ) -> futures.Future[T]: ...
-    def map[T](
-        self, f: typing.Callable[..., T], *args: typing.Iterable[typing.Any]
-    ) -> list[T]: ...
+    def apply_async(
+        self, func: typing.Callable[..., _T], args: tuple[typing.Any, ...]
+    ) -> futures.Future[_T]: ...
+    def map(
+        self, f: typing.Callable[..., _T], *args: typing.Iterable[typing.Any]
+    ) -> list[_T]: ...

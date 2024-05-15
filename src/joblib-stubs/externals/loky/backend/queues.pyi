@@ -4,11 +4,14 @@ from multiprocessing.queues import Queue as mp_Queue
 from multiprocessing.queues import SimpleQueue as mp_SimpleQueue
 from queue import Full
 
+import typing_extensions
 from joblib.pool import _Reducer
 
 __all__ = ["Queue", "SimpleQueue", "Full"]
 
-class Queue[T](mp_Queue[T]):
+_T = typing_extensions.TypeVar("_T")
+
+class Queue(mp_Queue[_T], typing.Generic[_T]):
     def __init__(
         self,
         maxsize: int = ...,
@@ -16,11 +19,11 @@ class Queue[T](mp_Queue[T]):
         ctx: BaseContext | None = ...,
     ) -> None: ...
 
-class SimpleQueue[T](mp_SimpleQueue[T]):
+class SimpleQueue(mp_SimpleQueue[_T], typing.Generic[_T]):
     def __init__(
         self,
         reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
         ctx: BaseContext | None = ...,
     ) -> None: ...
     def close(self) -> None: ...
-    def put(self, obj: T) -> None: ...
+    def put(self, obj: _T) -> None: ...

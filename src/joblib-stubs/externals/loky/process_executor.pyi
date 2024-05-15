@@ -6,6 +6,7 @@ from concurrent.futures import Executor
 from concurrent.futures.process import BrokenProcessPool as _BPPException
 from multiprocessing.context import BaseContext
 
+import typing_extensions
 from joblib.externals.loky._base import Future as Future
 from joblib.externals.loky.backend import get_context as get_context
 from joblib.externals.loky.backend.context import cpu_count as cpu_count
@@ -30,7 +31,10 @@ _MEMORY_LEAK_CHECK_DELAY: float
 _MAX_MEMORY_LEAK_SIZE: int
 _USE_PSUTIL: bool
 
-type _Lock = Lock | RLock
+_Lock: typing_extensions.TypeAlias = Lock | RLock
+_BaseExceptionT = typing.TypeVar("_BaseExceptionT", bound=BaseException)
+_T = typing_extensions.TypeVar("_T")
+_P = typing_extensions.ParamSpec("_P")
 
 class _ThreadWakeup:
     def __init__(self) -> None: ...
@@ -61,62 +65,66 @@ class _RemoteTraceback(Exception):  # noqa: N818
     tb: str
     def __init__(self, tb: typing.Any = ...) -> None: ...
 
-type _RebuildExc[T: BaseException] = typing.Callable[[T, str], T]
+_RebuildExc: typing_extensions.TypeAlias = typing.Callable[
+    [_BaseExceptionT, str], _BaseExceptionT
+]
 
-class _ExceptionWithTraceback[T: BaseException]:
-    exc: T
+class _ExceptionWithTraceback(typing.Generic[_BaseExceptionT]):
+    exc: _BaseExceptionT
     tb: str
-    def __init__(self, exc: T) -> None: ...
-    def __reduce__(self) -> tuple[_RebuildExc[T], tuple[T, str]]: ...
+    def __init__(self, exc: _BaseExceptionT) -> None: ...
+    def __reduce__(
+        self,
+    ) -> tuple[_RebuildExc[_BaseExceptionT], tuple[_BaseExceptionT, str]]: ...
 
-class _WorkItem[**P, T]:
-    future: futures.Future[T]
-    fn: typing.Callable[P, T]
+class _WorkItem(typing.Generic[_P, _T]):
+    future: futures.Future[_T]
+    fn: typing.Callable[_P, _T]
     args: tuple[typing.Any, ...]
     kwargs: dict[str, typing.Any]
     def __init__(
         self,
-        future: Future[T],
-        fn: typing.Callable[P, T],
+        future: Future[_T],
+        fn: typing.Callable[_P, _T],
         args: tuple[typing.Any, ...],
         kwargs: dict[str, typing.Any],
     ) -> None: ...
 
-class _ResultItem[T]:
+class _ResultItem(typing.Generic[_T]):
     work_id: int
     exception: BaseException | None
-    result: T | None
+    result: _T | None
     def __init__(
         self,
         work_id: int,
         exception: BaseException | None = ...,
-        result: T | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
+        result: _T | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
     ) -> None: ...
 
-class _CallItem[**P, T]:
+class _CallItem(typing.Generic[_P, _T]):
     work_id: int
-    fn: typing.Callable[P, T]
+    fn: typing.Callable[_P, _T]
     args: tuple[typing.Any, ...]
     kwargs: dict[str, typing.Any]
     loky_pickler: str
     def __init__(
         self,
         work_id: int,
-        fn: typing.Callable[P, T],
+        fn: typing.Callable[_P, _T],
         args: tuple[typing.Any, ...],
         kwargs: dict[str, typing.Any],
     ) -> None: ...
-    def __call__(self) -> T: ...
+    def __call__(self) -> _T: ...
 
-class _SafeQueue[T](Queue[T]):
+class _SafeQueue(Queue[_T], typing.Generic[_T]):
     thread_wakeup: _ThreadWakeup | None
-    pending_work_items: dict[int, _WorkItem[..., T]] | None
+    pending_work_items: dict[int, _WorkItem[..., _T]] | None
     running_work_items: list[int] | None
     def __init__(
         self,
         max_size: int = ...,
         ctx: BaseContext | None = ...,
-        pending_work_items: dict[int, _WorkItem[..., T]] | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
+        pending_work_items: dict[int, _WorkItem[..., _T]] | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
         running_work_items: list[int] | None = ...,
         thread_wakeup: _ThreadWakeup | None = ...,
         reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
@@ -128,8 +136,8 @@ class _ExecutorManagerThread(threading.Thread):
     executor_reference: weakref.ReferenceType[ProcessPoolExecutor]
     executor_flags: _ExecutorFlags
     processes: dict[int, _Process]
-    call_queue: _SafeQueue | None
-    result_queue: SimpleQueue | None
+    call_queue: _SafeQueue[_CallItem[..., typing.Any]] | None
+    result_queue: SimpleQueue[_ResultItem[typing.Any]] | None
     work_ids_queue: Queue[int]
     pending_work_items: dict[int, _WorkItem[..., typing.Any]]
     running_work_items: list[int]
@@ -176,15 +184,15 @@ class ProcessPoolExecutor(Executor):
         initargs: tuple[typing.Any, ...] = ...,
         env: dict[str, str] | None = ...,
     ) -> None: ...
-    def submit[**P, T](
-        self, fn: typing.Callable[P, T], *args: P.args, **kwargs: P.kwargs
-    ) -> futures.Future[T]: ...
-    def map[T](
+    def submit(
+        self, fn: typing.Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
+    ) -> futures.Future[_T]: ...
+    def map(
         self,
-        fn: typing.Callable[..., T],
+        fn: typing.Callable[..., _T],
         *iterables: typing.Iterable[typing.Any],
         timeout: float | None = ...,
         chunksize: int = ...,
         **kwargs: typing.Any,
-    ) -> typing.Generator[T, typing.Any, None]: ...
+    ) -> typing.Generator[_T, typing.Any, None]: ...
     def shutdown(self, wait: bool = ..., kill_workers: bool = ...) -> None: ...

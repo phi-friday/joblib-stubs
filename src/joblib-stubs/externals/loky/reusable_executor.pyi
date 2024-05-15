@@ -3,12 +3,16 @@ import typing
 from concurrent import futures
 from multiprocessing.context import BaseContext
 
+import typing_extensions
 from _typeshed import Incomplete
 from joblib.externals.loky.process_executor import ProcessPoolExecutor
 
 __all__ = ["get_reusable_executor"]
 
-type _Context = str | BaseContext
+_T = typing_extensions.TypeVar("_T")
+_P = typing_extensions.ParamSpec("_P")
+
+_Context: typing_extensions.TypeAlias = str | BaseContext
 
 def get_reusable_executor(
     max_workers: int | None = ...,
@@ -57,6 +61,6 @@ class _ReusablePoolExecutor(ProcessPoolExecutor):
         initargs: tuple[typing.Any, ...] = ...,
         env: dict[str, str] | None = ...,
     ) -> _ReusablePoolExecutor: ...
-    def submit[**P, T](
-        self, fn: typing.Callable[P, T], *args: P.args, **kwargs: P.kwargs
-    ) -> futures.Future[T]: ...
+    def submit(
+        self, fn: typing.Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
+    ) -> futures.Future[_T]: ...

@@ -16,13 +16,15 @@ from joblib._memmapping_reducer import (
 from joblib._multiprocessing_helpers import assert_spawning as assert_spawning
 from joblib._multiprocessing_helpers import mp as mp
 
-type _Reducer[T] = typing.Callable[
-    typing_extensions.Concatenate[type[T], ...], typing.Any
+_T = typing_extensions.TypeVar("_T")
+
+_Reducer: typing_extensions.TypeAlias = typing.Callable[
+    typing_extensions.Concatenate[type[_T], ...], typing.Any
 ]
-type _Dispatch[T] = typing.Callable[[Unpickler, T], None]
+_Dispatch: typing_extensions.TypeAlias = typing.Callable[[Unpickler, _T], None]  # noqa: PYI047
 
 class CustomizablePickler(Pickler):
-    dispatch: dict[type[typing.Any], _Dispatch[typing.Any]]
+    # dispatch: dict[type[typing.Any], _Dispatch[typing.Any]]  # noqa: ERA001
     dispatch_table: dict[type[typing.Any], _Reducer[typing.Any]]
     def __init__(
         self,
@@ -30,10 +32,10 @@ class CustomizablePickler(Pickler):
         reducers: dict[type[typing.Any], _Reducer[typing.Any]] | None = ...,
         protocol: int = ...,
     ) -> None: ...
-    def register[T](
+    def register(
         self,
-        type: type[T],  # noqa: A002
-        reduce_func: _Reducer[T],
+        type: type[_T],  # noqa: A002
+        reduce_func: _Reducer[_T],
     ) -> None: ...
 
 class CustomizablePicklingQueue:

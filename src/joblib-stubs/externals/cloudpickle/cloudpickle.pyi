@@ -9,6 +9,8 @@ from _typeshed import ReadableBuffer, SupportsWrite
 from joblib.pool import _Dispatch as _Dispatch
 from joblib.pool import _Reducer as _Reducer
 
+_T = typing_extensions.TypeVar("_T")
+
 _PICKLE_BY_VALUE_MODULES: set[str]
 _DYNAMIC_CLASS_TRACKER_BY_CLASS: weakref.WeakKeyDictionary[typing.Any, str]
 _DYNAMIC_CLASS_TRACKER_BY_ID: weakref.WeakValueDictionary[str, typing.Any]
@@ -35,7 +37,7 @@ def dynamic_subimport(
     name: str,
     vars: typing.Mapping[str, typing.Any],  # noqa: A002
 ) -> types.ModuleType: ...
-def instance[T](cls: type[T]) -> T: ...
+def instance(cls: type[_T]) -> _T: ...
 
 # decorated by `instance`
 class _EmptyCellValueClass:
@@ -51,10 +53,12 @@ class _PickleBuffer:
     def __buffer__(self, flags: int, /) -> memoryview: ...
     def __release_buffer__(self, buffer: memoryview, /) -> None: ...
 
-type _BufferCallback = typing.Callable[[_PickleBuffer], typing.Any] | None
+_BufferCallback: typing_extensions.TypeAlias = (
+    typing.Callable[[_PickleBuffer], typing.Any] | None
+)
 
 class Pickler(pickle.Pickler):
-    dispatch_table: typing.ClassVar[dict[type[typing.Any], _Reducer[typing.Any]]]
+    dispatch_table: typing.ClassVar[dict[type[typing.Any], _Reducer[typing.Any]]]  # type: ignore[misc]
     def dump(self, obj: typing.Any) -> None: ...
     globals_ref: dict[int, dict[str, typing.Any]]
     proto: int

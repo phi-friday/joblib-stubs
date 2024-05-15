@@ -1,0 +1,6 @@
+{
+    "mypy-type-checker.importStrategy": "fromEnvironment",
+    "mypy-type-checker.args": [
+        "--config-file=pyproject.toml"
+    ],
+}

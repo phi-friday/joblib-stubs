@@ -4,6 +4,7 @@ from collections.abc import Generator
 from concurrent import futures
 from multiprocessing.pool import AsyncResult as AsyncResult
 
+import typing_extensions
 from joblib._multiprocessing_helpers import mp as mp
 from joblib.executor import get_memmapping_executor as get_memmapping_executor
 from joblib.externals.loky import cpu_count as cpu_count
@@ -11,12 +12,22 @@ from joblib.externals.loky import process_executor as process_executor
 from joblib.externals.loky.process_executor import (
     ShutdownExecutorError as ShutdownExecutorError,
 )
-from joblib.parallel import _R
 from joblib.parallel import Parallel as Parallel
+from joblib.parallel import _ReturnAs as _ReturnAs
 from joblib.pool import MemmappingPool as MemmappingPool
 
-type _Prefer = typing.Literal["processes", "threads"]
-type _Require = typing.Literal["sharedmem"]
+_T = typing_extensions.TypeVar("_T")
+_T_co = typing_extensions.TypeVar("_T_co", covariant=True)
+_R = typing_extensions.TypeVar(
+    "_R",
+    default=typing.Literal["list"],
+    bound="_ReturnAs",  # noqa: PYI020
+)
+
+class _AnyContainer(typing.Protocol[_T_co]): ...  # mypy override error
+
+_Prefer: typing_extensions.TypeAlias = typing.Literal["processes", "threads"]
+_Require: typing_extensions.TypeAlias = typing.Literal["sharedmem"]
 
 class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
     supports_inner_max_num_threads: typing.ClassVar[bool]
@@ -39,17 +50,15 @@ class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
     @abstractmethod
     def effective_n_jobs(self, n_jobs: int) -> int: ...
     @abstractmethod
-    def apply_async[T](
+    def apply_async(
         self,
-        func: typing.Callable[[], T],
-        callback: typing.Callable[[futures.Future[T] | AsyncResult[T]], typing.Any]
-        | typing.Callable[[futures.Future[T]], typing.Any]
-        | typing.Callable[[AsyncResult[T]], typing.Any]
+        func: typing.Callable[[], _T],
+        callback: typing.Callable[[_AnyContainer[_T]], typing.Any]  # FIXME: mypy error
         | None = ...,
-    ) -> futures.Future[T] | AsyncResult[T]: ...
-    def retrieve_result_callback[T](
-        self, out: futures.Future[T] | AsyncResult[T]
-    ) -> T: ...
+    ) -> _AnyContainer[_T]: ...
+    def retrieve_result_callback(
+        self, out: futures.Future[_T] | AsyncResult[_T]
+    ) -> _T: ...
     parallel: Parallel[_R]
     def configure(
         self,
@@ -85,15 +94,17 @@ class SequentialBackend(ParallelBackendBase[_R], typing.Generic[_R]):
         func: typing.Callable[[], typing.Any],
         callback: typing.Callable[..., typing.Any] | None = ...,
     ) -> typing.NoReturn: ...
+    # mypy
+    def effective_n_jobs(self, n_jobs: int) -> int: ...
 
 class PoolManagerMixin:
     def effective_n_jobs(self, n_jobs: int) -> int: ...
     def terminate(self) -> None: ...
-    def apply_async[T](
+    def apply_async(
         self,
-        func: typing.Callable[[], T],
-        callback: typing.Callable[[AsyncResult[T]], typing.Any] | None = ...,
-    ) -> AsyncResult[T]: ...
+        func: typing.Callable[[], _T],
+        callback: typing.Callable[[AsyncResult[_T]], typing.Any] | None = ...,
+    ) -> AsyncResult[_T]: ...
     def retrieve_result_callback(self, out: typing.Any) -> typing.Any: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
 
@@ -110,14 +121,14 @@ class ThreadingBackend(PoolManagerMixin, ParallelBackendBase[_R], typing.Generic
     supports_retrieve_callback: typing.ClassVar[bool]
     uses_threads: typing.ClassVar[bool]
     supports_sharedmem: typing.ClassVar[bool]
-    def configure(
+    def configure(  # type: ignore[override]
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
         **backend_args: typing.Any,
     ) -> int: ...
 
-class MultiprocessingBackend(
+class MultiprocessingBackend(  # type: ignore[misc] # FIXME
     PoolManagerMixin, AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic[_R]
 ):
     supports_retrieve_callback: typing.ClassVar[bool]
@@ -131,7 +142,7 @@ class MultiprocessingBackend(
         **memmappingpool_args: typing.Any,
     ) -> int: ...
 
-class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic[_R]):
+class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic[_R]):  # type: ignore[misc] # FIXME
     supports_retrieve_callback: typing.ClassVar[bool]
     supports_inner_max_num_threads: typing.ClassVar[bool]
     def configure(
@@ -145,11 +156,13 @@ class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic
     ) -> int: ...
     def terminate(self) -> None: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
-    def apply_async[T](
+    def apply_async(
         self,
-        func: typing.Callable[[], T],
-        callback: typing.Callable[[futures.Future[T]], typing.Any] | None = ...,
-    ) -> futures.Future[T]: ...
+        func: typing.Callable[[], _T],
+        callback: typing.Callable[[futures.Future[_T]], typing.Any] | None = ...,
+    ) -> futures.Future[_T]: ...
+    # mypy
+    def effective_n_jobs(self, n_jobs: int) -> int: ...
 
 class FallbackToBackend(Exception):  # noqa: N818
     backend: ParallelBackendBase[typing.Any]

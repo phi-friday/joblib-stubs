@@ -7,7 +7,7 @@ import typing_extensions
 from joblib.pool import _Dispatch as _Dispatch
 
 Pickler = pickle.Pickler
-type _HashType = typing.Literal["md5", "sha1"]
+_HashType: typing_extensions.TypeAlias = typing.Literal["md5", "sha1"]
 
 class _ConsistentSet:
     def __init__(self, set_sequence: typing.Iterable[typing.Hashable]) -> None: ...
@@ -30,7 +30,7 @@ class Hasher(Pickler):
             typing_extensions.Concatenate[str | bytes, ...], bytes
         ] = ...,
     ) -> None: ...
-    dispatch: dict[type[typing.Any], _Dispatch[typing.Any]]
+    # dispatch: dict[type[typing.Any], _Dispatch[typing.Any]]  # noqa: ERA001
     def save_set(self, set_items: typing.Iterable[typing.Hashable]) -> None: ...
 
 class NumpyHasher(Hasher):

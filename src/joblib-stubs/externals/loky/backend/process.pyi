@@ -19,7 +19,7 @@ class LokyProcess(BaseProcess):
     ) -> None: ...
 
 class LokyInitMainProcess(LokyProcess):
-    _start_method: typing.Literal["loky_init_main"]
+    _start_method: typing.Literal["loky_init_main"]  # type: ignore[assignment]
 
     def __init__(
         self,

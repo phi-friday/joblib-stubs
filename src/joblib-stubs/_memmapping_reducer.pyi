@@ -11,7 +11,7 @@ from joblib.numpy_pickle import load as load
 from joblib.numpy_pickle import load_temporary_memmap as load_temporary_memmap
 from numpy.typing import ArrayLike, NDArray
 
-type _MmapMode = typing.Literal["r+", "r", "w+", "c"]
+_MmapMode: typing_extensions.TypeAlias = typing.Literal["r+", "r", "w+", "c"]
 
 WindowsError: type[OSError | None]
 SYSTEM_SHARED_MEM_FS: str

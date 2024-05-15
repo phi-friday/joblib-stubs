@@ -23,16 +23,20 @@ from joblib.externals import loky as loky
 from joblib.logger import Logger as Logger
 from joblib.logger import short_format_time as short_format_time
 
-type _ReturnList = typing.Literal["list"]
-type _ReturnGererator = typing.Literal["generator"]
-type _ReturnGereratorUnordered = typing.Literal["generator_unordered"]
-type _ReturnUnknown = str
-type _ReturnAs = (
+_T = typing_extensions.TypeVar("_T")
+_P = typing_extensions.ParamSpec("_P")
+
+_ReturnList: typing_extensions.TypeAlias = typing.Literal["list"]
+_ReturnGererator: typing_extensions.TypeAlias = typing.Literal["generator"]
+_ReturnGereratorUnordered: typing_extensions.TypeAlias = typing.Literal[
+    "generator_unordered"
+]
+_ReturnUnknown: typing_extensions.TypeAlias = str
+_ReturnAs: typing_extensions.TypeAlias = (
     _ReturnList | _ReturnGererator | _ReturnGereratorUnordered | _ReturnUnknown
 )
 _R = typing_extensions.TypeVar(
     "_R",
-    infer_variance=True,
     default=typing.Literal["list"],
     bound="_ReturnAs",  # noqa: PYI020
 )
@@ -87,13 +91,13 @@ class parallel_backend(parallel_config, typing.Generic[_R]):  # noqa: N801
         inner_max_num_threads: int | None = ...,
         **backend_params: typing.Any,
     ) -> None: ...
-    def __enter__(self) -> tuple[ParallelBackendBase[_R], int]: ...
+    def __enter__(self) -> tuple[ParallelBackendBase[_R], int]: ...  # type: ignore[override]
 
 DEFAULT_MP_CONTEXT: BaseContext | None
 method: str | None
 
-type _BatchedCall[**P, T] = tuple[
-    typing.Callable[P, T], tuple[typing.Any, ...], dict[str, typing.Any]
+_BatchedCall: typing_extensions.TypeAlias = tuple[
+    typing.Callable[_P, _T], tuple[typing.Any, ...], dict[str, typing.Any]
 ]
 
 class BatchedCalls:
@@ -125,24 +129,24 @@ TASK_ERROR: typing.Literal["Error"]
 TASK_PENDING: typing.Literal["Pending"]
 
 def cpu_count(only_physical_cores: bool = ...) -> int: ...
-def delayed[**P, T](
-    function: typing.Callable[P, T],
-) -> typing.Callable[P, _BatchedCall[P, T]]: ...
+def delayed(
+    function: typing.Callable[_P, _T],
+) -> typing.Callable[_P, _BatchedCall[_P, _T]]: ...
 
-class BatchCompletionCallBack[T]:
+class BatchCompletionCallBack(typing.Generic[_T]):
     dispatch_timestamp: float
     batch_size: int
     parallel: Parallel
     parallel_call_id: tuple[str, ...]
-    job: futures.Future[T] | AsyncResult[T] | None
+    job: futures.Future[_T] | AsyncResult[_T] | None
     status: str
     def __init__(
         self, dispatch_timestamp: float, batch_size: int, parallel: Parallel
     ) -> None: ...
-    def register_job(self, job: futures.Future[T] | AsyncResult[T]) -> None: ...
+    def register_job(self, job: futures.Future[_T] | AsyncResult[_T]) -> None: ...
     def get_result(self, timeout: float) -> typing.Any: ...
     def get_status(self, timeout: float) -> str: ...
-    def __call__(self, out: futures.Future[T] | AsyncResult[T]) -> None: ...
+    def __call__(self, out: futures.Future[_T] | AsyncResult[_T]) -> None: ...
 
 def register_parallel_backend(
     name: str, factory: type[ParallelBackendBase[typing.Any]], make_default: bool = ...
@@ -255,7 +259,7 @@ class Parallel(Logger, typing.Generic[_R]):
         require: _Require | None = ...,
     ) -> Parallel[_ReturnUnknown]: ...
     @typing.overload
-    def __new__(
+    def __new__(  # type: ignore[misc]
         cls,
         n_jobs: int | None = ...,
         backend: str | ParallelBackendBase[typing.Any] | None = ...,
@@ -284,28 +288,28 @@ class Parallel(Logger, typing.Generic[_R]):
     ) -> bool: ...
     def print_progress(self) -> None: ...
     @typing.overload
-    def __call__[T](
-        self: Parallel[_ReturnList], iterable: typing.Iterable[_BatchedCall[..., T]]
-    ) -> list[T]: ...
+    def __call__(
+        self: Parallel[_ReturnList], iterable: typing.Iterable[_BatchedCall[..., _T]]
+    ) -> list[_T]: ...
     @typing.overload
-    def __call__[T](
+    def __call__(
         self: Parallel[_ReturnGererator],
-        iterable: typing.Iterable[_BatchedCall[..., T]],
-    ) -> typing.Generator[T, None, None]: ...
+        iterable: typing.Iterable[_BatchedCall[..., _T]],
+    ) -> typing.Generator[_T, None, None]: ...
     @typing.overload
-    def __call__[T](
+    def __call__(
         self: Parallel[_ReturnGereratorUnordered],
-        iterable: typing.Iterable[_BatchedCall[..., T]],
-    ) -> typing.Generator[T, None, None]: ...
+        iterable: typing.Iterable[_BatchedCall[..., _T]],
+    ) -> typing.Generator[_T, None, None]: ...
     @typing.overload
-    def __call__[T](
-        self: Parallel[_ReturnUnknown], iterable: typing.Iterable[_BatchedCall[..., T]]
-    ) -> list[T] | typing.Generator[T, None, None]: ...
+    def __call__(
+        self: Parallel[_ReturnUnknown], iterable: typing.Iterable[_BatchedCall[..., _T]]
+    ) -> list[_T] | typing.Generator[_T, None, None]: ...
     @typing.overload
-    def __call__[T](
-        self: Parallel[typing.Any], iterable: typing.Iterable[_BatchedCall[..., T]]
-    ) -> list[T] | typing.Generator[T, None, None]: ...
+    def __call__(
+        self: Parallel[typing.Any], iterable: typing.Iterable[_BatchedCall[..., _T]]
+    ) -> list[_T] | typing.Generator[_T, None, None]: ...
     @typing.overload
-    def __call__[T](
-        self, iterable: typing.Iterable[_BatchedCall[..., T]]
-    ) -> list[T] | typing.Generator[T, None, None]: ...
+    def __call__(
+        self, iterable: typing.Iterable[_BatchedCall[..., _T]]
+    ) -> list[_T] | typing.Generator[_T, None, None]: ...

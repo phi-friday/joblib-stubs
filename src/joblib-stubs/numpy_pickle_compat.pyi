@@ -38,7 +38,7 @@ class ZNDArrayWrapper(NDArrayWrapper):
     def read(self, unpickler: Unpickler) -> NDArray[typing.Any]: ...
 
 class ZipNumpyUnpickler(Unpickler):
-    dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]
+    # dispatch: typing.ClassVar[dict[type[typing.Any], _Dispatch[typing.Any]]]  # noqa: ERA001, E501
     mmap_mode: _MmapMode
     file_handle: typing.BinaryIO
     np: types.ModuleType

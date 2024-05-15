@@ -1,12 +1,15 @@
+import typing_extensions
 from joblib.externals.loky import (
     wrap_non_picklable_objects as _wrap_non_picklable_objects,
 )
 
-def _my_wrap_non_picklable_objects[T](obj: T, keep_wrapper: bool = ...) -> T: ...
+_T = typing_extensions.TypeVar("_T")
+
+def _my_wrap_non_picklable_objects(obj: _T, keep_wrapper: bool = ...) -> _T: ...
 
 if bool():  # noqa: PYI002, UP018
     wrap_non_picklable_objects = _my_wrap_non_picklable_objects
 else:
-    wrap_non_picklable_objects = _wrap_non_picklable_objects
+    wrap_non_picklable_objects = _wrap_non_picklable_objects  # type: ignore[assignment]
 
 __all__ = ["wrap_non_picklable_objects"]

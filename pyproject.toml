@@ -48,3 +48,5 @@ stubPath = "./typings"
 [tool.mypy]
 python_version = "3.8"
 strict = true
+disable_error_code = "import-untyped,overload-overlap,override"
+disallow_subclassing_any = false

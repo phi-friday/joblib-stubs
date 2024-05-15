@@ -2,15 +2,18 @@ import typing
 from pickle import Pickler
 from pickle import loads as loads
 
+import typing_extensions
 from _typeshed import SupportsWrite
 from joblib.pool import _Reducer
 
 __all__ = ["dump", "dumps", "loads", "register", "set_loky_pickler"]
 
+_T = typing_extensions.TypeVar("_T")
+
 DEFAULT_ENV: str
 ENV_LOKY_PICKLER: str
 
-def register[T](type_: type[T], reduce_function: _Reducer[T]) -> None: ...
+def register(type_: type[_T], reduce_function: _Reducer[_T]) -> None: ...
 
 class _C:
     def f(self) -> None: ...
