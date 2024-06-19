@@ -145,6 +145,7 @@ def effective_n_jobs(n_jobs: int = ...) -> int: ...
 
 class Parallel(Logger, typing.Generic[_R]):
     _backend: ParallelBackendBase[_R]
+    _backend_args: dict[str, typing.Any]
     verbose: int
     timeout: float | None
     pre_dispatch: int | str
