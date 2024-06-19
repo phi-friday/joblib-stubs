@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install rye
-        uses: phi-friday/install-rye@v1.4
+        uses: phi-friday/install-rye@v1.5
         id: install-rye
         with:
           python_version: ${{ matrix.python-version }}
