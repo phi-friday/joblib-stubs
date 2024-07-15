@@ -31,6 +31,7 @@ dev-dependencies = [
     "dask>=2023.5.0",
     "distributed>=2023.5.0",
     "mypy>=1.10.0",
+    "ruff==0.5.2",
 ]
 
 [tool.hatch.metadata]
