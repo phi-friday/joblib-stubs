@@ -20,7 +20,7 @@ _T = typing_extensions.TypeVar("_T")
 
 class CustomizablePickler(Pickler):
     # dispatch: dict[type[typing.Any], _Dispatch[typing.Any]]  # noqa: ERA001
-    dispatch_table: dict[type[typing.Any], Reducer[typing.Any]]
+    dispatch_table: typing.Mapping[type[typing.Any], Reducer[typing.Any]]
     def __init__(
         self,
         writer: SupportsWrite[bytes],

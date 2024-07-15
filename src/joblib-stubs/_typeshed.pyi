@@ -12,7 +12,7 @@ class AnyContainer(typing.Protocol[_T_co]): ...  # mypy override error
 
 class EmptyCellValueClass:
     @classmethod
-    def __reduce__(cls) -> str: ...
+    def __reduce__(cls) -> str: ...  # pyright: ignore[reportIncompatibleMethodOverride]
 
 class Process(typing.Protocol):
     pid: int

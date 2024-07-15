@@ -33,6 +33,6 @@ class _TestingMemmappingExecutor(MemmappingExecutor):
     def apply_async(
         self, func: typing.Callable[..., _T], args: tuple[typing.Any, ...]
     ) -> futures.Future[_T]: ...
-    def map(
+    def map(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, f: typing.Callable[..., _T], *args: typing.Iterable[typing.Any]
     ) -> list[_T]: ...

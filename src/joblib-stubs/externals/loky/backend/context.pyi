@@ -1,3 +1,4 @@
+# pyright: reportIncompatibleMethodOverride=false
 import typing
 from multiprocessing.context import BaseContext
 
@@ -47,6 +48,6 @@ class LokyContext(BaseContext):
     def Event(self) -> _Event: ...  # noqa: N802
 
 class LokyInitMainContext(LokyContext):
-    Process: type[LokyInitMainProcess]
+    Process: type[LokyInitMainProcess]  # pyright: ignore[reportIncompatibleVariableOverride]
 
 ctx_loky: LokyContext

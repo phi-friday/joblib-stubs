@@ -110,7 +110,7 @@ class NotMemorizedFunc(typing.Generic[_P, _T]):
 class AsyncNotMemorizedFunc(
     NotMemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P, _T]
 ):
-    func: AnyAwaitableCallable[_P, _T]
+    func: AnyAwaitableCallable[_P, _T]  # pyright: ignore[reportIncompatibleMethodOverride]
     def __init__(self, func: AnyAwaitableCallable[_P, _T]) -> None: ...
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> AnyAwaitable[_T]: ...
     async def call_and_shelve(  # type: ignore[override]
@@ -155,7 +155,7 @@ class MemorizedFunc(Logger, typing.Generic[_P, _T]):
     ) -> tuple[MemorizedResult[_T] | NotMemorizedResult[_T], dict[str, typing.Any]]: ...
 
 class AsyncMemorizedFunc(MemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P, _T]):
-    func: AnyAwaitableCallable[_P, _T]
+    func: AnyAwaitableCallable[_P, _T]  # pyright: ignore[reportIncompatibleMethodOverride]
     def __init__(
         self,
         func: AnyAwaitableCallable[_P, _T],

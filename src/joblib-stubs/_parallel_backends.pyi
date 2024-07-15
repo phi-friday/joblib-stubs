@@ -76,7 +76,7 @@ class ParallelBackendBase(typing.Generic[_R], metaclass=ABCMeta):
 
 class SequentialBackend(ParallelBackendBase[_R], typing.Generic[_R]):
     uses_threads: typing.ClassVar[bool]
-    supports_timeout: typing.ClassVar[bool]
+    supports_timeout: typing.ClassVar[bool]  # pyright: ignore[reportIncompatibleMethodOverride]
     supports_retrieve_callback: typing.ClassVar[bool]
     supports_sharedmem: typing.ClassVar[bool]
     def apply_async(
@@ -122,7 +122,7 @@ class MultiprocessingBackend(  # type: ignore[misc] # FIXME
     PoolManagerMixin, AutoBatchingMixin[_R], ParallelBackendBase[_R], typing.Generic[_R]
 ):
     supports_retrieve_callback: typing.ClassVar[bool]
-    supports_return_generator: typing.ClassVar[bool]
+    supports_return_generator: typing.ClassVar[bool]  # pyright: ignore[reportIncompatibleMethodOverride]
     def configure(
         self,
         n_jobs: int = ...,
