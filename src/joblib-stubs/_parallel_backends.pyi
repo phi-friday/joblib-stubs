@@ -1,3 +1,4 @@
+# pyright: reportUnnecessaryTypeIgnoreComment=false
 import typing
 from abc import ABCMeta, abstractmethod
 from collections.abc import Generator

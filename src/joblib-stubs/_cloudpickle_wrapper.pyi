@@ -1,3 +1,4 @@
+# pyright: reportUnnecessaryTypeIgnoreComment=false
 import typing_extensions
 from joblib.externals.loky import (
     wrap_non_picklable_objects as _wrap_non_picklable_objects,
