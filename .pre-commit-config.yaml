@@ -19,3 +19,9 @@ repos:
         additional_dependencies: [numpy, dask, distributed, tornado]
     repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.10.1
+
+  - hooks:
+      - id: pyright
+        name: pyright
+    repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.371

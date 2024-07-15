@@ -14,5 +14,7 @@
     "reportUnnecessaryIsInstance": false,
     "reportUnnecessaryComparison": false,
     "reportDeprecated": false,
-    "reportPrivateUsage": false
+    "reportPrivateUsage": false,
+    "venv": ".venv",
+    "venvPath": "."
 }
