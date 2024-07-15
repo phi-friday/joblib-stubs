@@ -1,0 +1,18 @@
+{
+    "include": [
+        "src/joblib-stubs",
+    ],
+    "typeCheckingMode": "strict",
+    "pythonVersion": "3.8",
+    "pythonPlatform": "Linux",
+    "reportMissingTypeStubs": false,
+    "reportInconsistentConstructor": false,
+    "reportUnknownArgumentType": false,
+    "reportOverlappingOverload": false,
+    "reportUnknownVariableType": false,
+    "reportUnknownMemberType": false,
+    "reportUnnecessaryIsInstance": false,
+    "reportUnnecessaryComparison": false,
+    "reportDeprecated": false,
+    "reportPrivateUsage": false
+}
