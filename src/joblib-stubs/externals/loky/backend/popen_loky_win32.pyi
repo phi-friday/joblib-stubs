@@ -5,7 +5,7 @@ from multiprocessing.process import BaseProcess
 
 __all__ = ["Popen"]
 
-class Popen(_Popen):
+class Popen(_Popen):  # type: ignore[misc]
     method: typing.Literal["loky"]
     pid: int
     returncode: int | None
