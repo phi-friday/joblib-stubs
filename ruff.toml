@@ -2,24 +2,6 @@ target-version = "py38"
 
 [lint]
 select = ["ALL"]
-fixable = [
-    "UP",
-    'F401',   # unused imports
-    "F522",   # string-dot-format-extra-named-arguments
-    "F541",   # f-string-missing-placeholders
-    "W292",   # no-new-line-at-end-of-file
-    "E711",   # none-comparison
-    "E712",   # true-false-comparison
-    "E713",   # not-in-test
-    "E714",   # not-is-test
-    "I001",   # unsorted-imports
-    "UP037",  # quoted-annotation
-    "W293",   # blank-line-with-whitespace
-    "RSE102", # unnecessary-paren-on-raise-exception
-    "SIM108", # if-else-block-instead-of-if-exp
-    "I002",   #	missing-required-import	
-    "RUF100", # unused-noqa
-]
 ignore = [
     'TD',     # flake8-todos
     'E712',   # TrueFalseComparison # sqlalchemy
@@ -55,6 +37,7 @@ ignore = [
     "TD",     # flake8-todos
     "FIX",    # flake8-fixme
     "D413",   # blank-line-after-last-section 
+    "PLR2044", # empty-comment
     # ruff format
     "W191",   # tab-indentation
     "E111",   # indentation-with-invalid-multiple
@@ -73,6 +56,24 @@ ignore = [
     # joblib
     "FBT001",
     "PLR0913"
+]
+fixable = [
+    "UP",
+    'F401',   # unused imports
+    "F522",   # string-dot-format-extra-named-arguments
+    "F541",   # f-string-missing-placeholders
+    "W292",   # no-new-line-at-end-of-file
+    "E711",   # none-comparison
+    "E712",   # true-false-comparison
+    "E713",   # not-in-test
+    "E714",   # not-is-test
+    "I001",   # unsorted-imports
+    "UP037",  # quoted-annotation
+    "W293",   # blank-line-with-whitespace
+    "RSE102", # unnecessary-paren-on-raise-exception
+    "SIM108", # if-else-block-instead-of-if-exp
+    "I002",   #	missing-required-import	
+    "RUF100", # unused-noqa
 ]
 [lint.per-file-ignores]
 "./src/joblib-stubs/externals/**/*.pyi" = ["F405"]
