@@ -20,11 +20,10 @@ jobs:
           fetch-depth: 0
 
       - name: Install rye
-        uses: phi-friday/install-rye@v1.5
+        uses: phi-friday/install-rye@v2
         id: install-rye
         with:
           python_version: ${{ matrix.python-version }}
-          use_uv: true
 
       - name: Build package
         run: |
