@@ -17,5 +17,6 @@
     "reportPrivateUsage": false,
     "reportUnnecessaryTypeIgnoreComment": true,
     "venv": ".venv",
-    "venvPath": "."
+    "venvPath": ".",
+    "stubPath": "./typings"
 }

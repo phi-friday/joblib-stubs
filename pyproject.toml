@@ -37,8 +37,8 @@ dev-dependencies = [
 
 [tool.rye.scripts]
 lint = { chain = ["lint:check", "lint:format"] }
-"lint:check" = "ruff check src tests --fix"
-"lint:format" = "ruff format src tests"
+"lint:check" = "ruff check src --fix"
+"lint:format" = "ruff format src"
 check = "pre-commit run --all-files --show-diff-on-failure"
 
 [tool.hatch.metadata]
@@ -46,12 +46,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/joblib-stubs"]
-
-[tool.pyright]
-pythonVersion = '3.8'
-pythonPlatform = 'Linux'
-diagnostic = 'basic'
-stubPath = "./typings"
 
 [tool.mypy]
 python_version = "3.8"
