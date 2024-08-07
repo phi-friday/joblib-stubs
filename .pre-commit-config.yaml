@@ -3,14 +3,14 @@ repos:
       - id: ruff
         name: ruff-lint
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.2
+    rev: v0.5.6
 
   - hooks:
       - id: ruff-format
         name: ruff-format
         args: [--check]
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.2
+    rev: v0.5.6
 
   - hooks:
       - id: mypy
@@ -24,4 +24,4 @@ repos:
       - id: pyright
         name: pyright
     repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.371
+    rev: v1.1.374
