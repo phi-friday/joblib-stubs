@@ -1,8 +1,7 @@
-import typing
 from abc import ABCMeta, abstractmethod
 from datetime import datetime, timedelta
+from typing import Any, Callable, Mapping, NamedTuple
 
-import typing_extensions
 from joblib import numpy_pickle as numpy_pickle
 from joblib._typeshed import ItemInfo, MmapMode
 from joblib.backports import concurrency_safe_rename as concurrency_safe_rename
@@ -10,10 +9,11 @@ from joblib.disk import memstr_to_bytes as memstr_to_bytes
 from joblib.disk import mkdirp as mkdirp
 from joblib.disk import rm_subdirs as rm_subdirs
 from joblib.logger import format_time as format_time
+from typing_extensions import TypeVar
 
-_T = typing_extensions.TypeVar("_T")
+_T = TypeVar("_T")
 
-class CacheItemInfo(typing.NamedTuple):
+class CacheItemInfo(NamedTuple):
     path: str
     size: int
     last_access: datetime
@@ -21,9 +21,7 @@ class CacheItemInfo(typing.NamedTuple):
 class CacheWarning(Warning): ...
 
 def concurrency_safe_write(
-    object_to_write: _T,
-    filename: str,
-    write_func: typing.Callable[[_T, str], typing.Any],
+    object_to_write: _T, filename: str, write_func: Callable[[_T, str], Any]
 ) -> str: ...
 
 class StoreBackendBase(metaclass=ABCMeta):
@@ -39,7 +37,7 @@ class StoreBackendBase(metaclass=ABCMeta):
         self,
         location: str,
         verbose: int = ...,
-        backend_options: dict[str, typing.Any] | None = ...,
+        backend_options: dict[str, Any] | None = ...,
     ) -> None: ...
 
 class StoreBackendMixin:
@@ -48,17 +46,17 @@ class StoreBackendMixin:
         call_id: tuple[str, ...],
         verbose: int = ...,
         timestamp: float | None = ...,
-        metadata: typing.Mapping[str, typing.Any] | None = ...,
-    ) -> typing.Any: ...
+        metadata: Mapping[str, Any] | None = ...,
+    ) -> Any: ...
     def dump_item(
-        self, call_id: tuple[str, ...], item: typing.Any, verbose: int = ...
+        self, call_id: tuple[str, ...], item: Any, verbose: int = ...
     ) -> None: ...
     def clear_item(self, call_id: tuple[str, ...]) -> None: ...
     def contains_item(self, call_id: tuple[str, ...]) -> bool: ...
     def get_item_info(self, call_id: tuple[str, ...]) -> ItemInfo: ...
-    def get_metadata(self, call_id: tuple[str, ...]) -> dict[str, typing.Any]: ...
+    def get_metadata(self, call_id: tuple[str, ...]) -> dict[str, Any]: ...
     def store_metadata(
-        self, call_id: tuple[str, ...], metadata: dict[str, typing.Any]
+        self, call_id: tuple[str, ...], metadata: dict[str, Any]
     ) -> None: ...
     def contains_path(self, call_id: tuple[str, ...]) -> bool: ...
     def clear_path(self, call_id: tuple[str, ...]) -> None: ...
@@ -87,5 +85,5 @@ class FileSystemStoreBackend(StoreBackendBase, StoreBackendMixin):
         self,
         location: str,
         verbose: int = ...,
-        backend_options: dict[str, typing.Any] | None = ...,
+        backend_options: dict[str, Any] | None = ...,
     ) -> None: ...

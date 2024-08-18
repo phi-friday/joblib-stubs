@@ -1,18 +1,18 @@
 import threading
-import typing
 from concurrent import futures
 from multiprocessing.context import BaseContext
+from typing import Any, Callable
 
-import typing_extensions
 from _typeshed import Incomplete
 from joblib.externals.loky.process_executor import ProcessPoolExecutor
+from typing_extensions import ParamSpec, TypeAlias, TypeVar
 
 __all__ = ["get_reusable_executor"]
 
-_T = typing_extensions.TypeVar("_T")
-_P = typing_extensions.ParamSpec("_P")
+_T = TypeVar("_T")
+_P = ParamSpec("_P")
 
-_Context: typing_extensions.TypeAlias = str | BaseContext
+_Context: TypeAlias = str | BaseContext
 
 def get_reusable_executor(
     max_workers: int | None = ...,
@@ -20,11 +20,10 @@ def get_reusable_executor(
     timeout: float = ...,
     kill_workers: bool = ...,
     reuse: str = ...,
-    job_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]] | None = ...,
-    result_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]]
-    | None = ...,
-    initializer: typing.Callable[..., typing.Any] | None = ...,
-    initargs: tuple[typing.Any, ...] = ...,
+    job_reducers: dict[type[Any], Callable[..., Any]] | None = ...,
+    result_reducers: dict[type[Any], Callable[..., Any]] | None = ...,
+    initializer: Callable[..., Any] | None = ...,
+    initargs: tuple[Any, ...] = ...,
     env: dict[str, str] | None = ...,
 ) -> _ReusablePoolExecutor: ...
 
@@ -37,12 +36,10 @@ class _ReusablePoolExecutor(ProcessPoolExecutor):
         context: _Context | None = ...,
         timeout: float | None = ...,
         executor_id: int = ...,
-        job_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]]
-        | None = ...,
-        result_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]]
-        | None = ...,
-        initializer: typing.Callable[..., typing.Any] | None = ...,
-        initargs: tuple[typing.Any, ...] = ...,
+        job_reducers: dict[type[Any], Callable[..., Any]] | None = ...,
+        result_reducers: dict[type[Any], Callable[..., Any]] | None = ...,
+        initializer: Callable[..., Any] | None = ...,
+        initargs: tuple[Any, ...] = ...,
         env: dict[str, str] | None = ...,
     ) -> None: ...
     @classmethod
@@ -53,14 +50,12 @@ class _ReusablePoolExecutor(ProcessPoolExecutor):
         timeout: float = ...,
         kill_workers: bool = ...,
         reuse: str = ...,
-        job_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]]
-        | None = ...,
-        result_reducers: dict[type[typing.Any], typing.Callable[..., typing.Any]]
-        | None = ...,
-        initializer: typing.Callable[..., typing.Any] | None = ...,
-        initargs: tuple[typing.Any, ...] = ...,
+        job_reducers: dict[type[Any], Callable[..., Any]] | None = ...,
+        result_reducers: dict[type[Any], Callable[..., Any]] | None = ...,
+        initializer: Callable[..., Any] | None = ...,
+        initargs: tuple[Any, ...] = ...,
         env: dict[str, str] | None = ...,
     ) -> _ReusablePoolExecutor: ...
     def submit(
-        self, fn: typing.Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
+        self, fn: Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
     ) -> futures.Future[_T]: ...

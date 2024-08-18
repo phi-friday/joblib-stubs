@@ -1,10 +1,10 @@
 # pyright: reportUnnecessaryTypeIgnoreComment=false
-import typing_extensions
 from joblib.externals.loky import (
     wrap_non_picklable_objects as _wrap_non_picklable_objects,
 )
+from typing_extensions import TypeVar
 
-_T = typing_extensions.TypeVar("_T")
+_T = TypeVar("_T")
 
 def _my_wrap_non_picklable_objects(obj: _T, keep_wrapper: bool = ...) -> _T: ...
 

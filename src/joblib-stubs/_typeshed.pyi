@@ -1,75 +1,60 @@
-import typing
 from pickle import Unpickler
+from typing import Any, Awaitable, Callable, Coroutine, Literal, NamedTuple, Protocol
 
-import typing_extensions
+from typing_extensions import Concatenate, ParamSpec, TypeAlias, TypedDict, TypeVar
 
-_T = typing_extensions.TypeVar("_T")
-_T_co = typing_extensions.TypeVar("_T_co", covariant=True)
-_P = typing_extensions.ParamSpec("_P")
-_BaseExceptionT = typing.TypeVar("_BaseExceptionT", bound=BaseException)
+_T = TypeVar("_T")
+_T_co = TypeVar("_T_co", covariant=True)
+_P = ParamSpec("_P")
+_BaseExceptionT = TypeVar("_BaseExceptionT", bound=BaseException)
 
-class AnyContainer(typing.Protocol[_T_co]): ...  # mypy override error
+class AnyContainer(Protocol[_T_co]): ...  # mypy override error
 
 class EmptyCellValueClass:
     @classmethod
     def __reduce__(cls) -> str: ...  # pyright: ignore[reportIncompatibleMethodOverride]
 
-class Process(typing.Protocol):
+class Process(Protocol):
     pid: int
     returncode: int | None
-    kill: typing.Callable[[], None]
-    join: typing.Callable[[], None]
+    kill: Callable[[], None]
+    join: Callable[[], None]
 
-class ItemInfo(typing.TypedDict, total=True):
+class ItemInfo(TypedDict, total=True):
     location: str
 
-class FullArgSpec(typing.NamedTuple):
+class FullArgSpec(NamedTuple):
     args: list[str]
     varargs: str
     varkw: str
-    defaults: tuple[typing.Any, ...]
+    defaults: tuple[Any, ...]
     kwonlyargs: list[str]
-    kwonlydefaults: dict[str, typing.Any] | None
-    annotations: dict[str, typing.Any] | None
+    kwonlydefaults: dict[str, Any] | None
+    annotations: dict[str, Any] | None
 
-class ArrayMemmapForwardReducerReduceKwargs(typing.TypedDict, total=True):
+class ArrayMemmapForwardReducerReduceKwargs(TypedDict, total=True):
     verbose: int
     prewarm: bool
 
-RebuildExc: typing_extensions.TypeAlias = typing.Callable[
-    [_BaseExceptionT, str], _BaseExceptionT
-]
+RebuildExc: TypeAlias = Callable[[_BaseExceptionT, str], _BaseExceptionT]
 WindowsError: type[OSError | None]
-DaskTaskItem: typing_extensions.TypeAlias = tuple[
-    typing.Callable[_P, _T], list[typing.Any], dict[str, typing.Any]
-]
-DaskScatterIterItem: typing_extensions.TypeAlias = (
-    list[typing.Any] | dict[typing.Any, typing.Any]
+DaskTaskItem: TypeAlias = tuple[Callable[_P, _T], list[Any], dict[str, Any]]
+DaskScatterIterItem: TypeAlias = list[Any] | dict[Any, Any]
+Prefer: TypeAlias = Literal["processes", "threads"]
+Require: TypeAlias = Literal["sharedmem"]
+HashType: TypeAlias = Literal["md5", "sha1"]
+MmapMode: TypeAlias = Literal["r+", "r", "w+", "c"]
+AnyAwaitable: TypeAlias = Awaitable[_T] | Coroutine[Any, Any, _T]
+AnyAwaitableCallable: TypeAlias = (
+    Callable[_P, Awaitable[_T]] | Callable[_P, Coroutine[Any, Any, _T]]
 )
-Prefer: typing_extensions.TypeAlias = typing.Literal["processes", "threads"]
-Require: typing_extensions.TypeAlias = typing.Literal["sharedmem"]
-HashType: typing_extensions.TypeAlias = typing.Literal["md5", "sha1"]
-MmapMode: typing_extensions.TypeAlias = typing.Literal["r+", "r", "w+", "c"]
-AnyAwaitable: typing_extensions.TypeAlias = (
-    typing.Awaitable[_T] | typing.Coroutine[typing.Any, typing.Any, _T]
-)
-AnyAwaitableCallable: typing_extensions.TypeAlias = (
-    typing.Callable[_P, typing.Awaitable[_T]]
-    | typing.Callable[_P, typing.Coroutine[typing.Any, typing.Any, _T]]
-)
-Reducer: typing_extensions.TypeAlias = typing.Callable[
-    typing_extensions.Concatenate[type[_T], ...], typing.Any
-]
-Dispatch: typing_extensions.TypeAlias = typing.Callable[[Unpickler, _T], None]
-ReturnList: typing_extensions.TypeAlias = typing.Literal["list"]
-ReturnGererator: typing_extensions.TypeAlias = typing.Literal["generator"]
-ReturnGereratorUnordered: typing_extensions.TypeAlias = typing.Literal[
-    "generator_unordered"
-]
-ReturnUnknown: typing_extensions.TypeAlias = str
-ReturnAs: typing_extensions.TypeAlias = (
+Reducer: TypeAlias = Callable[Concatenate[type[_T], ...], Any]
+Dispatch: TypeAlias = Callable[[Unpickler, _T], None]
+ReturnList: TypeAlias = Literal["list"]
+ReturnGererator: TypeAlias = Literal["generator"]
+ReturnGereratorUnordered: TypeAlias = Literal["generator_unordered"]
+ReturnUnknown: TypeAlias = str
+ReturnAs: TypeAlias = (
     ReturnList | ReturnGererator | ReturnGereratorUnordered | ReturnUnknown
 )
-BatchedCall: typing_extensions.TypeAlias = tuple[
-    typing.Callable[_P, _T], tuple[typing.Any, ...], dict[str, typing.Any]
-]
+BatchedCall: TypeAlias = tuple[Callable[_P, _T], tuple[Any, ...], dict[str, Any]]

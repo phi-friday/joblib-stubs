@@ -1,5 +1,5 @@
-import typing
+from typing import Any, Callable
 
 mp: int | None
 name: str
-assert_spawning: typing.Callable[[typing.Any], None] | None
+assert_spawning: Callable[[Any], None] | None

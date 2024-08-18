@@ -1,4 +1,4 @@
-import typing
+from typing import Any, Callable
 
 from _typeshed import StrOrBytesPath
 from joblib._typeshed import WindowsError as WindowsError
@@ -12,16 +12,10 @@ RM_SUBDIRS_N_RETRY: int
 
 def rm_subdirs(
     path: StrOrBytesPath,
-    onerror: typing.Callable[
-        [typing.Callable[..., typing.Any], str, typing.Any], object
-    ]
-    | None = ...,
+    onerror: Callable[[Callable[..., Any], str, Any], object] | None = ...,
 ) -> None: ...
 def delete_folder(
     folder_path: StrOrBytesPath,
-    onerror: typing.Callable[
-        [typing.Callable[..., typing.Any], str, typing.Any], object
-    ]
-    | None = ...,
+    onerror: Callable[[Callable[..., Any], str, Any], object] | None = ...,
     allow_non_empty: bool = ...,
 ) -> None: ...

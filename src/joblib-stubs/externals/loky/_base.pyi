@@ -1,8 +1,8 @@
-import typing
 from concurrent.futures import Future as _BaseFuture
+from typing import Generic
 
-import typing_extensions
+from typing_extensions import TypeVar
 
-_T = typing_extensions.TypeVar("_T")
+_T = TypeVar("_T")
 
-class Future(_BaseFuture[_T], typing.Generic[_T]): ...
+class Future(_BaseFuture[_T], Generic[_T]): ...

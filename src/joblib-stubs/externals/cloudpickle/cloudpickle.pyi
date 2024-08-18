@@ -1,26 +1,26 @@
 import pickle
 import threading
-import types
-import typing
 import weakref
+from types import ModuleType
+from typing import Any, Callable, ClassVar, Mapping
 
-import typing_extensions
 from _typeshed import ReadableBuffer, SupportsWrite
 from joblib._typeshed import Dispatch, EmptyCellValueClass, Reducer
+from typing_extensions import Concatenate, TypeAlias, TypeVar
 
-_T = typing_extensions.TypeVar("_T")
+_T = TypeVar("_T")
 
 _PICKLE_BY_VALUE_MODULES: set[str]
-_DYNAMIC_CLASS_TRACKER_BY_CLASS: weakref.WeakKeyDictionary[typing.Any, str]
-_DYNAMIC_CLASS_TRACKER_BY_ID: weakref.WeakValueDictionary[str, typing.Any]
+_DYNAMIC_CLASS_TRACKER_BY_CLASS: weakref.WeakKeyDictionary[Any, str]
+_DYNAMIC_CLASS_TRACKER_BY_ID: weakref.WeakValueDictionary[str, Any]
 _DYNAMIC_CLASS_TRACKER_LOCK: threading.Lock
 
 DEFAULT_PROTOCOL: int
 PYPY: bool
-builtin_code_type: type[typing.Any] | None
+builtin_code_type: type[Any] | None
 
-def register_pickle_by_value(module: types.ModuleType) -> None: ...
-def unregister_pickle_by_value(module: types.ModuleType) -> None: ...
+def register_pickle_by_value(module: ModuleType) -> None: ...
+def unregister_pickle_by_value(module: ModuleType) -> None: ...
 def list_registry_pickle_by_value() -> set[str]: ...
 
 STORE_GLOBAL: int
@@ -30,12 +30,12 @@ GLOBAL_OPS: tuple[int, int, int]
 HAVE_ARGUMENT: int
 EXTENDED_ARG: int
 
-def is_tornado_coroutine(func: typing.Callable[..., typing.Any]) -> bool: ...
-def subimport(name: str) -> types.ModuleType: ...
+def is_tornado_coroutine(func: Callable[..., Any]) -> bool: ...
+def subimport(name: str) -> ModuleType: ...
 def dynamic_subimport(
     name: str,
-    vars: typing.Mapping[str, typing.Any],  # noqa: A002
-) -> types.ModuleType: ...
+    vars: Mapping[str, Any],  # noqa: A002
+) -> ModuleType: ...
 def instance(cls: type[_T]) -> _T: ...
 
 _empty_cell_value: EmptyCellValueClass
@@ -47,14 +47,12 @@ class _PickleBuffer:
     def __buffer__(self, flags: int, /) -> memoryview: ...
     def __release_buffer__(self, buffer: memoryview, /) -> None: ...
 
-_BufferCallback: typing_extensions.TypeAlias = (
-    typing.Callable[[_PickleBuffer], typing.Any] | None
-)
+_BufferCallback: TypeAlias = Callable[[_PickleBuffer], Any] | None
 
 class Pickler(pickle.Pickler):
-    dispatch_table: typing.ClassVar[dict[type[typing.Any], Reducer[typing.Any]]]  # type: ignore[misc]
-    def dump(self, obj: typing.Any) -> None: ...
-    globals_ref: dict[int, dict[str, typing.Any]]
+    dispatch_table: ClassVar[dict[type[Any], Reducer[Any]]]  # type: ignore[misc]
+    def dump(self, obj: Any) -> None: ...
+    globals_ref: dict[int, dict[str, Any]]
     proto: int
     def __init__(
         self,
@@ -62,29 +60,25 @@ class Pickler(pickle.Pickler):
         protocol: int | None = ...,
         buffer_callback: _BufferCallback | None = ...,
     ) -> None: ...
-    dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]
-    def reducer_override(self, obj: typing.Any) -> typing.Any: ...
+    dispatch: ClassVar[dict[type[Any], Dispatch[Any]]]
+    def reducer_override(self, obj: Any) -> Any: ...
     def save_global(
         self,
-        obj: typing.Any,
+        obj: Any,
         name: str | None = ...,
-        pack: typing.Callable[
-            typing_extensions.Concatenate[str | bytes, ...], bytes
-        ] = ...,
+        pack: Callable[Concatenate[str | bytes, ...], bytes] = ...,
     ) -> None: ...
-    def save_function(self, obj: typing.Any, name: str | None = ...) -> None: ...
-    def save_pypy_builtin_func(self, obj: typing.Any) -> None: ...
+    def save_function(self, obj: Any, name: str | None = ...) -> None: ...
+    def save_pypy_builtin_func(self, obj: Any) -> None: ...
 
 def dump(
-    obj: typing.Any,
+    obj: Any,
     file: SupportsWrite[bytes],
     protocol: int | None = ...,
     buffer_callback: _BufferCallback | None = ...,
 ) -> None: ...
 def dumps(
-    obj: typing.Any,
-    protocol: int | None = ...,
-    buffer_callback: _BufferCallback | None = ...,
+    obj: Any, protocol: int | None = ..., buffer_callback: _BufferCallback | None = ...
 ) -> bytes: ...
 
 load = pickle.load

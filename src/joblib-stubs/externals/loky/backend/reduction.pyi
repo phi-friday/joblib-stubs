@@ -1,14 +1,14 @@
-import typing
 from pickle import Pickler
 from pickle import loads as loads
+from typing import Any
 
-import typing_extensions
 from _typeshed import SupportsWrite
 from joblib._typeshed import Reducer
+from typing_extensions import TypeVar
 
 __all__ = ["dump", "dumps", "loads", "register", "set_loky_pickler"]
 
-_T = typing_extensions.TypeVar("_T")
+_T = TypeVar("_T")
 
 DEFAULT_ENV: str
 ENV_LOKY_PICKLER: str
@@ -24,13 +24,13 @@ def set_loky_pickler(loky_pickler: str | None = ...) -> None: ...
 def get_loky_pickler_name() -> str: ...
 def get_loky_pickler() -> type[Pickler]: ...
 def dump(
-    obj: typing.Any,
+    obj: Any,
     file: SupportsWrite[bytes],
-    reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
+    reducers: dict[type[Any], Reducer[Any]] | None = ...,
     protocol: int | None = ...,
 ) -> None: ...
 def dumps(
-    obj: typing.Any,
-    reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
+    obj: Any,
+    reducers: dict[type[Any], Reducer[Any]] | None = ...,
     protocol: int | None = ...,
 ) -> memoryview: ...

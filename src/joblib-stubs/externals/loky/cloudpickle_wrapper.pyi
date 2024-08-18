@@ -1,26 +1,25 @@
-import typing
+from typing import Any, Callable, Generic
 
-import typing_extensions
 from joblib.externals.cloudpickle import dumps as dumps
 from joblib.externals.cloudpickle import loads as loads
+from typing_extensions import ParamSpec, TypeVar
 
-_T = typing_extensions.TypeVar("_T")
-_P = typing_extensions.ParamSpec("_P")
+_T = TypeVar("_T")
+_P = ParamSpec("_P")
 
-WRAP_CACHE: dict[typing.Any, CloudpickledObjectWrapper[typing.Any]]
+WRAP_CACHE: dict[Any, CloudpickledObjectWrapper[Any]]
 
-class CloudpickledObjectWrapper(typing.Generic[_T]):
+class CloudpickledObjectWrapper(Generic[_T]):
     def __init__(self, obj: _T, keep_wrapper: bool = ...) -> None: ...
     def __reduce__(
         self,
     ) -> tuple[
-        typing.Callable[[bytes, bool], CloudpickledObjectWrapper[typing.Any]],
-        tuple[bytes, bool],
+        Callable[[bytes, bool], CloudpickledObjectWrapper[Any]], tuple[bytes, bool]
     ]: ...
-    def __getattr__(self, attr: str) -> typing.Any: ...
+    def __getattr__(self, attr: str) -> Any: ...
 
 class CallableObjectWrapper(
-    CloudpickledObjectWrapper[typing.Callable[_P, _T]], typing.Generic[_P, _T]
+    CloudpickledObjectWrapper[Callable[_P, _T]], Generic[_P, _T]
 ):
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _T: ...
 

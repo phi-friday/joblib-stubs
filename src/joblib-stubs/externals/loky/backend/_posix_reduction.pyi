@@ -1,6 +1,6 @@
-import typing
 from multiprocessing import resource_sharer
 from multiprocessing.connection import Connection
+from typing import Callable
 
 from joblib.externals.loky.backend.reduction import register as register
 
@@ -13,6 +13,6 @@ def rebuild_connection(
 def reduce_connection(
     conn: Connection,
 ) -> tuple[
-    typing.Callable[[resource_sharer.DupFd, bool, bool], Connection],
+    Callable[[resource_sharer.DupFd, bool, bool], Connection],
     tuple[resource_sharer.DupFd, bool, bool],
 ]: ...

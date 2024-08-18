@@ -1,5 +1,5 @@
-import typing
 from multiprocessing.process import BaseProcess
+from typing import Literal
 
 from _typeshed import Incomplete
 
@@ -11,7 +11,7 @@ class _DupFd:
     def detach(self) -> int: ...
 
 class Popen:
-    method: typing.Literal["loky"]
+    method: Literal["loky"]
     DupFd: _DupFd
     returncode: int | None
     def __init__(self, process_obj: BaseProcess) -> None: ...

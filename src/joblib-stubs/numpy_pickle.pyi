@@ -1,6 +1,6 @@
-import types
-import typing
 from pathlib import Path
+from types import ModuleType
+from typing import Any, BinaryIO, ClassVar, Literal
 
 import numpy as np
 from _typeshed import SupportsRead, SupportsWrite
@@ -27,52 +27,49 @@ from numpy.typing import DTypeLike, NDArray
 NUMPY_ARRAY_ALIGNMENT_BYTES: int
 
 class NumpyArrayWrapper:
-    subclass: type[NDArray[typing.Any]]
+    subclass: type[NDArray[Any]]
     shape: int | tuple[int, ...]
-    order: typing.Literal["C", "F"]
+    order: Literal["C", "F"]
     dtype: DTypeLike
     allow_mmap: bool
     numpy_array_alignment_bytes: int
     def __init__(
         self,
-        subclass: type[NDArray[typing.Any]],
+        subclass: type[NDArray[Any]],
         shape: int | tuple[int, ...],
-        order: typing.Literal["C", "F"],
+        order: Literal["C", "F"],
         dtype: DTypeLike,
         allow_mmap: bool = ...,
         numpy_array_alignment_bytes: bool = ...,
     ) -> None: ...
-    def safe_get_numpy_array_alignment_bytes(self) -> typing.Any: ...
-    def write_array(self, array: NDArray[typing.Any], pickler: Pickler) -> None: ...
-    def read_array(self, unpickler: Unpickler) -> NDArray[typing.Any]: ...
-    def read_mmap(self, unpickler: Unpickler) -> np.memmap[typing.Any, typing.Any]: ...
-    def read(self, unpickler: Unpickler) -> NDArray[typing.Any]: ...
+    def safe_get_numpy_array_alignment_bytes(self) -> Any: ...
+    def write_array(self, array: NDArray[Any], pickler: Pickler) -> None: ...
+    def read_array(self, unpickler: Unpickler) -> NDArray[Any]: ...
+    def read_mmap(self, unpickler: Unpickler) -> np.memmap[Any, Any]: ...
+    def read(self, unpickler: Unpickler) -> NDArray[Any]: ...
 
 class NumpyPickler(Pickler):
-    dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]
-    file_handle: typing.BinaryIO
+    dispatch: ClassVar[dict[type[Any], Dispatch[Any]]]
+    file_handle: BinaryIO
     buffered: bool
-    np: types.ModuleType
-    def __init__(self, fp: typing.BinaryIO, protocol: int | None = ...) -> None: ...
-    def save(self, obj: typing.Any) -> None: ...
+    np: ModuleType
+    def __init__(self, fp: BinaryIO, protocol: int | None = ...) -> None: ...
+    def save(self, obj: Any) -> None: ...
 
 class NumpyUnpickler(Unpickler):
     # dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]  # noqa: ERA001, E501
     mmap_mode: MmapMode
-    file_handle: typing.BinaryIO
+    file_handle: BinaryIO
     filename: str
     compat_mode: bool
-    np: types.ModuleType
+    np: ModuleType
     def __init__(
-        self,
-        filename: str,
-        file_handle: typing.BinaryIO,
-        mmap_mode: MmapMode | None = ...,
+        self, filename: str, file_handle: BinaryIO, mmap_mode: MmapMode | None = ...
     ) -> None: ...
     def load_build(self) -> None: ...
 
 def dump(
-    value: typing.Any,
+    value: Any,
     filename: str | Path | SupportsWrite[bytes],
     compress: int | bool | tuple[str, int] = ...,
     protocol: int | None = ...,
@@ -82,7 +79,7 @@ def load_temporary_memmap(
     filename: str | Path | SupportsRead[bytes],
     mmap_mode: MmapMode,
     unlink_on_gc_collect: bool,
-) -> typing.Any: ...
+) -> Any: ...
 def load(
     filename: str | Path | SupportsRead[bytes], mmap_mode: MmapMode | None = ...
-) -> typing.Any: ...
+) -> Any: ...

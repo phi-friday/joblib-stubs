@@ -1,33 +1,31 @@
-import types
-import typing
+from types import FunctionType
+from typing import Any, Callable
 
-import typing_extensions
 from joblib._typeshed import FullArgSpec
 from joblib.logger import pformat as pformat
+from typing_extensions import ParamSpec
 
-_P = typing_extensions.ParamSpec("_P")
+_P = ParamSpec("_P")
 
 full_argspec_fields: str
 full_argspec_type = FullArgSpec
 
-def get_func_code(func: types.FunctionType) -> tuple[str, str, int]: ...
+def get_func_code(func: FunctionType) -> tuple[str, str, int]: ...
 def get_func_name(
-    func: typing.Callable[..., typing.Any],
-    resolv_alias: bool = ...,
-    win_characters: bool = ...,
+    func: Callable[..., Any], resolv_alias: bool = ..., win_characters: bool = ...
 ) -> tuple[list[str], str]: ...
 def filter_args(
-    func: typing.Callable[..., typing.Any],
+    func: Callable[..., Any],
     ignore_lst: list[str],
-    args: tuple[typing.Any, ...] = ...,
-    kwargs: dict[str, typing.Any] = ...,
-) -> dict[str, typing.Any]: ...
+    args: tuple[Any, ...] = ...,
+    kwargs: dict[str, Any] = ...,
+) -> dict[str, Any]: ...
 def format_signature(
-    func: typing.Callable[_P, typing.Any], *args: _P.args, **kwargs: _P.kwargs
+    func: Callable[_P, Any], *args: _P.args, **kwargs: _P.kwargs
 ) -> tuple[list[str], str]: ...
 def format_call(
-    func: typing.Callable[..., typing.Any],
-    args: tuple[typing.Any, ...],
-    kwargs: dict[str, typing.Any],
+    func: Callable[..., Any],
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
     object_name: str = ...,
 ) -> str: ...

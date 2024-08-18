@@ -1,5 +1,5 @@
 import re
-import typing
+from typing import Any
 
 import numpy as np
 from _typeshed import StrOrBytesPath
@@ -27,7 +27,7 @@ def make_memmap(
     shape: int | tuple[int, ...] | None = ...,
     order: str = ...,
     unlink_on_gc_collect: bool = ...,
-) -> np.memmap[typing.Any, typing.Any]: ...
+) -> np.memmap[Any, Any]: ...
 
 access_denied_errors: tuple[int, int]
 

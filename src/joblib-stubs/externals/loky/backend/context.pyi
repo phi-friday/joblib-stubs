@@ -1,6 +1,6 @@
 # pyright: reportIncompatibleMethodOverride=false
-import typing
 from multiprocessing.context import BaseContext
+from typing import Any, Callable, Literal
 
 from joblib._typeshed import Reducer
 from joblib.externals.loky.backend.process import (
@@ -20,7 +20,7 @@ from joblib.externals.loky.backend.synchronize import Semaphore as _Semaphore
 
 _MAX_WINDOWS_WORKERS: int
 START_METHODS: list[str]
-physical_cores_cache: int | typing.Literal["not found"] | None
+physical_cores_cache: int | Literal["not found"] | None
 _DEFAULT_START_METHOD: str | None
 
 def get_context(method: str | None = ...) -> BaseContext: ...
@@ -29,17 +29,15 @@ def get_start_method() -> str: ...
 def cpu_count(only_physical_cores: bool = ...) -> int: ...
 
 class LokyContext(BaseContext):
-    _name: typing.Literal["loky"]
+    _name: Literal["loky"]
     Process: type[LokyProcess]
-    cpu_count: typing.Callable[[bool], int]
+    cpu_count: Callable[[bool], int]
     def Queue(  # noqa: N802
-        self,
-        maxsize: int = ...,
-        reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...,
-    ) -> _Queue[typing.Any]: ...
+        self, maxsize: int = ..., reducers: dict[type[Any], Reducer[Any]] | None = ...
+    ) -> _Queue[Any]: ...
     def SimpleQueue(  # noqa: N802
-        self, reducers: dict[type[typing.Any], Reducer[typing.Any]] | None = ...
-    ) -> _SimpleQueue[typing.Any]: ...
+        self, reducers: dict[type[Any], Reducer[Any]] | None = ...
+    ) -> _SimpleQueue[Any]: ...
     def Semaphore(self, value: int = ...) -> _Semaphore: ...  # noqa: N802
     def BoundedSemaphore(self, value: int) -> _BoundedSemaphore: ...  # noqa: N802
     def Lock(self) -> _Lock: ...  # noqa: N802

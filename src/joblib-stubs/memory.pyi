@@ -1,7 +1,6 @@
-import typing
 from datetime import timedelta
+from typing import Any, Callable, Coroutine, Generic, Protocol, overload
 
-import typing_extensions
 from joblib import hashing as hashing
 from joblib._store_backends import CacheWarning as CacheWarning
 from joblib._store_backends import FileSystemStoreBackend as FileSystemStoreBackend
@@ -15,40 +14,41 @@ from joblib.func_inspect import get_func_name as get_func_name
 from joblib.logger import Logger as Logger
 from joblib.logger import format_time as format_time
 from joblib.logger import pformat as pformat
+from typing_extensions import ParamSpec, TypeVar
 
-_T = typing_extensions.TypeVar("_T")
-_P = typing_extensions.ParamSpec("_P")
+_T = TypeVar("_T")
+_P = ParamSpec("_P")
 
 FIRST_LINE_TEXT: str
 _STORE_BACKENDS: dict[str, type[StoreBackendBase]]
 
-class _CacheFunc(typing.Protocol):
-    @typing.overload
+class _CacheFunc(Protocol):
+    @overload
     def __call__(
         self,
         func: None,
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> _CacheFunc: ...
-    @typing.overload
+    @overload
     def __call__(
         self,
         func: AnyAwaitableCallable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> AsyncMemorizedFunc[_P, _T]: ...
-    @typing.overload
+    @overload
     def __call__(
         self,
-        func: typing.Callable[_P, _T],
+        func: Callable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> MemorizedFunc[_P, _T]: ...
 
 def extract_first_line(func_code: str) -> tuple[str, int]: ...
@@ -59,10 +59,10 @@ def register_store_backend(
     backend_name: str, backend: type[StoreBackendBase]
 ) -> None: ...
 
-class MemorizedResult(Logger, typing.Generic[_T]):
+class MemorizedResult(Logger, Generic[_T]):
     store_backend: StoreBackendBase
     mmap_mode: MmapMode
-    metadata: dict[str, typing.Any]
+    metadata: dict[str, Any]
     duration: float
     verbose: int
     timestamp: float
@@ -74,7 +74,7 @@ class MemorizedResult(Logger, typing.Generic[_T]):
         mmap_mode: MmapMode | None = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
-        metadata: dict[str, typing.Any] | None = ...,
+        metadata: dict[str, Any] | None = ...,
     ) -> None: ...
     @property
     def func(self) -> str: ...
@@ -87,16 +87,16 @@ class MemorizedResult(Logger, typing.Generic[_T]):
     def get(self) -> _T: ...
     def clear(self) -> None: ...
 
-class NotMemorizedResult(typing.Generic[_T]):
+class NotMemorizedResult(Generic[_T]):
     value: _T
     valid: bool
     def __init__(self, value: _T) -> None: ...
     def get(self) -> _T: ...
     def clear(self) -> None: ...
 
-class NotMemorizedFunc(typing.Generic[_P, _T]):
-    func: typing.Callable[_P, _T]
-    def __init__(self, func: typing.Callable[_P, _T]) -> None: ...
+class NotMemorizedFunc(Generic[_P, _T]):
+    func: Callable[_P, _T]
+    def __init__(self, func: Callable[_P, _T]) -> None: ...
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _T: ...
     def call_and_shelve(
         self, *args: _P.args, **kwargs: _P.kwargs
@@ -104,25 +104,23 @@ class NotMemorizedFunc(typing.Generic[_P, _T]):
     def clear(self, warn: bool = ...) -> None: ...
     def call(
         self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> tuple[_T, dict[typing.Any, typing.Any]]: ...
-    def check_call_in_cache(self, *args: typing.Any, **kwargs: typing.Any) -> bool: ...
+    ) -> tuple[_T, dict[Any, Any]]: ...
+    def check_call_in_cache(self, *args: Any, **kwargs: Any) -> bool: ...
 
-class AsyncNotMemorizedFunc(
-    NotMemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P, _T]
-):
+class AsyncNotMemorizedFunc(NotMemorizedFunc[_P, AnyAwaitable[_T]], Generic[_P, _T]):
     func: AnyAwaitableCallable[_P, _T]  # pyright: ignore[reportIncompatibleMethodOverride]
     def __init__(self, func: AnyAwaitableCallable[_P, _T]) -> None: ...
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> AnyAwaitable[_T]: ...
     async def call_and_shelve(  # type: ignore[override]
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> NotMemorizedResult[_T]: ...
-    def call(self) -> tuple[AnyAwaitable[_T], dict[typing.Any, typing.Any]]: ...  # type: ignore[override]
+    def call(self) -> tuple[AnyAwaitable[_T], dict[Any, Any]]: ...  # type: ignore[override]
 
-class MemorizedFunc(Logger, typing.Generic[_P, _T]):
+class MemorizedFunc(Logger, Generic[_P, _T]):
     mmap_mode: MmapMode
     compress: bool | int
-    func: typing.Callable[_P, _T]
-    cache_validation_callback: typing.Callable[..., typing.Any] | None
+    func: Callable[_P, _T]
+    cache_validation_callback: Callable[..., Any] | None
     func_id: str
     ignore: list[str]
     store_backend: StoreBackendBase
@@ -130,7 +128,7 @@ class MemorizedFunc(Logger, typing.Generic[_P, _T]):
     __doc__: str
     def __init__(
         self,
-        func: typing.Callable[_P, _T],
+        func: Callable[_P, _T],
         location: str,
         backend: str = ...,
         ignore: list[str] | None = ...,
@@ -138,10 +136,10 @@ class MemorizedFunc(Logger, typing.Generic[_P, _T]):
         compress: bool | int = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> None: ...
     @property
-    def func_code_info(self) -> tuple[typing.Any, ...]: ...
+    def func_code_info(self) -> tuple[Any, ...]: ...
     def call_and_shelve(
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> MemorizedResult[_T] | NotMemorizedResult[_T]: ...
@@ -152,9 +150,9 @@ class MemorizedFunc(Logger, typing.Generic[_P, _T]):
     def clear(self, warn: bool = ...) -> None: ...
     def call(
         self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> tuple[MemorizedResult[_T] | NotMemorizedResult[_T], dict[str, typing.Any]]: ...
+    ) -> tuple[MemorizedResult[_T] | NotMemorizedResult[_T], dict[str, Any]]: ...
 
-class AsyncMemorizedFunc(MemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P, _T]):
+class AsyncMemorizedFunc(MemorizedFunc[_P, AnyAwaitable[_T]], Generic[_P, _T]):
     func: AnyAwaitableCallable[_P, _T]  # pyright: ignore[reportIncompatibleMethodOverride]
     def __init__(
         self,
@@ -166,7 +164,7 @@ class AsyncMemorizedFunc(MemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P,
         compress: bool | int = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> None: ...
     async def __call__(  # type: ignore[override]
         self, *args: _P.args, **kwargs: _P.kwargs
@@ -176,7 +174,7 @@ class AsyncMemorizedFunc(MemorizedFunc[_P, AnyAwaitable[_T]], typing.Generic[_P,
     ) -> MemorizedResult[_T] | NotMemorizedResult[_T]: ...
     async def call(  # type: ignore[override]
         self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> tuple[MemorizedResult[_T] | NotMemorizedResult[_T], dict[str, typing.Any]]: ...
+    ) -> tuple[MemorizedResult[_T] | NotMemorizedResult[_T], dict[str, Any]]: ...
 
 class Memory(Logger):
     mmap_mode: MmapMode
@@ -184,7 +182,7 @@ class Memory(Logger):
     bytes_limit: int | str
     backend: str
     compress: bool | int
-    backend_options: dict[str, typing.Any]
+    backend_options: dict[str, Any]
     location: str
     store_backend: StoreBackendBase
     def __init__(
@@ -195,34 +193,34 @@ class Memory(Logger):
         compress: bool | int = ...,
         verbose: int = ...,
         bytes_limit: int | str | None = ...,
-        backend_options: dict[str, typing.Any] | None = ...,
+        backend_options: dict[str, Any] | None = ...,
     ) -> None: ...
-    @typing.overload
+    @overload
     def cache(
         self,
         func: None,
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> _CacheFunc: ...
-    @typing.overload
+    @overload
     def cache(
         self,
         func: AnyAwaitableCallable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> AsyncMemorizedFunc[_P, _T]: ...
-    @typing.overload
+    @overload
     def cache(
         self,
-        func: typing.Callable[_P, _T],
+        func: Callable[_P, _T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: typing.Callable[..., typing.Any] | None = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> MemorizedFunc[_P, _T]: ...
     def clear(self, warn: bool = ...) -> None: ...
     def reduce_size(
@@ -233,15 +231,13 @@ class Memory(Logger):
     ) -> None: ...
     # awaitble -> awaitable
     # non-awaitable -> non-awaitable
-    @typing.overload
+    @overload
     def eval(
         self, func: AnyAwaitableCallable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
-    ) -> typing.Coroutine[
-        typing.Any, typing.Any, _T | NotMemorizedResult[_T] | MemorizedResult[_T]
-    ]: ...
-    @typing.overload
+    ) -> Coroutine[Any, Any, _T | NotMemorizedResult[_T] | MemorizedResult[_T]]: ...
+    @overload
     def eval(
-        self, func: typing.Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
+        self, func: Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
     ) -> _T | NotMemorizedResult[_T] | MemorizedResult[_T]: ...
 
 def expires_after(
@@ -252,4 +248,4 @@ def expires_after(
     minutes: int = ...,
     hours: int = ...,
     weeks: int = ...,
-) -> typing.Callable[[dict[str, typing.Any]], bool]: ...
+) -> Callable[[dict[str, Any]], bool]: ...

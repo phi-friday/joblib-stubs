@@ -1,5 +1,5 @@
 import signal
-import typing
+from typing import Any, Callable, Iterable
 
 from _typeshed import StrOrBytesPath
 
@@ -7,7 +7,7 @@ __all__ = ["ensure_running", "register", "unregister"]
 
 _HAVE_SIGMASK: bool
 _IGNORED_SIGNALS: tuple[signal.Signals, signal.Signals]
-_CLEANUP_FUNCS: dict[str, typing.Callable[..., typing.Any]]
+_CLEANUP_FUNCS: dict[str, Callable[..., Any]]
 VERBOSE: bool
 
 class ResourceTracker:
@@ -27,5 +27,5 @@ getfd = _resource_tracker.getfd
 
 def main(fd: int, verbose: int = ...) -> None: ...
 def spawnv_passfds(
-    path: StrOrBytesPath, args: tuple[typing.Any, ...], passfds: typing.Iterable[int]
+    path: StrOrBytesPath, args: tuple[Any, ...], passfds: Iterable[int]
 ) -> int: ...
