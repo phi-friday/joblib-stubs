@@ -1,14 +1,5 @@
 repos:
   - hooks:
-      - id: sync-rye-pre-commit
-        args:
-          - "-a ruff:ruff:v:"
-          - "-a ruff:ruff-format:v:"
-          - "-a mypy:mypy:v:"
-    repo: https://github.com/phi-friday/sync-rye-pre-commit
-    rev: v0.1.5
-
-  - hooks:
       - id: ruff
         name: ruff-lint
       - id: ruff-format
