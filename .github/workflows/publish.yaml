@@ -1,10 +1,8 @@
 name: Publish Package
 
 on:
-  # release:
-  #   types: [created]
-  push:
-    branches: [main]
+  release:
+    types: [created]
 
 jobs:
   publish:
@@ -38,7 +36,7 @@ jobs:
           sed -i'' -E "s/version = \"0.0.0\"/version = \"$VERSION\"/g" pyproject.toml
           uvx --from build pyproject-build --installer uv
 
-      # - name: Release to PyPI
-      #   run: |
-      #     uvx twine upload dist/* --non-interactive \
-      #     --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
+      - name: Release to PyPI
+        run: |
+          uvx twine upload dist/* --non-interactive \
+          --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
