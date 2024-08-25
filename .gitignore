@@ -165,6 +165,7 @@ cython_debug/
 # extra
 .DS_Store
 
-# rye
+# uv
 requirements.lock
 requirements-dev.lock
+uv.lock
