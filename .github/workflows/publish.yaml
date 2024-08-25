@@ -1,8 +1,10 @@
 name: Publish Package
 
 on:
-  release:
-    types: [created]
+  # release:
+  #   types: [created]
+  push:
+    branches: [main]
 
 jobs:
   publish:
@@ -10,7 +12,7 @@ jobs:
     name: "Publish library"
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.12"]
 
     steps:
       - name: Check out
@@ -19,20 +21,24 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           fetch-depth: 0
 
-      - name: Install rye
-        uses: phi-friday/install-rye@v2
-        id: install-rye
+      - name: Install python
+        uses: actions/setup-python@v4
+        id: install-python
         with:
-          python_version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: yezz123/setup-uv@v4
+        id: install-uv
 
       - name: Build package
         run: |
-          rye install dunamai
-          VERSION=$(dunamai from any --no-metadata --style pep440).$(date +"%Y%m%d")
-          rye version $VERSION
-          rye build
+          VERSION=$(uvx dunamai from any --no-metadata --style pep440).$(date +"%Y%m%d")
+          echo $VERSION
+          sed -i'' -E "s/version = \"0.0.0\"/version = \"$VERSION\"/g" pyproject.toml
+          uvx --from build pyproject-build --installer uv
 
-      - name: Release to PyPI
-        run: |
-          rye publish --yes \
-          --username __token__ --token ${{ secrets.PYPI_API_TOKEN }}
+      # - name: Release to PyPI
+      #   run: |
+      #     uvx twine upload dist/* --non-interactive \
+      #     --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
