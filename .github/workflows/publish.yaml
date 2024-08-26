@@ -8,9 +8,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: "Publish library"
-    strategy:
-      matrix:
-        python-version: ["3.12"]
 
     steps:
       - name: Check out
@@ -19,15 +16,8 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           fetch-depth: 0
 
-      - name: Install python
-        uses: actions/setup-python@v4
-        id: install-python
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install uv
-        uses: yezz123/setup-uv@v4
-        id: install-uv
+      - name: Set up uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Build package
         run: |
