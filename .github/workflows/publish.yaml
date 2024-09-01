@@ -8,6 +8,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: "Publish library"
+    environment: publish
     permissions: 
       id-token: write
 
