@@ -8,6 +8,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: "Publish library"
+    permissions: 
+      id-token: write
 
     steps:
       - name: Check out
