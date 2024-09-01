@@ -25,8 +25,7 @@ jobs:
           echo $VERSION
           sed -i'' -E "s/version = \"0.0.0\"/version = \"$VERSION\"/g" pyproject.toml
           uvx --from build pyproject-build --installer uv
-
-      - name: Release to PyPI
-        run: |
-          uvx twine upload dist/* --non-interactive \
-          --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
+      
+      - name: Publish package distributions to PyPI
+        id: publish-pypi
+        uses: pypa/gh-action-pypi-publish@release/v1
