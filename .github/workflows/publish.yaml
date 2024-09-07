@@ -26,8 +26,8 @@ jobs:
         run: |
           VERSION=$(uvx dunamai from any --no-metadata --style pep440).$(date +"%Y%m%d")
           echo $VERSION
-          sed -i'' -E "s/version = \"0.0.0\"/version = \"$VERSION\"/g" pyproject.toml
-          uvx --from build pyproject-build --installer uv
+          uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version $VERSION
+          uv build
       
       - name: Publish package distributions to PyPI
         id: publish-pypi
