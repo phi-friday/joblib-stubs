@@ -15,7 +15,7 @@ repos:
         name: ruff-format
         args: [--check]
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.7
+    rev: v0.6.4
 
   - hooks:
       - id: mypy
@@ -23,10 +23,10 @@ repos:
         args: [--strict]
         additional_dependencies: [numpy, dask, distributed, tornado]
     repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.1
+    rev: v1.11.2
 
   - hooks:
       - id: pyright
         name: pyright
     repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.375
+    rev: v1.1.379
