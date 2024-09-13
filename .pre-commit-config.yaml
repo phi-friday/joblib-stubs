@@ -28,5 +28,8 @@ repos:
   - hooks:
       - id: pyright
         name: pyright
+        types: [python, pyi]
+        args:
+          - "--pythonpath=.venv/bin/python"
     repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.379
