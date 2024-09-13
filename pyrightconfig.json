@@ -16,5 +16,7 @@
     "reportDeprecated": false,
     "reportPrivateUsage": false,
     "reportUnnecessaryTypeIgnoreComment": true,
+    "venv": ".venv",
+    "venvPath": ".",
     "stubPath": "./typings"
 }

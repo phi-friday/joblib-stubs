@@ -1,6 +1,6 @@
 [project]
 name = "joblib-stubs"
-dynamic = ["version"]
+version = "0.0.0"
 description = "joblib stubs"
 authors = [{ name = "phi", email = "phi.friday@gmail.com" }]
 dependencies = [
@@ -24,6 +24,10 @@ classifiers = [
 [project.urls]
 Repository = "https://github.com/phi-friday/joblib-stubs"
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [tool.uv]
 managed = true
 dev-dependencies = [
@@ -38,17 +42,13 @@ dev-dependencies = [
 ]
 
 [tool.poe.tasks]
-lint = ["_lint:check", "_lint:format"]
-"_lint:check" = "ruff check src --fix"
-"_lint:format" = "ruff format src"
+lint = ["lint:check", "lint:format"]
+"lint:check" = "ruff check src --fix"
+"lint:format" = "ruff format src"
 check = "pre-commit run --all-files --show-diff-on-failure"
 
-[build-system]
-requires = ["hatchling", "hatch-vcs"]
-build-backend = "hatchling.build"
-
-[tool.hatch.version]
-source = "vcs"
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/joblib-stubs"]
