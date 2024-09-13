@@ -23,11 +23,7 @@ jobs:
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Build package
-        run: |
-          VERSION=$(uvx dunamai from any --no-metadata --style pep440).$(date +"%Y%m%d")
-          echo $VERSION
-          uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version $VERSION
-          uv build
+        run: uv build
       
       - name: Publish package distributions to PyPI
         id: publish-pypi
