@@ -42,13 +42,10 @@ dev-dependencies = [
 ]
 
 [tool.poe.tasks]
-lint = ["lint:check", "lint:format"]
-"lint:check" = "ruff check src --fix"
-"lint:format" = "ruff format src"
+lint = ["_lint:check", "_lint:format"]
+"_lint:check" = "ruff check src --fix"
+"_lint:format" = "ruff format src"
 check = "pre-commit run --all-files --show-diff-on-failure"
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/joblib-stubs"]
