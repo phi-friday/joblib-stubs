@@ -7,7 +7,7 @@ repos:
           - "-a mypy:mypy:v:"
           - "-e mypy-strict"
     repo: https://github.com/phi-friday/sync-uv-pre-commit
-    rev: v0.4.2
+    rev: v0.5.0
 
   - hooks:
       - id: ruff
