@@ -6,7 +6,6 @@ repos:
           - "-a ruff:ruff-format:v:"
           - "-a mypy:mypy:v:"
           - "-e mypy-strict"
-          - "-l DEBUG"
     repo: https://github.com/phi-friday/sync-uv-pre-commit
     rev: v0.4.2
 
