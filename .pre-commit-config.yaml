@@ -28,6 +28,7 @@ repos:
   - hooks:
       - id: pyright
         name: pyright
+        always_run: true
         types: [python, pyi]
         args:
           - "--pythonpath=.venv/bin/python"
