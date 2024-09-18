@@ -5,7 +5,7 @@ from joblib import hashing as hashing
 from joblib._store_backends import CacheWarning as CacheWarning
 from joblib._store_backends import FileSystemStoreBackend as FileSystemStoreBackend
 from joblib._store_backends import StoreBackendBase as StoreBackendBase
-from joblib._typeshed import AwaitableCallable, MmapMode
+from joblib._typeshed import MmapMode
 from joblib.func_inspect import filter_args as filter_args
 from joblib.func_inspect import format_call as format_call
 from joblib.func_inspect import format_signature as format_signature
@@ -35,7 +35,7 @@ class _CacheFunc(Protocol):
     @overload
     def __call__(
         self,
-        func: AwaitableCallable[_P, _T],
+        func: Callable[_P, Awaitable[_T]],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
@@ -108,8 +108,8 @@ class NotMemorizedFunc(Generic[_P, _T]):
     def check_call_in_cache(self, *args: Any, **kwargs: Any) -> bool: ...
 
 class AsyncNotMemorizedFunc(NotMemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]):
-    func: AwaitableCallable[_P, _T]
-    def __init__(self, func: AwaitableCallable[_P, _T]) -> None: ...
+    func: Callable[_P, Awaitable[_T]]
+    def __init__(self, func: Callable[_P, Awaitable[_T]]) -> None: ...
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> Awaitable[_T]: ...
     async def call_and_shelve(  # type: ignore[override]
         self, *args: _P.args, **kwargs: _P.kwargs
@@ -151,10 +151,10 @@ class MemorizedFunc(Logger, Generic[_P, _T]):
     ) -> tuple[_T, dict[str, Any]]: ...
 
 class AsyncMemorizedFunc(MemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]):
-    func: AwaitableCallable[_P, _T]
+    func: Callable[_P, Awaitable[_T]]
     def __init__(
         self,
-        func: AwaitableCallable[_P, _T],
+        func: Callable[_P, Awaitable[_T]],
         location: str,
         backend: str = ...,
         ignore: list[str] | None = ...,
@@ -203,7 +203,7 @@ class Memory(Logger):
     @overload
     def cache(
         self,
-        func: AwaitableCallable[_P, _T],
+        func: Callable[_P, Awaitable[_T]],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
@@ -229,7 +229,7 @@ class Memory(Logger):
     # non-awaitable -> non-awaitable
     @overload
     def eval(
-        self, func: AwaitableCallable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
+        self, func: Callable[_P, Awaitable[_T]], *args: _P.args, **kwargs: _P.kwargs
     ) -> Coroutine[Any, Any, _T]: ...
     @overload
     def eval(
