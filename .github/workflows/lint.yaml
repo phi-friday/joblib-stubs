@@ -1,0 +1,71 @@
+name: lint
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.py"
+      - ".github/workflows/lint.yaml"
+      - "pyproject.toml"
+      - "ruff.toml"
+      - "pyrightconfig.json"
+      - ".pre-commit-config.yaml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.py"
+      - ".github/workflows/lint.yaml"
+      - "pyproject.toml"
+      - "ruff.toml"
+      - "pyrightconfig.json"
+      - ".pre-commit-config.yaml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: 3.8
+      UV_CACHE_DIR: /tmp/.uv-cache
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Set up Python
+        id: setup-python
+        run: |
+          uv python install ${{ env.PYTHON_VERSION }}
+          uv python pin ${{ env.PYTHON_VERSION }}
+          uv lock
+          PY=$(uv run python -VV | shasum -a 256 | cut -d' ' -f1)
+          echo PY: $PY
+          echo "PY=$PY" >> "$GITHUB_OUTPUT"
+
+      - name: Restore uv cache
+        uses: actions/cache@v4
+        id: uv-cache
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: uv-${{ steps.setup-python.outputs.PY }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ steps.setup-python.outputs.PY }}-${{ hashFiles('uv.lock') }}
+            uv-${{ steps.setup-python.outputs.PY }}
+  
+      - name: Install dependencies
+        if: steps.uv-cache.outputs.cache-hit != 'true'
+        run: uv sync
+
+      - name: Restore pre-commit cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ steps.setup-python.outputs.PY }}-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Code checks
+        run: |
+          uv run pre-commit run --all-files --show-diff-on-failure
+
+      - name: Minimize uv cache
+        run: uv cache prune --ci
