@@ -12,16 +12,9 @@ on:
       - ".pre-commit-config.yaml"
   pull_request:
     branches: [main]
-    paths:
-      - "**.py"
-      - ".github/workflows/lint.yaml"
-      - "pyproject.toml"
-      - "ruff.toml"
-      - "pyrightconfig.json"
-      - ".pre-commit-config.yaml"
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.8
