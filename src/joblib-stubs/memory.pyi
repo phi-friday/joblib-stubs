@@ -198,7 +198,7 @@ class Memory(Logger):
     @overload
     def cache(
         self,
-        func: None,
+        func: None = ...,
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
