@@ -1,5 +1,5 @@
 from pickle import Unpickler
-from typing import Any, Awaitable, Callable, Coroutine, Literal, NamedTuple, Protocol
+from typing import Any, Awaitable, Callable, Literal, NamedTuple, Protocol
 
 from typing_extensions import Concatenate, ParamSpec, TypeAlias, TypedDict, TypeVar
 
@@ -44,10 +44,7 @@ Prefer: TypeAlias = Literal["processes", "threads"]
 Require: TypeAlias = Literal["sharedmem"]
 HashType: TypeAlias = Literal["md5", "sha1"]
 MmapMode: TypeAlias = Literal["r+", "r", "w+", "c"]
-AnyAwaitable: TypeAlias = Awaitable[_T] | Coroutine[Any, Any, _T]
-AnyAwaitableCallable: TypeAlias = (
-    Callable[_P, Awaitable[_T]] | Callable[_P, Coroutine[Any, Any, _T]]
-)
+AwaitableCallable: TypeAlias = Callable[_P, Awaitable[_T]]
 Reducer: TypeAlias = Callable[Concatenate[type[_T], ...], Any]
 Dispatch: TypeAlias = Callable[[Unpickler, _T], None]
 ReturnList: TypeAlias = Literal["list"]
