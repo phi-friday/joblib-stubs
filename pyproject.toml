@@ -26,10 +26,10 @@ Repository = "https://github.com/phi-friday/joblib-stubs"
 
 [project.optional-dependencies]
 mypy = [
-    "mypy>=1.11.2",
+    "mypy>=1.12.0",
 ]
 mypy-strict = [
-    "mypy==1.11.2",
+    "mypy==1.12.0",
     "joblib-stubs[mypy]",
 ]
 

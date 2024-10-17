@@ -22,9 +22,9 @@ repos:
       - id: mypy
         name: mypy
         args: [--strict]
-        additional_dependencies: [numpy, dask, distributed, tornado]
+        additional_dependencies: [numpy, dask, distributed, tornado, "msgpack<1.1"]
     repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
+    rev: v1.12.0
 
   - hooks:
       - id: pyright
