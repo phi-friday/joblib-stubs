@@ -30,4 +30,4 @@ jobs:
           uv build
       
       - name: Publish package
-        run: uv publish -v
+        run: uv publish
