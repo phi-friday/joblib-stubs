@@ -7,7 +7,7 @@ from typing import Any, Generic
 from joblib._typeshed import Reducer
 from typing_extensions import TypeVar
 
-__all__ = ["Queue", "SimpleQueue", "Full"]
+__all__ = ["Full", "Queue", "SimpleQueue"]
 
 _T = TypeVar("_T")
 

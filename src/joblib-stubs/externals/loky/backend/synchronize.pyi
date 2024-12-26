@@ -3,7 +3,7 @@ from typing import Any, Callable
 from _typeshed import Incomplete
 from typing_extensions import Self, TypeVar
 
-__all__ = ["Lock", "RLock", "Semaphore", "BoundedSemaphore", "Condition", "Event"]
+__all__ = ["BoundedSemaphore", "Condition", "Event", "Lock", "RLock", "Semaphore"]
 
 _T = TypeVar("_T")
 

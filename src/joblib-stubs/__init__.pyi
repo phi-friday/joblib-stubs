@@ -2,7 +2,7 @@ from joblib._cloudpickle_wrapper import (
     wrap_non_picklable_objects as wrap_non_picklable_objects,
 )
 from joblib.compressor import register_compressor as register_compressor
-from joblib.hashing import hash as hash  # noqa: A001
+from joblib.hashing import hash as hash  # noqa: A004
 from joblib.logger import Logger as Logger
 from joblib.logger import PrintTime as PrintTime
 from joblib.memory import MemorizedResult as MemorizedResult
@@ -20,22 +20,22 @@ from joblib.parallel import parallel_config as parallel_config
 from joblib.parallel import register_parallel_backend as register_parallel_backend
 
 __all__ = [
-    "Memory",
-    "MemorizedResult",
-    "PrintTime",
     "Logger",
-    "hash",
-    "dump",
-    "load",
+    "MemorizedResult",
+    "Memory",
     "Parallel",
-    "delayed",
+    "PrintTime",
     "cpu_count",
+    "delayed",
+    "dump",
     "effective_n_jobs",
-    "register_parallel_backend",
-    "parallel_backend",
     "expires_after",
-    "register_store_backend",
-    "register_compressor",
-    "wrap_non_picklable_objects",
+    "hash",
+    "load",
+    "parallel_backend",
     "parallel_config",
+    "register_compressor",
+    "register_parallel_backend",
+    "register_store_backend",
+    "wrap_non_picklable_objects",
 ]

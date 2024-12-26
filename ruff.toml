@@ -72,6 +72,7 @@ fixable = [
     "SIM108", # if-else-block-instead-of-if-exp
     "I002",   #	missing-required-import	
     "RUF100", # unused-noqa
+    "RUF022", # unsorted-dunder-all
 ]
 [lint.per-file-ignores]
 "./src/joblib-stubs/externals/**/*.pyi" = ["F405"]
