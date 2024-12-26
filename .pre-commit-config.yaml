@@ -5,9 +5,9 @@ repos:
           - "-a ruff:ruff:v:"
           - "-a ruff:ruff-format:v:"
           - "-a mypy:mypy:v:"
-          - "-e mypy-strict"
+          - "-g dev"
     repo: https://github.com/phi-friday/sync-uv-pre-commit
-    rev: v0.5.1
+    rev: v0.6.3
 
   - hooks:
       - id: ruff
