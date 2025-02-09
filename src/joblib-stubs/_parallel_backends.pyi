@@ -1,9 +1,9 @@
 # pyright: reportUnnecessaryTypeIgnoreComment=false
 from abc import ABCMeta, abstractmethod
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from concurrent import futures
 from multiprocessing.pool import AsyncResult as AsyncResult
-from typing import Any, Callable, ClassVar, Generic, Literal, NoReturn
+from typing import Any, ClassVar, Generic, Literal, NoReturn
 
 from joblib._multiprocessing_helpers import mp as mp
 from joblib._typeshed import AnyContainer, Prefer, Require, ReturnAs

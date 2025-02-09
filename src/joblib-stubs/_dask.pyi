@@ -1,8 +1,8 @@
 import weakref
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from concurrent import futures
 from multiprocessing.pool import AsyncResult as AsyncResult
-from typing import Any, Callable, ClassVar, Generic, Literal
+from typing import Any, ClassVar, Generic, Literal
 
 from dask.distributed import Client as Client
 from dask.distributed import Future as Future

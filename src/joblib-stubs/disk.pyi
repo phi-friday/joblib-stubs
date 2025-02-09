@@ -1,4 +1,5 @@
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from _typeshed import StrOrBytesPath
 from joblib._typeshed import WindowsError as WindowsError

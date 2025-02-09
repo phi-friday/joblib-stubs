@@ -1,7 +1,8 @@
+from collections.abc import Callable
 from pickle import Unpickler
-from typing import Any, Callable, Literal, NamedTuple, Protocol
+from typing import Any, Concatenate, Literal, NamedTuple, Protocol, TypeAlias
 
-from typing_extensions import Concatenate, ParamSpec, TypeAlias, TypedDict, TypeVar
+from typing_extensions import ParamSpec, TypedDict, TypeVar
 
 _T = TypeVar("_T")
 _T_co = TypeVar("_T_co", covariant=True)

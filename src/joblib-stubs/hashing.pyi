@@ -1,11 +1,10 @@
 import io
 import pickle
-from collections.abc import Hashable, Iterable
+from collections.abc import Callable, Hashable, Iterable
 from types import ModuleType
-from typing import Any, Callable
+from typing import Any, Concatenate
 
 from joblib._typeshed import HashType
-from typing_extensions import Concatenate
 
 Pickler = pickle.Pickler
 

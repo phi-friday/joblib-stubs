@@ -1,6 +1,7 @@
 # pyright: reportIncompatibleMethodOverride=false
+from collections.abc import Callable
 from multiprocessing.context import BaseContext
-from typing import Any, Callable, Literal
+from typing import Any, Literal
 
 from joblib._typeshed import Reducer
 from joblib.externals.loky.backend.process import (

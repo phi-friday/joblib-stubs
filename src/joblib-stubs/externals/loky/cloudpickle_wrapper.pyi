@@ -1,4 +1,5 @@
-from typing import Any, Callable, Generic
+from collections.abc import Callable
+from typing import Any, Generic
 
 from joblib.externals.cloudpickle import dumps as dumps
 from joblib.externals.cloudpickle import loads as loads

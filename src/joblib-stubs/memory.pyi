@@ -1,6 +1,6 @@
-from collections.abc import Awaitable, Coroutine
+from collections.abc import Awaitable, Callable, Coroutine
 from datetime import timedelta
-from typing import Any, Callable, Generic, Protocol, overload
+from typing import Any, Generic, Protocol, overload
 
 from joblib import hashing as hashing
 from joblib._store_backends import CacheWarning as CacheWarning

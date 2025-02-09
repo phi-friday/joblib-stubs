@@ -1,11 +1,12 @@
 import threading
+from collections.abc import Callable
 from concurrent import futures
 from multiprocessing.context import BaseContext
-from typing import Any, Callable
+from typing import Any, TypeAlias
 
 from _typeshed import Incomplete
 from joblib.externals.loky.process_executor import ProcessPoolExecutor
-from typing_extensions import ParamSpec, TypeAlias, TypeVar
+from typing_extensions import ParamSpec, TypeVar
 
 __all__ = ["get_reusable_executor"]
 

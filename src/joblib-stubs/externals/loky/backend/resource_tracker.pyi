@@ -1,6 +1,6 @@
 import signal
-from collections.abc import Iterable
-from typing import Any, Callable
+from collections.abc import Callable, Iterable
+from typing import Any
 
 from _typeshed import StrOrBytesPath
 

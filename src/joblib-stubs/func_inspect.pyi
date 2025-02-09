@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from types import FunctionType
-from typing import Any, Callable
+from typing import Any
 
 from joblib._typeshed import FullArgSpec
 from joblib.logger import pformat as pformat

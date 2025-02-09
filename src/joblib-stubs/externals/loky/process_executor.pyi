@@ -1,11 +1,11 @@
 import threading
 import weakref
-from collections.abc import Generator, Iterable
+from collections.abc import Callable, Generator, Iterable
 from concurrent import futures
 from concurrent.futures import Executor
 from concurrent.futures.process import BrokenProcessPool as _BPPException
 from multiprocessing.context import BaseContext
-from typing import Any, Callable, Generic
+from typing import Any, Generic, TypeAlias
 
 from joblib._typeshed import Process, RebuildExc, Reducer
 from joblib.externals.loky._base import Future as Future
@@ -23,7 +23,7 @@ from joblib.externals.loky.backend.utils import (
     get_exitcodes_terminated_worker as get_exitcodes_terminated_worker,
 )
 from joblib.externals.loky.backend.utils import kill_process_tree as kill_process_tree
-from typing_extensions import ParamSpec, TypeAlias, TypeVar
+from typing_extensions import ParamSpec, TypeVar
 
 MAX_DEPTH: int
 _CURRENT_DEPTH: int

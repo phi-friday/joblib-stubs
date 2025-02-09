@@ -1,6 +1,6 @@
+from collections.abc import Callable
 from multiprocessing import resource_sharer
 from multiprocessing.connection import Connection
-from typing import Callable
 
 from joblib.externals.loky.backend.reduction import register as register
 

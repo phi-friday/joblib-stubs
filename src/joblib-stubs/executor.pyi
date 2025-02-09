@@ -1,6 +1,6 @@
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from concurrent import futures
-from typing import Any, Callable
+from typing import Any
 
 from joblib._memmapping_reducer import (
     TemporaryResourcesManager as TemporaryResourcesManager,

@@ -1,9 +1,9 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Callable, Generator, Iterable
 from concurrent import futures
 from multiprocessing.context import BaseContext
 from multiprocessing.pool import AsyncResult as AsyncResult
 from types import TracebackType
-from typing import Any, Callable, Generic, Literal, overload
+from typing import Any, Generic, Literal, overload
 
 from joblib._multiprocessing_helpers import mp as mp
 from joblib._parallel_backends import AutoBatchingMixin as AutoBatchingMixin

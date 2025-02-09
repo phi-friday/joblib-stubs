@@ -1,5 +1,5 @@
-from collections.abc import Iterable
-from typing import Any, Callable
+from collections.abc import Callable, Iterable
+from typing import Any
 
 class _ChainedInitializer:
     def __init__(self, initializers: Iterable[Callable[..., Any]]) -> None: ...

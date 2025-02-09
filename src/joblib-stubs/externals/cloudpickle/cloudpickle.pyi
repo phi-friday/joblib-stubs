@@ -1,13 +1,13 @@
 import pickle
 import threading
 import weakref
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from types import ModuleType
-from typing import Any, Callable, ClassVar
+from typing import Any, ClassVar, Concatenate, TypeAlias
 
 from _typeshed import ReadableBuffer, SupportsWrite
 from joblib._typeshed import Dispatch, EmptyCellValueClass, Reducer
-from typing_extensions import Concatenate, TypeAlias, TypeVar
+from typing_extensions import TypeVar
 
 _T = TypeVar("_T")
 

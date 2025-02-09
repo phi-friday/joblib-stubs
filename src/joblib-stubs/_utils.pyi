@@ -1,6 +1,7 @@
 import ast
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Generic
+from typing import Any, Generic
 
 from joblib._multiprocessing_helpers import mp as mp
 from typing_extensions import ParamSpec, TypeVar
