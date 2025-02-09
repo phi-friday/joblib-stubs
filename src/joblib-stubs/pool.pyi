@@ -1,7 +1,8 @@
+from collections.abc import Mapping
 from multiprocessing.context import BaseContext
 from multiprocessing.pool import Pool
 from pickle import Pickler
-from typing import Any, Mapping
+from typing import Any
 
 from _typeshed import SupportsWrite
 from joblib._memmapping_reducer import (

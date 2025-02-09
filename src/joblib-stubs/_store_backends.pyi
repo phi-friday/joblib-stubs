@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
+from collections.abc import Mapping
 from datetime import datetime, timedelta
-from typing import Any, Callable, Mapping, NamedTuple
+from typing import Any, Callable, NamedTuple
 
 from joblib import numpy_pickle as numpy_pickle
 from joblib._typeshed import ItemInfo, MmapMode

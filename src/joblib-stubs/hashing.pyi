@@ -1,7 +1,8 @@
 import io
 import pickle
+from collections.abc import Hashable, Iterable
 from types import ModuleType
-from typing import Any, Callable, Hashable, Iterable
+from typing import Any, Callable
 
 from joblib._typeshed import HashType
 from typing_extensions import Concatenate

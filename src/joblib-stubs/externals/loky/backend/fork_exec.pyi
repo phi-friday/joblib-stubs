@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 def close_fds(keep_fds: Iterable[int]) -> None: ...
 def fork_exec(

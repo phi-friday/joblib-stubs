@@ -1,5 +1,6 @@
+from collections.abc import Iterable, Mapping
 from multiprocessing.process import BaseProcess
-from typing import Any, Callable, Iterable, Literal, Mapping
+from typing import Any, Callable, Literal
 
 class LokyProcess(BaseProcess):
     _start_method: Literal["loky"]

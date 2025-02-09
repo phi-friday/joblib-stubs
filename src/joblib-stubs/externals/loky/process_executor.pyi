@@ -1,10 +1,11 @@
 import threading
 import weakref
+from collections.abc import Generator, Iterable
 from concurrent import futures
 from concurrent.futures import Executor
 from concurrent.futures.process import BrokenProcessPool as _BPPException
 from multiprocessing.context import BaseContext
-from typing import Any, Callable, Generator, Generic, Iterable
+from typing import Any, Callable, Generic
 
 from joblib._typeshed import Process, RebuildExc, Reducer
 from joblib.externals.loky._base import Future as Future

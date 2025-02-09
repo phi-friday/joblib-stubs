@@ -1,8 +1,9 @@
 import pickle
 import threading
 import weakref
+from collections.abc import Mapping
 from types import ModuleType
-from typing import Any, Callable, ClassVar, Mapping
+from typing import Any, Callable, ClassVar
 
 from _typeshed import ReadableBuffer, SupportsWrite
 from joblib._typeshed import Dispatch, EmptyCellValueClass, Reducer

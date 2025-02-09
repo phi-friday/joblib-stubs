@@ -1,5 +1,6 @@
+from collections.abc import Mapping
 from types import ModuleType
-from typing import Any, Mapping
+from typing import Any
 
 WINEXE: bool
 WINSERVICE: bool
