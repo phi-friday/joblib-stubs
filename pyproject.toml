@@ -69,7 +69,7 @@ packages = ["src/joblib-stubs"]
 include = ["src/joblib-stubs"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 strict = true
 disable_error_code = "import-untyped,overload-overlap,override"
 disallow_subclassing_any = false
