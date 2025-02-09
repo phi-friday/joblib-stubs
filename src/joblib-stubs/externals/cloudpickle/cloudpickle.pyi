@@ -62,7 +62,7 @@ class Pickler(pickle.Pickler):
         buffer_callback: _BufferCallback | None = ...,
     ) -> None: ...
     dispatch: ClassVar[dict[type[Any], Dispatch[Any]]]
-    def reducer_override(self, obj: Any) -> Any: ...
+    reducer_override: Callable[[Any], Any]
     def save_global(
         self,
         obj: Any,
