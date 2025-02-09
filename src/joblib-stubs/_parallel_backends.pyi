@@ -115,7 +115,7 @@ class ThreadingBackend(PoolManagerMixin, ParallelBackendBase[_R], Generic[_R]):
         **backend_args: Any,
     ) -> int: ...
 
-class MultiprocessingBackend(  # type: ignore[misc] # FIXME
+class MultiprocessingBackend(
     PoolManagerMixin, AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]
 ):
     supports_retrieve_callback: ClassVar[bool]
@@ -129,7 +129,7 @@ class MultiprocessingBackend(  # type: ignore[misc] # FIXME
         **memmappingpool_args: Any,
     ) -> int: ...
 
-class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]):  # type: ignore[misc] # FIXME
+class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]):
     supports_retrieve_callback: ClassVar[bool]
     supports_inner_max_num_threads: ClassVar[bool]
     def configure(
