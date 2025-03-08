@@ -3,38 +3,36 @@ target-version = "py310"
 [lint]
 select = ["ALL"]
 ignore = [
-    'TD',     # flake8-todos
-    'E712',   # TrueFalseComparison # sqlalchemy
-    "E711",   # none-comparison # sqlalchemy
-    "D100",   # public-module
-    "D104",   # public-package
-    "D107",   # public-init
-    "D201",   # no-blank-line-before-function
-    "D202",   # no-blank-line-after-function
-    "D203",   # one-blank-line-before-class
-    "D204",   # one-blank-line-after-class
-    "D211",   # no-blank-line-before-class
-    "D212",   # multi-line-summary-first-line
-    "D213",   # multi-line-summary-second-line
-    "D400",   # ends-in-period
-    "D401",   # non-imperative-mood
-    "D403",   # first-line-capitalized
-    "D406",   # new-line-after-section-name
-    "D407",   # dashed-underline-after-section
-    "D417",   # undocumented-param
-    "D415",   # ends-in-punctuation
-    "EM101",  # raw-string-in-exception
-    "TRY003", # raise-vanilla-args
-    "ANN401", # dynamically-typed-expression
-    "FBT002", # boolean-default-value-in-function-definition
-    "PGH003", # blanket-type-ignore
-    "SIM117", # multiple-with-statements # python3.8
-    "B905",   # zip-without-explicit-strict
-    "PD010",  # use-of-dot-pivot-or-unstack
-    "D105",   # undocumented-magic-method
-    "TD",     # flake8-todos
-    "FIX",    # flake8-fixme
-    "D413",   # blank-line-after-last-section 
+    'TD',      # flake8-todos
+    "D100",    # public-module
+    "D104",    # public-package
+    "D107",    # public-init
+    "D201",    # no-blank-line-before-function
+    "D202",    # no-blank-line-after-function
+    "D203",    # one-blank-line-before-class
+    "D204",    # one-blank-line-after-class
+    "D211",    # no-blank-line-before-class
+    "D212",    # multi-line-summary-first-line
+    "D213",    # multi-line-summary-second-line
+    "D400",    # ends-in-period
+    "D401",    # non-imperative-mood
+    "D403",    # first-line-capitalized
+    "D406",    # new-line-after-section-name
+    "D407",    # dashed-underline-after-section
+    "D417",    # undocumented-param
+    "D415",    # ends-in-punctuation
+    "EM101",   # raw-string-in-exception
+    "TRY003",  # raise-vanilla-args
+    "ANN401",  # dynamically-typed-expression
+    "FBT002",  # boolean-default-value-in-function-definition
+    "PGH003",  # blanket-type-ignore
+    "SIM117",  # multiple-with-statements # python3.8
+    "B905",    # zip-without-explicit-strict
+    "PD010",   # use-of-dot-pivot-or-unstack
+    "D105",    # undocumented-magic-method
+    "TD",      # flake8-todos
+    "FIX",     # flake8-fixme
+    "D413",    # blank-line-after-last-section 
     "PLR2044", # empty-comment
     # ruff format
     "W191",   # tab-indentation
@@ -53,7 +51,7 @@ ignore = [
     "ISC002", # multi-line-implicit-string-concatenation
     # joblib
     "FBT001",
-    "PLR0913"
+    "PLR0913",
 ]
 fixable = [
     "UP",
@@ -89,3 +87,10 @@ required-imports = ["from __future__ import annotations"]
 force-single-line = false
 force-wrap-aliases = false
 split-on-trailing-comma = false
+
+[lint.flake8-type-checking]
+exempt-modules = ["typing", "typing_extensions"]
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
+    "sqlalchemy.orm.DeclarativeBase",
+]
