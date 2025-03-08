@@ -41,7 +41,7 @@ joblib-dependencies = [
 ]
 dev = [
     { include-group = "joblib-dependencies" },
-    "ruff==0.9.5",
+    "ruff==0.9.10",
     "pre-commit>=3.5.0",
     "poethepoet>=0.27.0",
     "joblib-stubs[mypy-strict]",
