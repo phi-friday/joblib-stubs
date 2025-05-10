@@ -1,7 +1,8 @@
 # pyright: reportUnnecessaryTypeIgnoreComment=false
 from abc import ABCMeta, abstractmethod
-from collections.abc import Callable, Generator
+from collections.abc import Callable
 from concurrent import futures
+from contextlib import AbstractContextManager
 from multiprocessing.pool import AsyncResult as AsyncResult
 from typing import Any, ClassVar, Generic, Literal, NoReturn
 
@@ -15,61 +16,68 @@ from joblib.externals.loky.process_executor import (
 )
 from joblib.parallel import Parallel as Parallel
 from joblib.pool import MemmappingPool as MemmappingPool
-from typing_extensions import TypeVar
+from typing_extensions import TypeVar, deprecated
 
 _T = TypeVar("_T")
 _R = TypeVar("_R", default=Literal["list"], bound=ReturnAs)
 
 class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):
+    default_n_jobs: ClassVar[int]
     supports_inner_max_num_threads: ClassVar[bool]
     supports_retrieve_callback: ClassVar[bool]
-    default_n_jobs: ClassVar[int]
     @property
     def supports_return_generator(self) -> bool: ...
     @property
     def supports_timeout(self) -> bool: ...
     nesting_level: int | None
     inner_max_num_threads: int
+    backend_kwargs: dict[str, Any]
     def __init__(
         self,
         nesting_level: int | None = ...,
         inner_max_num_threads: int | None = ...,
-        **kwargs: Any,
+        **backend_kwargs: Any,
     ) -> None: ...
     MAX_NUM_THREADS_VARS: ClassVar[list[str]]
     TBB_ENABLE_IPC_VAR: ClassVar[str]
     @abstractmethod
     def effective_n_jobs(self, n_jobs: int) -> int: ...
-    @abstractmethod
+    @deprecated("implement `submit` instead.")
     def apply_async(
         self,
         func: Callable[[], _T],
-        callback: Callable[[AnyContainer[_T]], Any]  # FIXME: mypy error
-        | None = ...,
+        callback: Callable[[AnyContainer[_T]], Any] | None = ...,
+    ) -> AnyContainer[_T]: ...
+    def submit(
+        self,
+        func: Callable[[], _T],
+        callback: Callable[[AnyContainer[_T]], Any] | None = ...,
     ) -> AnyContainer[_T]: ...
     def retrieve_result_callback(
         self, out: futures.Future[_T] | AsyncResult[_T]
     ) -> _T: ...
     parallel: Parallel[_R]
+    def retrieve_result(
+        self, out: futures.Future[_T] | AsyncResult[_T], timeout: float | None = ...
+    ) -> _T: ...
     def configure(
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
         prefer: Prefer | None = ...,
         require: Require | None = ...,
-        **backend_args: Any,
+        **backend_kwargs: Any,
     ) -> int: ...
     def start_call(self) -> None: ...
     def stop_call(self) -> None: ...
     def terminate(self) -> None: ...
     def compute_batch_size(self) -> int: ...
     def batch_completed(self, batch_size: int, duration: float) -> None: ...
-    def get_exceptions(self) -> list[BaseException]: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
     def get_nested_backend(
         self,
     ) -> tuple[SequentialBackend[Any] | ThreadingBackend[Any], int | None]: ...
-    def retrieval_context(self) -> Generator[None, None, None]: ...
+    def retrieval_context(self) -> AbstractContextManager[None]: ...
     @staticmethod
     def in_main_thread() -> bool: ...
 
@@ -78,7 +86,7 @@ class SequentialBackend(ParallelBackendBase[_R], Generic[_R]):
     supports_timeout: ClassVar[bool]  # pyright: ignore[reportIncompatibleMethodOverride]
     supports_retrieve_callback: ClassVar[bool]
     supports_sharedmem: ClassVar[bool]
-    def apply_async(
+    def submit(
         self, func: Callable[[], Any], callback: Callable[..., Any] | None = ...
     ) -> NoReturn: ...
     # mypy
@@ -112,7 +120,7 @@ class ThreadingBackend(PoolManagerMixin, ParallelBackendBase[_R], Generic[_R]):
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
-        **backend_args: Any,
+        **backend_kwargs: Any,
     ) -> int: ...
 
 class MultiprocessingBackend(
@@ -126,7 +134,7 @@ class MultiprocessingBackend(
         parallel: Parallel[_R] | None = ...,
         prefer: Prefer | None = ...,
         require: Require | None = ...,
-        **memmappingpool_args: Any,
+        **memmapping_pool_kwargs: Any,
     ) -> int: ...
 
 class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]):
@@ -139,11 +147,11 @@ class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]):
         prefer: Prefer | None = ...,
         require: Require | None = ...,
         idle_worker_timeout: float = ...,
-        **memmappingexecutor_args: Any,
+        **memmapping_executor_kwargs: Any,
     ) -> int: ...
     def terminate(self) -> None: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
-    def apply_async(
+    def submit(
         self,
         func: Callable[[], _T],
         callback: Callable[[futures.Future[_T]], Any] | None = ...,
