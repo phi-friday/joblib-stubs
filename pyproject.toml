@@ -33,7 +33,7 @@ mypy-strict = [
 
 [dependency-groups]
 joblib-dependencies = [
-    "joblib>=1.4.2",
+    "joblib>=1.5.0",
     "numpy>=1.24.4",
     "dask>=2023.5.0",
     "distributed>=2023.5.0",
