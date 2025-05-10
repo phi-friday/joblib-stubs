@@ -1,6 +1,5 @@
 from collections.abc import Iterable
 
-def close_fds(keep_fds: Iterable[int]) -> None: ...
 def fork_exec(
     cmd: str | bytes | tuple[str | bytes, ...],
     keep_fds: Iterable[int],

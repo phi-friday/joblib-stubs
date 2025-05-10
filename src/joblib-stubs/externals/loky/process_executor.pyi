@@ -114,6 +114,7 @@ class _CallItem(Generic[_P, _T]):
 
 class _SafeQueue(Queue[_T], Generic[_T]):
     thread_wakeup: _ThreadWakeup | None
+    shutdown_lock: _Lock | None
     pending_work_items: dict[int, _WorkItem[..., _T]] | None
     running_work_items: list[int] | None
     def __init__(
@@ -123,6 +124,7 @@ class _SafeQueue(Queue[_T], Generic[_T]):
         pending_work_items: dict[int, _WorkItem[..., _T]] | None = ...,  # pyright: ignore[reportInvalidTypeVarUse]
         running_work_items: list[int] | None = ...,
         thread_wakeup: _ThreadWakeup | None = ...,
+        shutdown_lock: _Lock | None = ...,
         reducers: dict[type[Any], Reducer[Any]] | None = ...,
     ) -> None: ...
 
