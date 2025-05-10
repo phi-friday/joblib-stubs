@@ -17,7 +17,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     env:
-      PYTHON_VERSION: 3.8
+      PYTHON_VERSION: 3.10
       UV_CACHE_DIR: /tmp/.uv-cache
 
     steps:
