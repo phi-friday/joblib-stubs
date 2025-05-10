@@ -95,7 +95,7 @@ class SequentialBackend(ParallelBackendBase[_R], Generic[_R]):
 class PoolManagerMixin:
     def effective_n_jobs(self, n_jobs: int) -> int: ...
     def terminate(self) -> None: ...
-    def apply_async(
+    def submit(
         self,
         func: Callable[[], _T],
         callback: Callable[[AsyncResult[_T]], Any] | None = ...,
