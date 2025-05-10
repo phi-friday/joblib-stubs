@@ -39,8 +39,9 @@ _R = TypeVar("_R", default=Literal["list"], bound=ReturnAs)
 IS_PYPY: bool
 BACKENDS: dict[str, type[ParallelBackendBase[Any]]]
 DEFAULT_BACKEND: str
-MAYBE_AVAILABLE_BACKENDS: set[str]
 DEFAULT_THREAD_BACKEND: str
+DEFAULT_PROCESS_BACKEND: str
+MAYBE_AVAILABLE_BACKENDS: set[str]
 EXTERNAL_BACKENDS: dict[str, Callable[[], Any]]
 default_parallel_config: dict[str, _Sentinel[Any]]
 VALID_BACKEND_HINTS: tuple[str | None, ...]
@@ -135,7 +136,7 @@ class BatchCompletionCallBack(Generic[_T]):
     def register_job(self, job: futures.Future[_T] | AsyncResult[_T]) -> None: ...
     def get_result(self, timeout: float) -> Any: ...
     def get_status(self, timeout: float) -> str: ...
-    def __call__(self, out: futures.Future[_T] | AsyncResult[_T]) -> None: ...
+    def __call__(self, *args: Any, **kwargs: Any) -> None: ...
 
 def register_parallel_backend(
     name: str, factory: type[ParallelBackendBase[Any]], make_default: bool = ...
@@ -144,7 +145,7 @@ def effective_n_jobs(n_jobs: int = ...) -> int: ...
 
 class Parallel(Logger, Generic[_R]):
     _backend: ParallelBackendBase[_R]
-    _backend_args: dict[str, Any]
+    _backend_kwargs: dict[str, Any]
     verbose: int
     timeout: float | None
     pre_dispatch: int | str
@@ -167,6 +168,7 @@ class Parallel(Logger, Generic[_R]):
         mmap_mode: MmapMode | None = ...,
         prefer: Prefer | None = ...,
         require: Require | None = ...,
+        **backend_kwargs: Any,
     ) -> None: ...
     #
     @overload
