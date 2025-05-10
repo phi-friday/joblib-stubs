@@ -1,5 +1,6 @@
 from collections.abc import Awaitable, Callable, Coroutine
 from datetime import timedelta
+from pathlib import Path
 from typing import Any, Generic, Protocol, overload
 
 from joblib import hashing as hashing
@@ -176,20 +177,18 @@ class AsyncMemorizedFunc(MemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]):
 class Memory(Logger):
     mmap_mode: MmapMode
     timestamp: float
-    bytes_limit: int | str
     backend: str
     compress: bool | int
     backend_options: dict[str, Any]
-    location: str
+    location: str | Path
     store_backend: StoreBackendBase
     def __init__(
         self,
-        location: str | None = ...,
+        location: str | Path | None = ...,
         backend: str = ...,
         mmap_mode: MmapMode | None = ...,
         compress: bool | int = ...,
         verbose: int = ...,
-        bytes_limit: int | str | None = ...,
         backend_options: dict[str, Any] | None = ...,
     ) -> None: ...
     @overload
