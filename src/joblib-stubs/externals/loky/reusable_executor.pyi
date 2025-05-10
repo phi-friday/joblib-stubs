@@ -4,7 +4,6 @@ from concurrent import futures
 from multiprocessing.context import BaseContext
 from typing import Any, TypeAlias
 
-from _typeshed import Incomplete
 from joblib.externals.loky.process_executor import ProcessPoolExecutor
 from typing_extensions import ParamSpec, TypeVar
 
@@ -29,7 +28,7 @@ def get_reusable_executor(
 ) -> _ReusablePoolExecutor: ...
 
 class _ReusablePoolExecutor(ProcessPoolExecutor):
-    executor_id: Incomplete
+    executor_id: int
     def __init__(
         self,
         submit_resize_lock: threading.RLock,

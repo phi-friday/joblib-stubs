@@ -1,12 +1,10 @@
 from multiprocessing.process import BaseProcess
 from typing import Literal
 
-from _typeshed import Incomplete
-
 __all__ = ["Popen"]
 
 class _DupFd:
-    fd: Incomplete
+    fd: int
     def __init__(self, fd: int) -> None: ...
     def detach(self) -> int: ...
 
