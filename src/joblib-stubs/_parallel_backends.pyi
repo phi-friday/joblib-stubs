@@ -97,7 +97,7 @@ class PoolManagerMixin:
 
 class AutoBatchingMixin(Generic[_R]):
     MIN_IDEAL_BATCH_DURATION: ClassVar[float]
-    MAX_IDEAL_BATCH_DURATION: ClassVar[int]
+    MAX_IDEAL_BATCH_DURATION: ClassVar[float]
     parallel: Parallel[_R]
     def __init__(self, **kwargs: Any) -> None: ...
     def compute_batch_size(self) -> int: ...

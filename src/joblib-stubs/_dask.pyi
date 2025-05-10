@@ -2,7 +2,7 @@ import weakref
 from collections.abc import Callable, Iterator
 from concurrent import futures
 from multiprocessing.pool import AsyncResult as AsyncResult
-from typing import Any, ClassVar, Generic, Literal
+from typing import Any, Generic, Literal
 
 from dask.distributed import Client as Client
 from dask.distributed import Future as Future
@@ -34,7 +34,6 @@ class Batch(Generic[_T]):
 class DaskDistributedBackend(
     AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]
 ):
-    MIN_IDEAL_BATCH_DURATION: ClassVar[float]
     client: Client
     data_futures: dict[int, Future]
     wait_for_workers_timeout: float
