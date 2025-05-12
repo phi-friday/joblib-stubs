@@ -113,10 +113,10 @@ class AsyncNotMemorizedFunc(NotMemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]
     func: Callable[_P, Awaitable[_T]]
     def __init__(self, func: Callable[_P, Awaitable[_T]]) -> None: ...
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> Awaitable[_T]: ...
-    async def call_and_shelve(  # type: ignore[override]
+    async def call_and_shelve(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> NotMemorizedResult[_T]: ...
-    def call(self) -> tuple[Awaitable[_T], dict[Any, Any]]: ...  # type: ignore[override]
+    def call(self) -> tuple[Awaitable[_T], dict[Any, Any]]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
 
 class MemorizedFunc(Logger, Generic[_P, _T]):
     mmap_mode: MmapMode
@@ -167,10 +167,10 @@ class AsyncMemorizedFunc(MemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]):
         cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> None: ...
     async def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _T: ...
-    async def call_and_shelve(  # type: ignore[override]
+    async def call_and_shelve(  # pyright: ignore[reportIncompatibleVariableOverride,reportIncompatibleMethodOverride]
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> MemorizedResult[_T] | NotMemorizedResult[_T]: ...
-    async def call(  # type: ignore[override]
+    async def call(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> tuple[_T, dict[str, Any]]: ...
 

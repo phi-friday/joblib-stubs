@@ -14,7 +14,7 @@ from joblib.compressor import LZ4CompressorWrapper as LZ4CompressorWrapper
 from joblib.compressor import LZMACompressorWrapper as LZMACompressorWrapper
 from joblib.compressor import XZCompressorWrapper as XZCompressorWrapper
 from joblib.compressor import ZlibCompressorWrapper as ZlibCompressorWrapper
-from joblib.compressor import lz4 as lz4  # type: ignore
+from joblib.compressor import lz4 as lz4  # type: ignore[attr-defined]
 from joblib.compressor import register_compressor as register_compressor
 from joblib.numpy_pickle_compat import NDArrayWrapper as NDArrayWrapper
 from joblib.numpy_pickle_compat import ZNDArrayWrapper as ZNDArrayWrapper

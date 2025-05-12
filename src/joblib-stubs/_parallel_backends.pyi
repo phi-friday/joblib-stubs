@@ -116,7 +116,7 @@ class ThreadingBackend(PoolManagerMixin, ParallelBackendBase[_R], Generic[_R]):
     supports_retrieve_callback: ClassVar[bool]
     uses_threads: ClassVar[bool]
     supports_sharedmem: ClassVar[bool]
-    def configure(  # type: ignore[override]
+    def configure(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
