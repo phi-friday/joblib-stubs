@@ -8,7 +8,7 @@ from multiprocessing.popen_spawn_win32 import Popen as _Popen  # type: ignore[at
 
 __all__ = ["Popen"]
 
-class Popen(_Popen):  # pyright: ignore[reportUntypedBaseClass]
+class Popen(_Popen):  # type: ignore[misc]
     method: Literal["loky"]
     pid: int
     returncode: int | None
