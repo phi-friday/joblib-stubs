@@ -13,6 +13,7 @@ operators: dict[ast.AST, Callable[[Any, Any], Any]]
 
 def eval_expr(expr: str) -> Any: ...
 def eval_(node: ast.AST) -> Any: ...
+
 @dataclass(frozen=True)
 class _Sentinel(Generic[_T]):
     default_value: _T

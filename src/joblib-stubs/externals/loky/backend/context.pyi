@@ -1,5 +1,4 @@
 # pyright: reportIncompatibleMethodOverride=false
-from collections.abc import Callable
 from multiprocessing.context import BaseContext
 from typing import Any, Literal
 
@@ -32,7 +31,8 @@ def cpu_count(only_physical_cores: bool = ...) -> int: ...
 class LokyContext(BaseContext):
     _name: Literal["loky"]
     Process: type[LokyProcess]
-    cpu_count: Callable[[bool], int]
+    @staticmethod
+    def cpu_count(only_physical_cores: bool = ...) -> int: ...
     def Queue(  # noqa: N802
         self, maxsize: int = ..., reducers: dict[type[Any], Reducer[Any]] | None = ...
     ) -> _Queue[Any]: ...
