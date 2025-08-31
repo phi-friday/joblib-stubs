@@ -1,7 +1,7 @@
 import signal
 from collections.abc import Callable, Iterable
 from multiprocessing.resource_tracker import ResourceTracker as _ResourceTracker
-from typing import Any
+from typing import Any, NoReturn
 
 from _typeshed import StrOrBytesPath
 
@@ -24,6 +24,7 @@ maybe_unlink = _resource_tracker.maybe_unlink
 unregister = _resource_tracker.unregister
 getfd = _resource_tracker.getfd
 
+def cleanup_noop(name: str) -> NoReturn: ...
 def main(fd: int, verbose: int = ...) -> None: ...
 def spawnv_passfds(
     path: StrOrBytesPath, args: tuple[Any, ...], passfds: Iterable[int]
