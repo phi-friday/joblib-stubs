@@ -16,7 +16,7 @@ repos:
         name: ruff-format
         args: [--check]
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.2
+    rev: v0.12.11
 
   - hooks:
       - id: mypy
@@ -24,7 +24,7 @@ repos:
         args: [--strict]
         additional_dependencies: [numpy, dask, distributed, tornado, "msgpack<1.1"]
     repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.16.1
+    rev: v1.17.1
 
   - hooks:
       - id: pyright
@@ -34,4 +34,4 @@ repos:
         args:
           - "--pythonpath=.venv/bin/python"
     repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.402
+    rev: v1.1.403

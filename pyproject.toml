@@ -25,10 +25,10 @@ Repository = "https://github.com/phi-friday/joblib-stubs"
 
 [project.optional-dependencies]
 mypy = [
-    "mypy>=1.16.1",
+    "mypy>=1.17.1",
 ]
 mypy-strict = [
-    "mypy==1.16.1",
+    "mypy==1.17.1",
     "joblib-stubs[mypy]",
 ]
 
@@ -41,7 +41,7 @@ joblib-dependencies = [
 ]
 dev = [
     { include-group = "joblib-dependencies" },
-    "ruff==0.12.2",
+    "ruff==0.12.11",
     "pre-commit>=3.5.0",
     "poethepoet>=0.27.0",
     "joblib-stubs[mypy-strict]",
