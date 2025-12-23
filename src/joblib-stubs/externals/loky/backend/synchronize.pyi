@@ -1,8 +1,8 @@
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Self
 
 from _typeshed import Incomplete
-from typing_extensions import Self, TypeVar
+from typing_extensions import TypeVar
 
 __all__ = ["BoundedSemaphore", "Condition", "Event", "Lock", "RLock", "Semaphore"]
 

@@ -12,7 +12,6 @@ from joblib.numpy_pickle import dump as dump
 from joblib.numpy_pickle import load as load
 from joblib.numpy_pickle import load_temporary_memmap as load_temporary_memmap
 from numpy.typing import ArrayLike, NDArray
-from typing_extensions import Unpack
 
 SYSTEM_SHARED_MEM_FS: str
 SYSTEM_SHARED_MEM_FS_MIN_SIZE: int
@@ -31,9 +30,7 @@ class _WeakArrayKeyMap:
 def has_shareable_memory(a: Any) -> bool: ...
 def reduce_array_memmap_backward(
     a: np.memmap[Any, Any] | ArrayLike,
-) -> tuple[
-    Callable[..., np.memmap[Any, Any] | NDArray[Any]], Unpack[tuple[Any, ...]]
-]: ...
+) -> tuple[Callable[..., np.memmap[Any, Any] | NDArray[Any]], *tuple[Any, ...]]: ...
 
 class ArrayMemmapForwardReducer:
     verbose: int
@@ -55,9 +52,7 @@ class ArrayMemmapForwardReducer:
     ]: ...
     def __call__(
         self, a: Any
-    ) -> tuple[
-        Callable[..., np.memmap[Any, Any] | NDArray[Any]], Unpack[tuple[Any, ...]]
-    ]: ...
+    ) -> tuple[Callable[..., np.memmap[Any, Any] | NDArray[Any]], *tuple[Any, ...]]: ...
 
 def get_memmapping_reducers(
     forward_reducers: dict[type[Any], ArrayMemmapForwardReducer] | None = ...,
