@@ -35,10 +35,10 @@ class DaskDistributedBackend(
     AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]
 ):
     client: Client
-    data_futures: dict[int, Future]
+    data_futures: dict[int, Future[Any]]
     wait_for_workers_timeout: float
     submit_kwargs: dict[str, Any]
-    waiting_futures: Iterator[Future]
+    waiting_futures: Iterator[Future[Any]]
     def __init__(
         self,
         scheduler_host: str | Cluster | None = ...,
