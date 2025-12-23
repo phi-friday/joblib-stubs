@@ -1,17 +1,19 @@
 import ast
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Generic
+from typing import Any, Generic, SupportsAbs
 
 from joblib._multiprocessing_helpers import mp as mp
 from typing_extensions import ParamSpec, TypeVar
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
+_F = TypeVar("_F", bound=Callable[..., SupportsAbs[Any]])
 
 operators: dict[ast.AST, Callable[[Any, Any], Any]]
 
 def eval_expr(expr: str) -> Any: ...
+def limit(max_: float | None = ...) -> Callable[[_F], _F]: ...
 def eval_(node: ast.AST) -> Any: ...
 
 @dataclass(frozen=True)
