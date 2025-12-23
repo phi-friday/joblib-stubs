@@ -3,7 +3,7 @@
         "src/joblib-stubs",
     ],
     "typeCheckingMode": "strict",
-    "pythonVersion": "3.10",
+    "pythonVersion": "3.11",
     "pythonPlatform": "Linux",
     "reportMissingTypeStubs": false,
     "reportInconsistentConstructor": false,
