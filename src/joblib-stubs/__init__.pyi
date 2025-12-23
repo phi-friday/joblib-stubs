@@ -18,6 +18,8 @@ from joblib.parallel import (
     register_parallel_backend,
 )
 
+__version__: str
+
 __all__ = [
     "Logger",
     "MemorizedResult",
