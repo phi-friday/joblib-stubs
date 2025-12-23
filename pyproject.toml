@@ -44,9 +44,9 @@ joblib-dependencies = [
 dev = [
     { include-group = "joblib-dependencies" },
     "ruff==0.14.10",
-    "pre-commit>=3.5.0",
     "poethepoet>=0.27.0",
     "joblib-stubs[mypy-strict]",
+    "prek>=0.2.24",
 ]
 
 [tool.uv]
@@ -58,7 +58,7 @@ lint = ["_lint:check", "_lint:format"]
 "_lint:check" = "ruff check src --fix"
 "_lint:format" = "ruff format src"
 mypy = "mypy src --strict"
-check = "pre-commit run --all-files --show-diff-on-failure"
+check = "prek run --all-files --show-diff-on-failure"
 
 [build-system]
 requires = ["hatchling"]
