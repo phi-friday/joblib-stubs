@@ -5,9 +5,6 @@ from joblib._typeshed import MmapMode
 from joblib.numpy_pickle_utils import Unpickler as Unpickler
 from numpy.typing import NDArray
 
-_MAX_LEN: int
-_CHUNK_SIZE: int
-
 def hex_str(an_int: int) -> str: ...
 def asbytes(s: str | bytes) -> bytes: ...
 def read_zfile(file_handle: BinaryIO) -> bytes: ...
