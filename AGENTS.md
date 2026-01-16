@@ -68,9 +68,6 @@ uv run poe lint      # Ruff lint + format
 uv run poe mypy      # Mypy type check
 uv run poe pyright   # Pyright type check
 uv run pytest src/tests/test_module.py -v  # Actual tests
-
-# Or run everything at once:
-uv run poe check && uv run pytest src/tests/test_module.py -v
 ```
 
 ### Universal Test Pattern
@@ -189,25 +186,18 @@ When writing tests for a module, ensure:
 ```bash
 # 1. Linting
 uv run poe lint
-# or
-uv run ruff check src/tests/test_module.py
-uv run ruff format src/tests/test_module.py
 
 # 2. Type checking
 uv run poe mypy
 uv run poe pyright
-# or
-uv run mypy src/tests/test_module.py
-uv run pyright src/tests/test_module.py
 
 # 3. Actual test execution
 uv run pytest src/tests/test_module.py -v
-
-# 4. Everything together
-uv run poe check
 ```
 
-**All four must pass with zero errors before considering tests complete.**
+**All three (lint, mypy, pyright, pytest) must pass with zero errors before considering tests complete.**
+
+⚠️ **Do NOT use `uv run poe check`** - it may not accurately reflect individual tool results. Always run `lint`, `mypy`, and `pyright` separately.
 
 ## TODO
 
