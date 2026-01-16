@@ -1,13 +1,13 @@
 from collections.abc import Awaitable, Callable, Coroutine
 from datetime import timedelta
 from pathlib import Path
-from typing import Any, Generic, Protocol, overload
+from typing import Any, Generic, overload
 
 from joblib import hashing as hashing
 from joblib._store_backends import CacheWarning as CacheWarning
 from joblib._store_backends import FileSystemStoreBackend as FileSystemStoreBackend
 from joblib._store_backends import StoreBackendBase as StoreBackendBase
-from joblib._typeshed import MmapMode
+from joblib._typeshed import MemoryCacheFunc, MmapMode
 from joblib.func_inspect import filter_args as filter_args
 from joblib.func_inspect import format_call as format_call
 from joblib.func_inspect import format_signature as format_signature
@@ -22,36 +22,6 @@ _T = TypeVar("_T")
 _P = ParamSpec("_P")
 
 FIRST_LINE_TEXT: str
-_STORE_BACKENDS: dict[str, type[StoreBackendBase]]
-
-class _CacheFunc(Protocol):
-    @overload
-    def __call__(
-        self,
-        func: None,
-        ignore: list[str] | None = ...,
-        verbose: int | None = ...,
-        mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> _CacheFunc: ...
-    @overload
-    def __call__(
-        self,
-        func: Callable[_P, Awaitable[_T]],
-        ignore: list[str] | None = ...,
-        verbose: int | None = ...,
-        mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> AsyncMemorizedFunc[_P, _T]: ...
-    @overload
-    def __call__(
-        self,
-        func: Callable[_P, _T],
-        ignore: list[str] | None = ...,
-        verbose: int | None = ...,
-        mmap_mode: MmapMode | bool = ...,
-        cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> MemorizedFunc[_P, _T]: ...
 
 def extract_first_line(func_code: str) -> tuple[str, int]: ...
 
@@ -199,7 +169,7 @@ class Memory(Logger):
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> _CacheFunc: ...
+    ) -> MemoryCacheFunc: ...
     @overload
     def cache(
         self,

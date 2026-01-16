@@ -1,7 +1,9 @@
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from pickle import Unpickler
-from typing import Any, Concatenate, Literal, NamedTuple, Protocol, TypeAlias
+from typing import Any, Concatenate, Literal, NamedTuple, Protocol, TypeAlias, overload
 
+from joblib.memory import AsyncMemorizedFunc as AsyncMemorizedFunc
+from joblib.memory import MemorizedFunc as MemorizedFunc
 from typing_extensions import ParamSpec, TypedDict, TypeVar
 
 _T = TypeVar("_T")
@@ -36,6 +38,35 @@ class FullArgSpec(NamedTuple):
 class ArrayMemmapForwardReducerReduceKwargs(TypedDict, total=True):
     verbose: int
     prewarm: bool
+
+class MemoryCacheFunc(Protocol):
+    @overload
+    def __call__(
+        self,
+        func: None,
+        ignore: list[str] | None = ...,
+        verbose: int | None = ...,
+        mmap_mode: MmapMode | bool = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
+    ) -> MemoryCacheFunc: ...
+    @overload
+    def __call__(
+        self,
+        func: Callable[_P, Awaitable[_T]],
+        ignore: list[str] | None = ...,
+        verbose: int | None = ...,
+        mmap_mode: MmapMode | bool = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
+    ) -> AsyncMemorizedFunc[_P, _T]: ...
+    @overload
+    def __call__(
+        self,
+        func: Callable[_P, _T],
+        ignore: list[str] | None = ...,
+        verbose: int | None = ...,
+        mmap_mode: MmapMode | bool = ...,
+        cache_validation_callback: Callable[..., Any] | None = ...,
+    ) -> MemorizedFunc[_P, _T]: ...
 
 RebuildExc: TypeAlias = Callable[[_BaseExceptionT, str], _BaseExceptionT]
 WindowsError: type[OSError | None]
