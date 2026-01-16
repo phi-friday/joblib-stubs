@@ -12,14 +12,6 @@ from typing_extensions import TypeVar
 _BufferedIOBaseT = TypeVar("_BufferedIOBaseT", bound=BufferedIOBase)
 
 LZ4_NOT_INSTALLED_ERROR: str
-_COMPRESSORS: dict[str, CompressorWrapper[Any]]
-_ZFILE_PREFIX: bytes
-_ZLIB_PREFIX: bytes
-_GZIP_PREFIX: bytes
-_BZ2_PREFIX: bytes
-_XZ_PREFIX: bytes
-_LZMA_PREFIX: bytes
-_LZ4_PREFIX: bytes
 
 def register_compressor(
     compressor_name: str, compressor: CompressorWrapper[Any], force: bool = ...
@@ -39,12 +31,6 @@ class BZ2CompressorWrapper(CompressorWrapper[bz2.BZ2File]): ...
 class LZMACompressorWrapper(CompressorWrapper[lzma.LZMAFile]): ...
 class XZCompressorWrapper(LZMACompressorWrapper): ...
 class LZ4CompressorWrapper(CompressorWrapper[LZ4FrameFile]): ...
-
-_MODE_CLOSED: Literal[0]
-_MODE_READ: Literal[1]
-_MODE_READ_EOF: Literal[2]
-_MODE_WRITE: Literal[3]
-_BUFFER_SIZE: Literal[8192]
 
 class BinaryZlibFile(io.BufferedIOBase):
     wbits: ClassVar[int]
