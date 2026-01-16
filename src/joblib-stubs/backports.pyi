@@ -1,9 +1,10 @@
 import re
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 from _typeshed import StrOrBytesPath
 from joblib._typeshed import MmapMode
+from numpy.typing import DTypeLike
 
 class Version:
     def __init__(self, vstring: str | None = ...) -> None: ...
@@ -21,13 +22,13 @@ class LooseVersion(Version):
 
 def make_memmap(
     filename: StrOrBytesPath,
-    dtype: str = ...,
+    dtype: DTypeLike = ...,
     mode: MmapMode = ...,
     offset: int = ...,
     shape: int | tuple[int, ...] | None = ...,
-    order: str = ...,
+    order: Literal["K", "A", "C", "F"] = ...,
     unlink_on_gc_collect: bool = ...,
-) -> np.memmap[Any, Any]: ...
+) -> np.memmap[Any, np.dtype[Any]]: ...
 
 access_denied_errors: tuple[int, int]
 

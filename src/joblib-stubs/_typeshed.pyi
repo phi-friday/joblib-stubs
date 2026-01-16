@@ -44,7 +44,9 @@ DaskScatterIterItem: TypeAlias = list[Any] | dict[Any, Any]
 Prefer: TypeAlias = Literal["processes", "threads"]
 Require: TypeAlias = Literal["sharedmem"]
 HashType: TypeAlias = Literal["md5", "sha1"]
-MmapMode: TypeAlias = Literal["r+", "r", "w+", "c"]
+MmapMode: TypeAlias = Literal[
+    "readonly", "r", "copyonwrite", "c", "readwrite", "r+", "write", "w+"
+]
 Reducer: TypeAlias = Callable[Concatenate[type[_T], ...], Any]
 Dispatch: TypeAlias = Callable[[Unpickler, _T], None]
 ReturnList: TypeAlias = Literal["list"]
