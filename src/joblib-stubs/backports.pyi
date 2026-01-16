@@ -29,7 +29,4 @@ def make_memmap(
     order: Literal["K", "A", "C", "F"] = ...,
     unlink_on_gc_collect: bool = ...,
 ) -> np.memmap[Any, np.dtype[Any]]: ...
-
-access_denied_errors: tuple[int, int]
-
 def concurrency_safe_rename(src: StrOrBytesPath, dst: StrOrBytesPath) -> None: ...
