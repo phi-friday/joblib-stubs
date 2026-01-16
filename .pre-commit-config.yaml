@@ -23,6 +23,7 @@ repos:
         name: mypy
         args: [--strict]
         additional_dependencies: [numpy, dask, distributed, tornado]
+        language_version: python3.11
     repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.19.1
 
