@@ -7,7 +7,8 @@ Type stubs for [joblib](https://github.com/joblib/joblib). This repo contains on
 ```bash
 uv sync                    # Install dependencies
 uv run poe lint            # Ruff lint + format
-uv run poe mypy            # Type check (strict)
+uv run poe pyright         # Type check (strict, pyright)
+uv run poe mypy            # Type check (strict, mypy)
 uv run poe check           # Run all checks (pre-commit)
 ```
 

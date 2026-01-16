@@ -1,6 +1,7 @@
 {
     "include": [
         "src/joblib-stubs",
+        "src/tests",
     ],
     "typeCheckingMode": "strict",
     "pythonVersion": "3.11",
