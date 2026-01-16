@@ -8,13 +8,6 @@ from joblib._typeshed import HashType
 
 Pickler = pickle.Pickler
 
-class _ConsistentSet:
-    def __init__(self, set_sequence: Iterable[Hashable]) -> None: ...
-
-class _MyHash:
-    args: tuple[Any]
-    def __init__(self, *args: Any) -> None: ...
-
 class Hasher(Pickler):
     stream: io.BytesIO
     def __init__(self, hash_name: HashType = ...) -> None: ...
