@@ -40,6 +40,10 @@ joblib-dependencies = [
     "dask>=2025.12.0",
     "distributed>=2025.12.0",
 ]
+test = [
+    { include-group = "joblib-dependencies" },
+    "pytest>=9.0.2",
+]
 dev = [
     { include-group = "joblib-dependencies" },
     "ruff==0.14.13",
@@ -50,7 +54,7 @@ dev = [
 
 [tool.uv]
 managed = true
-default-groups = ["dev"]
+default-groups = ["dev", "test"]
 
 [tool.poe.tasks]
 lint = ["_lint:check", "_lint:format"]
