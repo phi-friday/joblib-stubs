@@ -1,6 +1,4 @@
 import pickle
-import threading
-import weakref
 from collections.abc import Callable, Mapping
 from types import ModuleType
 from typing import Any, ClassVar, Concatenate, TypeAlias
@@ -10,11 +8,6 @@ from joblib._typeshed import Dispatch, EmptyCellValueClass, Reducer
 from typing_extensions import TypeVar
 
 _T = TypeVar("_T")
-
-_PICKLE_BY_VALUE_MODULES: set[str]
-_DYNAMIC_CLASS_TRACKER_BY_CLASS: weakref.WeakKeyDictionary[Any, str]
-_DYNAMIC_CLASS_TRACKER_BY_ID: weakref.WeakValueDictionary[str, Any]
-_DYNAMIC_CLASS_TRACKER_LOCK: threading.Lock
 
 DEFAULT_PROTOCOL: int
 PYPY: bool

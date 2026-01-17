@@ -7,15 +7,21 @@ from concurrent.futures import TimeoutError as TimeoutError  # noqa: A004
 from concurrent.futures import as_completed as as_completed
 from concurrent.futures import wait as wait
 
-from ._base import Future as Future
-from .backend.context import cpu_count as cpu_count
-from .backend.reduction import set_loky_pickler as set_loky_pickler
-from .cloudpickle_wrapper import (
+from joblib.externals.loky._base import Future as Future
+from joblib.externals.loky.backend.context import cpu_count as cpu_count
+from joblib.externals.loky.backend.reduction import set_loky_pickler as set_loky_pickler
+from joblib.externals.loky.cloudpickle_wrapper import (
     wrap_non_picklable_objects as wrap_non_picklable_objects,
 )
-from .process_executor import BrokenProcessPool as BrokenProcessPool
-from .process_executor import ProcessPoolExecutor as ProcessPoolExecutor
-from .reusable_executor import get_reusable_executor as get_reusable_executor
+from joblib.externals.loky.process_executor import (
+    BrokenProcessPool as BrokenProcessPool,
+)
+from joblib.externals.loky.process_executor import (
+    ProcessPoolExecutor as ProcessPoolExecutor,
+)
+from joblib.externals.loky.reusable_executor import (
+    get_reusable_executor as get_reusable_executor,
+)
 
 __all__ = [
     "ALL_COMPLETED",
