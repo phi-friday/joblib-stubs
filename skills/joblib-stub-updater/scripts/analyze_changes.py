@@ -1,17 +1,18 @@
 #!/usr/bin/env -S uv run --script
-"""
-Analyze changes between joblib versions for stub updates.
+"""Analyze changes between joblib versions for stub updates.
 
 This script compares two versions of joblib and outputs a structured report
 of API changes that need to be reflected in the stub files.
 
 Usage:
-    python analyze_changes.py --old-version 1.3.2 --new-version 1.4.0 --joblib-path /tmp/joblib-source
+    python analyze_changes.py --old-version 1.3.2 --new-version 1.4.0 \
+        --joblib-path /tmp/joblib-source
 
 Output:
     - JSON report of changes
     - Human-readable summary
 """
+# ruff: noqa: T201, S603, S607
 
 from __future__ import annotations
 
@@ -22,7 +23,10 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
 
 
 @dataclass
@@ -37,6 +41,7 @@ class FunctionInfo:
     is_async: bool = False
 
     def signature_str(self) -> str:
+        """Return a string representation of the function signature."""
         return f"{self.name}({', '.join(self.params)})"
 
 
@@ -72,6 +77,7 @@ class Change:
     details: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
         return {
             "type": self.type,
             "category": self.category,
@@ -81,72 +87,73 @@ class Change:
         }
 
 
+def _extract_params(node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
+    """Extract parameter list from a function node."""
+    params: list[str] = []
+
+    # Regular arguments
+    for arg in node.args.args:
+        param = arg.arg
+        if arg.annotation:
+            param += f": {ast.unparse(arg.annotation)}"
+        params.append(param)
+
+    # *args
+    if node.args.vararg:
+        vararg = f"*{node.args.vararg.arg}"
+        if node.args.vararg.annotation:
+            vararg += f": {ast.unparse(node.args.vararg.annotation)}"
+        params.append(vararg)
+    elif node.args.kwonlyargs:
+        params.append("*")
+
+    # keyword-only arguments
+    for arg in node.args.kwonlyargs:
+        param = arg.arg
+        if arg.annotation:
+            param += f": {ast.unparse(arg.annotation)}"
+        params.append(param)
+
+    # **kwargs
+    if node.args.kwarg:
+        kwarg = f"**{node.args.kwarg.arg}"
+        if node.args.kwarg.annotation:
+            kwarg += f": {ast.unparse(node.args.kwarg.annotation)}"
+        params.append(kwarg)
+
+    return params
+
+
 class ASTVisitor(ast.NodeVisitor):
     """Extract API information from Python AST."""
 
     def __init__(self) -> None:
+        """Initialize the visitor with empty collections."""
         self.functions: dict[str, FunctionInfo] = {}
         self.classes: dict[str, ClassInfo] = {}
         self.exports: list[str] = []
         self.imports: list[str] = []
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """Visit a function definition node."""
         self._process_function(node)
         self.generic_visit(node)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        """Visit an async function definition node."""
         self._process_function(node, is_async=True)
         self.generic_visit(node)
 
     def _process_function(
-        self, node: ast.FunctionDef | ast.AsyncFunctionDef, is_async: bool = False
+        self, node: ast.FunctionDef | ast.AsyncFunctionDef, *, is_async: bool = False
     ) -> None:
+        """Process a function node and extract its information."""
         if node.name.startswith("_") and not node.name.startswith("__"):
             return  # Skip private functions (but keep dunder methods)
 
-        params = []
-        defaults = []
-
-        # Regular arguments
-        for arg in node.args.args:
-            param = arg.arg
-            if arg.annotation:
-                param += f": {ast.unparse(arg.annotation)}"
-            params.append(param)
-
-        # *args
-        if node.args.vararg:
-            vararg = f"*{node.args.vararg.arg}"
-            if node.args.vararg.annotation:
-                vararg += f": {ast.unparse(node.args.vararg.annotation)}"
-            params.append(vararg)
-        elif node.args.kwonlyargs:
-            params.append("*")
-
-        # keyword-only arguments
-        for arg in node.args.kwonlyargs:
-            param = arg.arg
-            if arg.annotation:
-                param += f": {ast.unparse(arg.annotation)}"
-            params.append(param)
-
-        # **kwargs
-        if node.args.kwarg:
-            kwarg = f"**{node.args.kwarg.arg}"
-            if node.args.kwarg.annotation:
-                kwarg += f": {ast.unparse(node.args.kwarg.annotation)}"
-            params.append(kwarg)
-
-        # Get defaults
-        for default in node.args.defaults:
-            defaults.append(ast.unparse(default))
-
-        # Return annotation
-        return_annotation = None
-        if node.returns:
-            return_annotation = ast.unparse(node.returns)
-
-        # Decorators
+        params = _extract_params(node)
+        defaults = [ast.unparse(d) for d in node.args.defaults]
+        return_annotation = ast.unparse(node.returns) if node.returns else None
         decorators = [ast.unparse(d) for d in node.decorator_list]
 
         self.functions[node.name] = FunctionInfo(
@@ -159,6 +166,7 @@ class ASTVisitor(ast.NodeVisitor):
         )
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """Visit a class definition node."""
         if node.name.startswith("_"):
             return
 
@@ -172,26 +180,30 @@ class ASTVisitor(ast.NodeVisitor):
                 func_visitor._process_function(item)
                 if item.name in func_visitor.functions:
                     methods[item.name] = func_visitor.functions[item.name]
-            elif isinstance(item, ast.AnnAssign):
-                if isinstance(item.target, ast.Name):
-                    class_vars.append(item.target.id)
+            elif isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
+                class_vars.append(item.target.id)
 
         self.classes[node.name] = ClassInfo(
             name=node.name, bases=bases, methods=methods, class_vars=class_vars
         )
 
     def visit_Assign(self, node: ast.Assign) -> None:
-        # Capture __all__
+        """Visit an assignment node to capture __all__."""
         for target in node.targets:
-            if isinstance(target, ast.Name) and target.id == "__all__":
-                if isinstance(node.value, ast.List):
-                    for elt in node.value.elts:
-                        if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
-                            self.exports.append(elt.value)
+            if (
+                isinstance(target, ast.Name)
+                and target.id == "__all__"
+                and isinstance(node.value, ast.List)
+            ):
+                self.exports.extend(
+                    elt.value
+                    for elt in node.value.elts
+                    if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+                )
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
-        # Capture re-exports
+        """Visit an import-from node to capture re-exports."""
         for alias in node.names:
             name = alias.asname or alias.name
             if not name.startswith("_"):
@@ -227,13 +239,14 @@ def get_file_at_version(repo_path: Path, version: str, file_path: str) -> str | 
             capture_output=True,
             check=True,
         )
+    except subprocess.CalledProcessError:
+        return None
+    else:
         # Try UTF-8 first, fall back to latin-1
         try:
             return result.stdout.decode("utf-8")
         except UnicodeDecodeError:
             return result.stdout.decode("latin-1")
-    except subprocess.CalledProcessError:
-        return None
 
 
 def compare_functions(
@@ -246,28 +259,27 @@ def compare_functions(
     new_names = set(new.keys())
 
     # Added functions
-    for name in new_names - old_names:
-        func = new[name]
-        changes.append(
-            Change(
-                type="added",
-                category="function",
-                module=module,
-                name=name,
-                details={
-                    "signature": func.signature_str(),
-                    "params": func.params,
-                    "return": func.return_annotation,
-                    "decorators": func.decorators,
-                },
-            )
+    changes.extend(
+        Change(
+            type="added",
+            category="function",
+            module=module,
+            name=name,
+            details={
+                "signature": new[name].signature_str(),
+                "params": new[name].params,
+                "return": new[name].return_annotation,
+                "decorators": new[name].decorators,
+            },
         )
+        for name in new_names - old_names
+    )
 
     # Removed functions
-    for name in old_names - new_names:
-        changes.append(
-            Change(type="removed", category="function", module=module, name=name)
-        )
+    changes.extend(
+        Change(type="removed", category="function", module=module, name=name)
+        for name in old_names - new_names
+    )
 
     # Modified functions
     for name in old_names & new_names:
@@ -316,27 +328,26 @@ def compare_classes(
     new_names = set(new.keys())
 
     # Added classes
-    for name in new_names - old_names:
-        cls = new[name]
-        changes.append(
-            Change(
-                type="added",
-                category="class",
-                module=module,
-                name=name,
-                details={
-                    "bases": cls.bases,
-                    "methods": list(cls.methods.keys()),
-                    "class_vars": cls.class_vars,
-                },
-            )
+    changes.extend(
+        Change(
+            type="added",
+            category="class",
+            module=module,
+            name=name,
+            details={
+                "bases": new[name].bases,
+                "methods": list(new[name].methods.keys()),
+                "class_vars": new[name].class_vars,
+            },
         )
+        for name in new_names - old_names
+    )
 
     # Removed classes
-    for name in old_names - new_names:
-        changes.append(
-            Change(type="removed", category="class", module=module, name=name)
-        )
+    changes.extend(
+        Change(type="removed", category="class", module=module, name=name)
+        for name in old_names - new_names
+    )
 
     # Modified classes
     for name in old_names & new_names:
@@ -344,101 +355,67 @@ def compare_classes(
         new_cls = new[name]
 
         # Compare methods
-        method_changes = compare_functions(
-            old_cls.methods, new_cls.methods, f"{module}.{name}"
+        changes.extend(
+            compare_functions(old_cls.methods, new_cls.methods, f"{module}.{name}")
         )
-        changes.extend(method_changes)
 
         # Compare class variables
         old_vars = set(old_cls.class_vars)
         new_vars = set(new_cls.class_vars)
 
-        for var in new_vars - old_vars:
-            changes.append(
-                Change(
-                    type="added",
-                    category="class_var",
-                    module=module,
-                    name=f"{name}.{var}",
-                )
+        changes.extend(
+            Change(
+                type="added", category="class_var", module=module, name=f"{name}.{v}"
             )
-
-        for var in old_vars - new_vars:
-            changes.append(
-                Change(
-                    type="removed",
-                    category="class_var",
-                    module=module,
-                    name=f"{name}.{var}",
-                )
+            for v in new_vars - old_vars
+        )
+        changes.extend(
+            Change(
+                type="removed", category="class_var", module=module, name=f"{name}.{v}"
             )
+            for v in old_vars - new_vars
+        )
 
     return changes
 
 
-def analyze_module_changes(
-    repo_path: Path, old_version: str, new_version: str, module_path: str
+def _analyze_new_module(module_name: str, new_source: str) -> list[Change]:
+    """Analyze a newly added module."""
+    changes: list[Change] = [
+        Change(type="added", category="module", module=module_name, name=module_name)
+    ]
+
+    new_info = parse_module(new_source)
+    if new_info:
+        changes.extend(
+            Change(
+                type="added",
+                category="function",
+                module=module_name,
+                name=name,
+                details={"signature": func.signature_str()},
+            )
+            for name, func in new_info.functions.items()
+        )
+        changes.extend(
+            Change(type="added", category="class", module=module_name, name=name)
+            for name in new_info.classes
+        )
+
+    return changes
+
+
+def _analyze_modified_module(
+    module_name: str, old_source: str, new_source: str
 ) -> list[Change]:
-    """Analyze changes in a single module."""
-    old_source = get_file_at_version(repo_path, old_version, module_path)
-    new_source = get_file_at_version(repo_path, new_version, module_path)
-
-    module_name = (
-        module_path.replace("joblib/", "").replace(".py", "").replace("/", ".")
-    )
-    if module_name == "__init__":
-        module_name = "joblib"
-    else:
-        module_name = f"joblib.{module_name}"
-
-    changes: list[Change] = []
-
-    # Handle new module
-    if old_source is None and new_source is not None:
-        changes.append(
-            Change(
-                type="added", category="module", module=module_name, name=module_name
-            )
-        )
-        # Parse new module for details
-        new_info = parse_module(new_source)
-        if new_info:
-            for name, func in new_info.functions.items():
-                changes.append(
-                    Change(
-                        type="added",
-                        category="function",
-                        module=module_name,
-                        name=name,
-                        details={"signature": func.signature_str()},
-                    )
-                )
-            for name in new_info.classes:
-                changes.append(
-                    Change(
-                        type="added", category="class", module=module_name, name=name
-                    )
-                )
-        return changes
-
-    # Handle removed module
-    if old_source is not None and new_source is None:
-        changes.append(
-            Change(
-                type="removed", category="module", module=module_name, name=module_name
-            )
-        )
-        return changes
-
-    # Handle modified module
-    if old_source is None or new_source is None:
-        return changes
-
+    """Analyze changes in a modified module."""
     old_info = parse_module(old_source)
     new_info = parse_module(new_source)
 
     if old_info is None or new_info is None:
-        return changes
+        return []
+
+    changes: list[Change] = []
 
     # Compare functions
     changes.extend(
@@ -452,17 +429,45 @@ def analyze_module_changes(
     old_exports = set(old_info.exports)
     new_exports = set(new_info.exports)
 
-    for name in new_exports - old_exports:
-        changes.append(
-            Change(type="added", category="export", module=module_name, name=name)
-        )
-
-    for name in old_exports - new_exports:
-        changes.append(
-            Change(type="removed", category="export", module=module_name, name=name)
-        )
+    changes.extend(
+        Change(type="added", category="export", module=module_name, name=name)
+        for name in new_exports - old_exports
+    )
+    changes.extend(
+        Change(type="removed", category="export", module=module_name, name=name)
+        for name in old_exports - new_exports
+    )
 
     return changes
+
+
+def analyze_module_changes(
+    repo_path: Path, old_version: str, new_version: str, module_path: str
+) -> list[Change]:
+    """Analyze changes in a single module."""
+    old_source = get_file_at_version(repo_path, old_version, module_path)
+    new_source = get_file_at_version(repo_path, new_version, module_path)
+
+    raw_name = module_path.replace("joblib/", "").replace(".py", "").replace("/", ".")
+    module_name = "joblib" if raw_name == "__init__" else f"joblib.{raw_name}"
+
+    # Handle new module
+    if old_source is None and new_source is not None:
+        return _analyze_new_module(module_name, new_source)
+
+    # Handle removed module
+    if old_source is not None and new_source is None:
+        return [
+            Change(
+                type="removed", category="module", module=module_name, name=module_name
+            )
+        ]
+
+    # Handle modified module
+    if old_source is None or new_source is None:
+        return []
+
+    return _analyze_modified_module(module_name, old_source, new_source)
 
 
 def get_python_files(repo_path: Path, version: str) -> list[str]:
@@ -475,10 +480,10 @@ def get_python_files(repo_path: Path, version: str) -> list[str]:
             text=True,
             check=True,
         )
-        files = [f for f in result.stdout.strip().split("\n") if f.endswith(".py")]
-        return files
     except subprocess.CalledProcessError:
         return []
+    else:
+        return [f for f in result.stdout.strip().split("\n") if f.endswith(".py")]
 
 
 def analyze_all_changes(
@@ -502,6 +507,33 @@ def analyze_all_changes(
     return all_changes
 
 
+def _format_added_change(change: Change) -> str:
+    """Format an added change for the report."""
+    if change.category == "module":
+        return f"- **New module**: `{change.name}`"
+    if change.category == "function":
+        sig = change.details.get("signature", change.name)
+        return f"- `{change.module}`: function `{sig}`"
+    if change.category == "class":
+        return f"- `{change.module}`: class `{change.name}`"
+    if change.category == "export":
+        return f"- `{change.module}`: export `{change.name}`"
+    return f"- `{change.module}`: {change.category} `{change.name}`"
+
+
+def _format_modified_change(change: Change) -> list[str]:
+    """Format a modified change for the report."""
+    lines = [f"- `{change.module}`: {change.category} `{change.name}`"]
+    if "old_signature" in change.details:
+        lines.append(f"  - Old: `{change.details['old_signature']}`")
+        lines.append(f"  - New: `{change.details['new_signature']}`")
+    if "old_return" in change.details:
+        old_ret = change.details["old_return"]
+        new_ret = change.details["new_return"]
+        lines.append(f"  - Return changed: `{old_ret}` → `{new_ret}`")
+    return lines
+
+
 def format_report(changes: list[Change]) -> str:
     """Format changes as a human-readable report."""
     lines = ["# Joblib API Changes Report", ""]
@@ -512,41 +544,19 @@ def format_report(changes: list[Change]) -> str:
     modified = [c for c in changes if c.type == "modified"]
 
     if added:
-        lines.append("## Added")
-        lines.append("")
-        for c in added:
-            if c.category == "module":
-                lines.append(f"- **New module**: `{c.name}`")
-            elif c.category == "function":
-                sig = c.details.get("signature", c.name)
-                lines.append(f"- `{c.module}`: function `{sig}`")
-            elif c.category == "class":
-                lines.append(f"- `{c.module}`: class `{c.name}`")
-            elif c.category == "export":
-                lines.append(f"- `{c.module}`: export `{c.name}`")
-            else:
-                lines.append(f"- `{c.module}`: {c.category} `{c.name}`")
+        lines.extend(["## Added", ""])
+        lines.extend(_format_added_change(c) for c in added)
         lines.append("")
 
     if removed:
-        lines.append("## Removed")
-        lines.append("")
-        for c in removed:
-            lines.append(f"- `{c.module}`: {c.category} `{c.name}`")
+        lines.extend(["## Removed", ""])
+        lines.extend(f"- `{c.module}`: {c.category} `{c.name}`" for c in removed)
         lines.append("")
 
     if modified:
-        lines.append("## Modified")
-        lines.append("")
+        lines.extend(["## Modified", ""])
         for c in modified:
-            lines.append(f"- `{c.module}`: {c.category} `{c.name}`")
-            if "old_signature" in c.details:
-                lines.append(f"  - Old: `{c.details['old_signature']}`")
-                lines.append(f"  - New: `{c.details['new_signature']}`")
-            if "old_return" in c.details:
-                lines.append(
-                    f"  - Return changed: `{c.details['old_return']}` → `{c.details['new_return']}`"
-                )
+            lines.extend(_format_modified_change(c))
         lines.append("")
 
     if not changes:
@@ -556,6 +566,7 @@ def format_report(changes: list[Change]) -> str:
 
 
 def main() -> None:
+    """Main entry point for the script."""
     parser = argparse.ArgumentParser(
         description="Analyze joblib API changes between versions"
     )
