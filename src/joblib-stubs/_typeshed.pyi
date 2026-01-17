@@ -1,6 +1,6 @@
 from collections.abc import Awaitable, Callable
 from pickle import Unpickler
-from typing import Any, Concatenate, Literal, NamedTuple, Protocol, TypeAlias, overload
+from typing import Any, Concatenate, Literal, Protocol, TypeAlias, overload
 
 from joblib.memory import AsyncMemorizedFunc as AsyncMemorizedFunc
 from joblib.memory import MemorizedFunc as MemorizedFunc
@@ -25,15 +25,6 @@ class Process(Protocol):
 
 class ItemInfo(TypedDict, total=True):
     location: str
-
-class FullArgSpec(NamedTuple):
-    args: list[str]
-    varargs: str
-    varkw: str
-    defaults: tuple[Any, ...]
-    kwonlyargs: list[str]
-    kwonlydefaults: dict[str, Any] | None
-    annotations: dict[str, Any] | None
 
 class ArrayMemmapForwardReducerReduceKwargs(TypedDict, total=True):
     verbose: int

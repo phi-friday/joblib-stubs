@@ -1,8 +1,8 @@
 from collections.abc import Callable
+from inspect import FullArgSpec
 from types import FunctionType
 from typing import Any
 
-from joblib._typeshed import FullArgSpec
 from joblib.logger import pformat as pformat
 from typing_extensions import ParamSpec
 

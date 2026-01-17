@@ -6,7 +6,7 @@ from typing import Any, Concatenate
 
 from joblib._typeshed import HashType
 
-Pickler = pickle.Pickler
+Pickler = pickle._Pickler  # noqa: SLF001
 
 class Hasher(Pickler):
     stream: io.BytesIO
