@@ -10,6 +10,9 @@ Type stubs for the [joblib](https://github.com/joblib/joblib) library.
 > This package provides type hints only and contains no runtime code.  
 > For the actual runtime implementation, install [`joblib`](https://github.com/joblib/joblib).
 
+> [!WARNING]  
+> This package does **not** include type stubs for `joblib.externals` (bundled `cloudpickle` and `loky`).
+
 ## Installation
 
 ```shell
@@ -30,10 +33,6 @@ from joblib import Parallel, delayed
 results = Parallel(n_jobs=2)(delayed(sqrt)(i**2) for i in range(10))
 assert_type(results, list[float])
 ```
-
-## TODO
-
-* [ ] Remove all `Incomplete` type annotations
 
 ## License
 

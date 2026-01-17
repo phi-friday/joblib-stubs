@@ -19,7 +19,6 @@ src/
 │   ├── __init__.pyi        # Public API re-exports
 │   ├── _typeshed.pyi       # Internal type definitions
 │   ├── memory.pyi          # Module stubs
-│   └── externals/          # Stubs for joblib.externals
 └── tests/                  # Stub validation tests
     └── test_<module>.py
 ```
@@ -51,6 +50,12 @@ class Example:
 | Ruff | ALL | Python 3.11 target |
 
 ## Important Notes
+
+### Bundled Dependencies (externals)
+
+**⚠️ This stub package does NOT include stubs for `joblib.externals`**
+
+The runtime `joblib` package bundles `cloudpickle` and `loky` under `joblib.externals` for convenience. However, this stub package deliberately excludes type hints for these bundled packages.
 
 ### Python Execution
 
@@ -252,12 +257,6 @@ uv run pytest src/tests/test_<module>.py -v  # ✓ Tests pass
 ```
 
 ---
-
-## TODO
-
-- Remove `Incomplete` from:
-  - `externals/cloudpickle/cloudpickle_fast.pyi`
-  - `externals/loky/backend/synchronize.pyi`
 
 ## References
 
