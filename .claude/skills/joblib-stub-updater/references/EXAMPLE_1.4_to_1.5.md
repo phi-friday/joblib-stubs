@@ -1,71 +1,131 @@
 # Example: Updating Stubs from 1.4.2 to 1.5.0
 
-This document shows a complete example of updating joblib-stubs based on changes detected between versions 1.4.2 and 1.5.0.
+This document shows a complete example of updating joblib-stubs based on actual changes between joblib versions 1.4.2 and 1.5.0.
 
 ## 1. Detect Changes
 
-Run the analysis script:
+### Setup Repository
 
 ```bash
-cd /path/to/joblib-stubs
-uv run python skills/joblib-stub-updater/scripts/analyze_changes.py \
-    --old-version 1.4.2 \
-    --new-version 1.5.0 \
-    --joblib-path /tmp/joblib-source
+# Clone joblib source if not already present
+if [ ! -d /tmp/joblib-source ]; then
+    git clone --depth=100 https://github.com/joblib/joblib.git /tmp/joblib-source
+fi
+cd /tmp/joblib-source
+git fetch --tags
+```
+
+### Generate Diff
+
+```bash
+# View public API changes
+git diff 1.4.2..1.5.0 -- joblib/__init__.py
+
+# Check specific module changes
+git diff 1.4.2..1.5.0 -- joblib/memory.py | head -100
+git diff 1.4.2..1.5.0 -- joblib/numpy_pickle.py | grep -E "def (dump|load)" -A 10
 ```
 
 ### Key Changes Found:
 
 **Public API (needs stub updates):**
-- ✅ New exports: `ParallelBackendBase`, `StoreBackendBase` 
-- ✅ `Memory.__init__`: removed `bytes_limit` parameter
-- ✅ `numpy_pickle.dump`: removed `cache_size` parameter
-- ✅ `numpy_pickle.load`: added `ensure_native_byte_order` parameter
-- ✅ `Parallel.__init__`: added `**backend_kwargs`
+- ✅ `__init__.py`: New exports `ParallelBackendBase`, `StoreBackendBase`
+- ✅ `Memory.__init__`: removed deprecated `bytes_limit` parameter
+- ✅ `numpy_pickle.dump`: removed deprecated `cache_size` parameter
 
-**Internal (usually skip):**
-- Test file changes
-- `loky.backend` internals
+**Internal/formatting (can skip):**
+- Import statement reorganization
+- Docstring updates
+- Code formatting changes
 
 ## 2. Update __init__.pyi
 
 Add new exports to `src/joblib-stubs/__init__.pyi`:
 
 ```python
-# Before (1.4.2)
-from .parallel import Parallel as Parallel
+# Before (1.4.2) - these classes were not exported
+from joblib.parallel import Parallel as Parallel
+# ... other imports
 
-# After (1.5.0) - add new exports
-from ._parallel_backends import ParallelBackendBase as ParallelBackendBase
-from ._store_backends import StoreBackendBase as StoreBackendBase
-from .parallel import Parallel as Parallel
+# After (1.5.0) - add explicit backend base classes
+from joblib._parallel_backends import ParallelBackendBase as ParallelBackendBase
+from joblib._store_backends import StoreBackendBase as StoreBackendBase
+from joblib.parallel import Parallel as Parallel
+# ... other imports
+
+# Also update __all__
+__all__ = [
+    # ... existing exports
+    "ParallelBackendBase",
+    "StoreBackendBase",
+    # ... other exports
+]
 ```
+
+**Verification:**
+```bash
+cd /tmp/joblib-source
+git diff 1.4.2..1.5.0 -- joblib/__init__.py | grep "ParallelBackendBase\|StoreBackendBase"
+```
+
+Output shows these were added to imports in 1.5.0.
 
 ## 3. Update memory.pyi
 
-Remove `bytes_limit` parameter from `Memory.__init__`:
+Remove deprecated `bytes_limit` parameter from `Memory.__init__`:
 
+**Verification:**
+```bash
+cd /tmp/joblib-source
+
+# Check 1.4.2 signature
+git show 1.4.2:joblib/memory.py | sed -n '/^class Memory/,/^class /p' | grep "def __init__" -A 5
+# Output: def __init__(self, location=None, backend='local',
+#                      mmap_mode=None, compress=False, verbose=1, bytes_limit=None,
+#                      backend_options=None):
+
+# Check 1.5.0 signature  
+git show 1.5.0:joblib/memory.py | sed -n '/^class Memory/,/^class /p' | grep "def __init__" -A 10
+# Output: def __init__(
+#             self,
+#             location=None,
+#             backend="local",
+#             mmap_mode=None,
+#             compress=False,
+#             verbose=1,
+#             backend_options=None,
+#         ):
+```
+
+**Stub Update:**
 ```python
-# Before (1.4.2)
-class Memory:
+# Necessary imports at top of file (absolute paths)
+from pathlib import Path
+from typing import Any
+
+from joblib._typeshed import MmapMode
+from joblib.logger import Logger
+
+# Before (1.4.2 stub)
+class Memory(Logger):
     def __init__(
         self,
-        location: str | os.PathLike[str] | None = ...,
+        location: str | Path | None = ...,
         backend: str = ...,
-        mmap_mode: str | None = ...,
+        mmap_mode: MmapMode | None = ...,
         compress: bool | int = ...,
         verbose: int = ...,
-        bytes_limit: int | str | None = ...,  # REMOVE THIS
+        bytes_limit: int | str | None = ...,  # REMOVE THIS LINE
         backend_options: dict[str, Any] | None = ...,
     ) -> None: ...
 
-# After (1.5.0)
-class Memory:
+# After (1.5.0 stub)
+class Memory(Logger):
     def __init__(
         self,
-        location: str | os.PathLike[str] | None = ...,
+        location: str | Path | None = ...,
         backend: str = ...,
-        mmap_mode: str | None = ...,
+        mmap_mode: MmapMode | None = ...,
         compress: bool | int = ...,
         verbose: int = ...,
         backend_options: dict[str, Any] | None = ...,
@@ -74,93 +134,87 @@ class Memory:
 
 ## 4. Update numpy_pickle.pyi
 
-### Remove `cache_size` from `dump`:
+Remove deprecated `cache_size` parameter from `dump` function:
 
+**Verification:**
+```bash
+cd /tmp/joblib-source
+
+# Check the diff
+git diff 1.4.2..1.5.0 -- joblib/numpy_pickle.py | grep -E "def dump" -A 10
+
+# Output shows:
+# -def dump(value, filename, compress=0, protocol=None, cache_size=None):
+# +def dump(value, filename, compress=0, protocol=None):
+```
+
+**Stub Update:**
 ```python
-# Before
+# Necessary imports at top of file (absolute paths)
+from pathlib import Path
+from typing import IO, Any
+
+# Before (1.4.2 stub)
 def dump(
     value: Any,
-    filename: str | os.PathLike[str] | IO[bytes],
+    filename: str | Path | IO[bytes],
     compress: bool | int | tuple[str, int] = ...,
     protocol: int | None = ...,
-    cache_size: int | None = ...,  # REMOVE
+    cache_size: int | None = ...,  # REMOVE THIS LINE
 ) -> list[str]: ...
 
-# After
+# After (1.5.0 stub)
 def dump(
     value: Any,
-    filename: str | os.PathLike[str] | IO[bytes],
+    filename: str | Path | IO[bytes],
     compress: bool | int | tuple[str, int] = ...,
     protocol: int | None = ...,
 ) -> list[str]: ...
 ```
 
-### Add `ensure_native_byte_order` to `load`:
+## 5. Validate Changes
 
-```python
-# Before
-def load(
-    filename: str | os.PathLike[str] | IO[bytes],
-    mmap_mode: str | None = ...,
-) -> Any: ...
-
-# After
-def load(
-    filename: str | os.PathLike[str] | IO[bytes],
-    mmap_mode: str | None = ...,
-    ensure_native_byte_order: bool = ...,
-) -> Any: ...
-```
-
-## 5. Update parallel.pyi
-
-Add `**backend_kwargs` to `Parallel.__init__`:
-
-```python
-# After (1.5.0)
-class Parallel:
-    def __init__(
-        self,
-        n_jobs: int | None = ...,
-        backend: str | ParallelBackendBase | None = ...,
-        return_as: Literal["list", "generator", "generator_unordered"] = ...,
-        verbose: int = ...,
-        timeout: float | None = ...,
-        pre_dispatch: int | str = ...,
-        batch_size: int | str = ...,
-        temp_folder: str | None = ...,
-        max_nbytes: int | str | None = ...,
-        mmap_mode: str | None = ...,
-        prefer: Literal["processes", "threads"] | None = ...,
-        require: Literal["sharedmem"] | None = ...,
-        **backend_kwargs: Any,  # NEW
-    ) -> None: ...
-```
-
-## 6. Validate
+After updating all stubs, run full validation:
 
 ```bash
-# Lint and format
+# Navigate back to stub repository
+cd /home/phi/git/python/repo/joblib-stubs
+
+# Format and lint
 uv run poe lint
 
-# Type check
+# Type check with both checkers
 uv run poe pyright
 uv run poe mypy
 
-# Run tests
-uv run pytest src/tests/ -v
+# Run affected tests
+uv run pytest src/tests/test_memory.py -v
+uv run pytest src/tests/test_numpy_pickle.py -v
+uv run pytest src/tests/ -v  # All tests
 ```
 
-## 7. Update Tests
+## 6. Update Tests
 
-Add tests for new parameters:
+Update signature tests to match new signatures:
 
 ```python
-# In test_numpy_pickle.py
-class TestLoad:
-    def test_ensure_native_byte_order_param(self) -> None:
-        sig = inspect.signature(mod.load)
-        assert "ensure_native_byte_order" in sig.parameters
+# In src/tests/test_memory.py
+class TestMemory:
+    def test_init_signature(self) -> None:
+        sig = inspect.signature(mod.Memory.__init__)
+        params = list(sig.parameters.keys())
+        # bytes_limit should NOT be in parameters anymore
+        assert "bytes_limit" not in params
+        assert "backend_options" in params
+
+# In src/tests/test_numpy_pickle.py
+class TestDump:
+    def test_dump_signature(self) -> None:
+        sig = inspect.signature(mod.dump)
+        params = list(sig.parameters.keys())
+        # cache_size should NOT be in parameters anymore
+        assert "cache_size" not in params
+        assert params == ["value", "filename", "compress", "protocol"]
 ```
 
 ## Summary Checklist
@@ -168,9 +222,37 @@ class TestLoad:
 | Module | Change | Status |
 |--------|--------|--------|
 | `__init__.pyi` | Add `ParallelBackendBase`, `StoreBackendBase` | ☐ |
-| `memory.pyi` | Remove `bytes_limit` | ☐ |
+| `memory.pyi` | Remove `bytes_limit` from `Memory.__init__` | ☐ |
 | `numpy_pickle.pyi` | Remove `cache_size` from `dump` | ☐ |
-| `numpy_pickle.pyi` | Add `ensure_native_byte_order` to `load` | ☐ |
-| `parallel.pyi` | Add `**backend_kwargs` | ☐ |
 | Tests | Update signature tests | ☐ |
-| Validate | `poe lint && poe pyright && poe mypy` | ☐ |
+| Validate | `uv run poe lint && uv run poe pyright && uv run poe mypy` | ☐ |
+
+## Complete Workflow Summary
+
+```bash
+# 1. Check versions
+uv run python -c "import joblib; print(joblib.__version__)"  # Current: 1.4.2
+curl -s https://pypi.org/pypi/joblib/json | python3 -c "import sys, json; print(json.load(sys.stdin)['info']['version'])"  # Latest: 1.5.0
+
+# 2. Clone and analyze
+if [ ! -d /tmp/joblib-source ]; then
+    git clone --depth=100 https://github.com/joblib/joblib.git /tmp/joblib-source
+fi
+cd /tmp/joblib-source
+git fetch --tags
+git diff 1.4.2..1.5.0 -- joblib/__init__.py joblib/memory.py joblib/numpy_pickle.py > /tmp/joblib-1.4.2-to-1.5.0.diff
+
+# 3. Review changes
+less /tmp/joblib-1.4.2-to-1.5.0.diff
+
+# 4. Update stubs (manual editing in VS Code)
+# - Edit src/joblib-stubs/__init__.pyi
+# - Edit src/joblib-stubs/memory.pyi
+# - Edit src/joblib-stubs/numpy_pickle.pyi
+# - Edit src/tests/test_memory.py
+# - Edit src/tests/test_numpy_pickle.py
+
+# 5. Validate
+cd /home/phi/git/python/repo/joblib-stubs
+uv run poe lint && uv run poe pyright && uv run poe mypy && uv run pytest src/tests/ -v
+```
