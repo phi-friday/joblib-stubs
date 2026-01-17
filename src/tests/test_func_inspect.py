@@ -3,17 +3,10 @@
 from __future__ import annotations
 
 import inspect
+from types import FunctionType
 from typing import assert_type
 
-import joblib.func_inspect as func_inspect_runtime
-from joblib.func_inspect import (
-    filter_args,
-    format_call,
-    format_signature,
-    full_argspec_fields,
-    get_func_code,
-    get_func_name,
-)
+import joblib.func_inspect as mod
 
 
 class TestConstants:
@@ -21,16 +14,16 @@ class TestConstants:
 
     def test_full_argspec_fields_exists(self) -> None:
         """full_argspec_fields should exist in runtime."""
-        assert hasattr(func_inspect_runtime, "full_argspec_fields")
+        assert hasattr(mod, "full_argspec_fields")
 
     def test_full_argspec_fields_type(self) -> None:
         """full_argspec_fields should be a str."""
-        assert_type(full_argspec_fields, str)
-        assert isinstance(full_argspec_fields, str)
+        assert_type(mod.full_argspec_fields, str)
+        assert isinstance(mod.full_argspec_fields, str)
 
     def test_full_argspec_type_exists(self) -> None:
         """full_argspec_type should exist in runtime."""
-        assert hasattr(func_inspect_runtime, "full_argspec_type")
+        assert hasattr(mod, "full_argspec_type")
 
 
 class TestGetFuncCode:
@@ -38,23 +31,22 @@ class TestGetFuncCode:
 
     def test_exists(self) -> None:
         """get_func_code should exist in runtime."""
-        assert hasattr(func_inspect_runtime, "get_func_code")
-        assert callable(func_inspect_runtime.get_func_code)
+        assert hasattr(mod, "get_func_code")
+        assert callable(mod.get_func_code)
 
     def test_signature(self) -> None:
         """get_func_code should have correct signature."""
-        sig = inspect.signature(get_func_code)
+        sig = inspect.signature(mod.get_func_code)
         params = list(sig.parameters.keys())
         assert params == ["func"]
 
     def test_return_type(self) -> None:
         """get_func_code should return tuple[str, str, int]."""
-        from types import FunctionType
 
         def sample_func() -> None:
             pass
 
-        result = get_func_code(
+        result = mod.get_func_code(
             FunctionType(sample_func.__code__, sample_func.__globals__)
         )
         assert_type(result, tuple[str, str, int])
@@ -70,12 +62,12 @@ class TestGetFuncName:
 
     def test_exists(self) -> None:
         """get_func_name should exist in runtime."""
-        assert hasattr(func_inspect_runtime, "get_func_name")
-        assert callable(func_inspect_runtime.get_func_name)
+        assert hasattr(mod, "get_func_name")
+        assert callable(mod.get_func_name)
 
     def test_signature(self) -> None:
         """get_func_name should have correct signature."""
-        sig = inspect.signature(get_func_name)
+        sig = inspect.signature(mod.get_func_name)
         params = list(sig.parameters.keys())
         assert "func" in params
         assert "resolv_alias" in params
@@ -87,7 +79,7 @@ class TestGetFuncName:
         def sample_func() -> None:
             pass
 
-        result = get_func_name(sample_func)
+        result = mod.get_func_name(sample_func)
         assert_type(result, tuple[list[str], str])
         assert isinstance(result, tuple)
         assert len(result) == 2
@@ -100,12 +92,12 @@ class TestFilterArgs:
 
     def test_exists(self) -> None:
         """filter_args should exist in runtime."""
-        assert hasattr(func_inspect_runtime, "filter_args")
-        assert callable(func_inspect_runtime.filter_args)
+        assert hasattr(mod, "filter_args")
+        assert callable(mod.filter_args)
 
     def test_signature(self) -> None:
         """filter_args should have correct signature."""
-        sig = inspect.signature(filter_args)
+        sig = inspect.signature(mod.filter_args)
         params = list(sig.parameters.keys())
         assert "func" in params
         assert "ignore_lst" in params
@@ -118,7 +110,7 @@ class TestFilterArgs:
         def sample_func(a: int, b: str) -> None:
             pass
 
-        result = filter_args(sample_func, [], (1, "test"), {})
+        result = mod.filter_args(sample_func, [], (1, "test"), {})
         assert isinstance(result, dict)
 
 
@@ -127,12 +119,12 @@ class TestFormatSignature:
 
     def test_exists(self) -> None:
         """format_signature should exist in runtime."""
-        assert hasattr(func_inspect_runtime, "format_signature")
-        assert callable(func_inspect_runtime.format_signature)
+        assert hasattr(mod, "format_signature")
+        assert callable(mod.format_signature)
 
     def test_signature(self) -> None:
         """format_signature should have correct signature."""
-        sig = inspect.signature(format_signature)
+        sig = inspect.signature(mod.format_signature)
         params = list(sig.parameters.keys())
         assert "func" in params
         assert "args" in params
@@ -144,7 +136,7 @@ class TestFormatSignature:
         def sample_func(a: int) -> None:
             pass
 
-        result = format_signature(sample_func, 1)
+        result = mod.format_signature(sample_func, 1)
         assert_type(result, tuple[list[str], str])
         assert isinstance(result, tuple)
         assert len(result) == 2
@@ -158,12 +150,12 @@ class TestFormatCall:
 
     def test_exists(self) -> None:
         """format_call should exist in runtime."""
-        assert hasattr(func_inspect_runtime, "format_call")
-        assert callable(func_inspect_runtime.format_call)
+        assert hasattr(mod, "format_call")
+        assert callable(mod.format_call)
 
     def test_signature(self) -> None:
         """format_call should have correct signature."""
-        sig = inspect.signature(format_call)
+        sig = inspect.signature(mod.format_call)
         params = list(sig.parameters.keys())
         assert "func" in params
         assert "args" in params
@@ -176,6 +168,6 @@ class TestFormatCall:
         def sample_func(a: int) -> None:
             pass
 
-        result = format_call(sample_func, (1,), {})
+        result = mod.format_call(sample_func, (1,), {})
         assert_type(result, str)
         assert isinstance(result, str)

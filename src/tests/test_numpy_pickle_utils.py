@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from typing import assert_type
 
-import joblib.numpy_pickle_utils as numpy_pickle_utils_runtime
-from joblib.numpy_pickle_utils import BUFFER_SIZE, xrange
+import joblib.numpy_pickle_utils as mod
 
 
 class TestPickler:
@@ -13,7 +12,7 @@ class TestPickler:
 
     def test_exists(self) -> None:
         """Pickler should exist in runtime."""
-        assert hasattr(numpy_pickle_utils_runtime, "Pickler")
+        assert hasattr(mod, "Pickler")
 
 
 class TestUnpickler:
@@ -21,7 +20,7 @@ class TestUnpickler:
 
     def test_exists(self) -> None:
         """Unpickler should exist in runtime."""
-        assert hasattr(numpy_pickle_utils_runtime, "Unpickler")
+        assert hasattr(mod, "Unpickler")
 
 
 class TestXrange:
@@ -29,11 +28,11 @@ class TestXrange:
 
     def test_exists(self) -> None:
         """xrange should exist in runtime."""
-        assert hasattr(numpy_pickle_utils_runtime, "xrange")
+        assert hasattr(mod, "xrange")
 
     def test_xrange_is_range(self) -> None:
         """xrange should be range in Python 3."""
-        assert xrange is range
+        assert mod.xrange is range
 
 
 class TestBufferSize:
@@ -41,9 +40,9 @@ class TestBufferSize:
 
     def test_exists(self) -> None:
         """BUFFER_SIZE should exist in runtime."""
-        assert hasattr(numpy_pickle_utils_runtime, "BUFFER_SIZE")
+        assert hasattr(mod, "BUFFER_SIZE")
 
     def test_type(self) -> None:
         """BUFFER_SIZE should be an int."""
-        assert_type(BUFFER_SIZE, int)
-        assert isinstance(BUFFER_SIZE, int)
+        assert_type(mod.BUFFER_SIZE, int)
+        assert isinstance(mod.BUFFER_SIZE, int)

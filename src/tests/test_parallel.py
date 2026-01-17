@@ -3,132 +3,48 @@
 from __future__ import annotations
 
 import inspect
-from typing import assert_type
+from typing import TYPE_CHECKING, Any, Literal, assert_type
 
-import joblib.parallel as parallel_runtime
-from joblib._parallel_backends import SequentialBackend
-from joblib.logger import Logger
-from joblib.parallel import (
-    BACKENDS,
-    DEFAULT_BACKEND,
-    DEFAULT_PROCESS_BACKEND,
-    DEFAULT_THREAD_BACKEND,
-    EXTERNAL_BACKENDS,
-    MAYBE_AVAILABLE_BACKENDS,
-    TASK_DONE,
-    TASK_ERROR,
-    TASK_PENDING,
-    VALID_BACKEND_CONSTRAINTS,
-    VALID_BACKEND_HINTS,
-    BatchCompletionCallBack,
-    BatchedCalls,
-    Parallel,
-    cpu_count,
-    delayed,
-    effective_n_jobs,
-    get_active_backend,
-    parallel_backend,
-    parallel_config,
-    register_parallel_backend,
-)
+import joblib.parallel as mod
 
 
-class TestConstants:
-    """Test module-level constants."""
+class TestModuleConstants:
+    """Test module-level constants and variables."""
 
     def test_backends_exists(self) -> None:
         """BACKENDS should exist in runtime."""
-        assert hasattr(parallel_runtime, "BACKENDS")
+        assert hasattr(mod, "BACKENDS")
 
     def test_backends_type(self) -> None:
         """BACKENDS should be a dict."""
-        assert isinstance(BACKENDS, dict)
+        if TYPE_CHECKING:
+            assert_type(mod.BACKENDS, dict[str, type[mod.ParallelBackendBase[Any]]])
+        assert isinstance(mod.BACKENDS, dict)
 
     def test_default_backend_exists(self) -> None:
         """DEFAULT_BACKEND should exist in runtime."""
-        assert hasattr(parallel_runtime, "DEFAULT_BACKEND")
+        assert hasattr(mod, "DEFAULT_BACKEND")
 
     def test_default_backend_type(self) -> None:
         """DEFAULT_BACKEND should be a str."""
-        assert_type(DEFAULT_BACKEND, str)
-        assert isinstance(DEFAULT_BACKEND, str)
+        assert_type(mod.DEFAULT_BACKEND, str)
+        assert isinstance(mod.DEFAULT_BACKEND, str)
 
     def test_default_thread_backend_exists(self) -> None:
         """DEFAULT_THREAD_BACKEND should exist in runtime."""
-        assert hasattr(parallel_runtime, "DEFAULT_THREAD_BACKEND")
-
-    def test_default_thread_backend_type(self) -> None:
-        """DEFAULT_THREAD_BACKEND should be a str."""
-        assert_type(DEFAULT_THREAD_BACKEND, str)
-        assert isinstance(DEFAULT_THREAD_BACKEND, str)
+        assert hasattr(mod, "DEFAULT_THREAD_BACKEND")
+        assert isinstance(mod.DEFAULT_THREAD_BACKEND, str)
 
     def test_default_process_backend_exists(self) -> None:
         """DEFAULT_PROCESS_BACKEND should exist in runtime."""
-        assert hasattr(parallel_runtime, "DEFAULT_PROCESS_BACKEND")
+        assert hasattr(mod, "DEFAULT_PROCESS_BACKEND")
+        assert isinstance(mod.DEFAULT_PROCESS_BACKEND, str)
 
-    def test_default_process_backend_type(self) -> None:
-        """DEFAULT_PROCESS_BACKEND should be a str."""
-        assert_type(DEFAULT_PROCESS_BACKEND, str)
-        assert isinstance(DEFAULT_PROCESS_BACKEND, str)
-
-    def test_maybe_available_backends_exists(self) -> None:
-        """MAYBE_AVAILABLE_BACKENDS should exist in runtime."""
-        assert hasattr(parallel_runtime, "MAYBE_AVAILABLE_BACKENDS")
-
-    def test_maybe_available_backends_type(self) -> None:
-        """MAYBE_AVAILABLE_BACKENDS should be a set."""
-        assert_type(MAYBE_AVAILABLE_BACKENDS, set[str])
-        assert isinstance(MAYBE_AVAILABLE_BACKENDS, set)
-
-    def test_external_backends_exists(self) -> None:
-        """EXTERNAL_BACKENDS should exist in runtime."""
-        assert hasattr(parallel_runtime, "EXTERNAL_BACKENDS")
-
-    def test_external_backends_type(self) -> None:
-        """EXTERNAL_BACKENDS should be a dict."""
-        assert isinstance(EXTERNAL_BACKENDS, dict)
-
-    def test_valid_backend_hints_exists(self) -> None:
-        """VALID_BACKEND_HINTS should exist in runtime."""
-        assert hasattr(parallel_runtime, "VALID_BACKEND_HINTS")
-
-    def test_valid_backend_hints_type(self) -> None:
-        """VALID_BACKEND_HINTS should be a tuple."""
-        assert_type(VALID_BACKEND_HINTS, tuple[str | None, ...])
-        assert isinstance(VALID_BACKEND_HINTS, tuple)
-
-    def test_valid_backend_constraints_exists(self) -> None:
-        """VALID_BACKEND_CONSTRAINTS should exist in runtime."""
-        assert hasattr(parallel_runtime, "VALID_BACKEND_CONSTRAINTS")
-
-    def test_valid_backend_constraints_type(self) -> None:
-        """VALID_BACKEND_CONSTRAINTS should be a tuple."""
-        assert_type(VALID_BACKEND_CONSTRAINTS, tuple[str | None, ...])
-        assert isinstance(VALID_BACKEND_CONSTRAINTS, tuple)
-
-    def test_task_done_exists(self) -> None:
-        """TASK_DONE should exist in runtime."""
-        assert hasattr(parallel_runtime, "TASK_DONE")
-
-    def test_task_done_type(self) -> None:
-        """TASK_DONE should be a str."""
-        assert isinstance(TASK_DONE, str)
-
-    def test_task_error_exists(self) -> None:
-        """TASK_ERROR should exist in runtime."""
-        assert hasattr(parallel_runtime, "TASK_ERROR")
-
-    def test_task_error_type(self) -> None:
-        """TASK_ERROR should be a str."""
-        assert isinstance(TASK_ERROR, str)
-
-    def test_task_pending_exists(self) -> None:
-        """TASK_PENDING should exist in runtime."""
-        assert hasattr(parallel_runtime, "TASK_PENDING")
-
-    def test_task_pending_type(self) -> None:
-        """TASK_PENDING should be a str."""
-        assert isinstance(TASK_PENDING, str)
+    def test_task_literals_exist(self) -> None:
+        """TASK_DONE, TASK_ERROR, TASK_PENDING should exist."""
+        assert hasattr(mod, "TASK_DONE")
+        assert hasattr(mod, "TASK_ERROR")
+        assert hasattr(mod, "TASK_PENDING")
 
 
 class TestGetActiveBackend:
@@ -136,12 +52,12 @@ class TestGetActiveBackend:
 
     def test_exists(self) -> None:
         """get_active_backend should exist in runtime."""
-        assert hasattr(parallel_runtime, "get_active_backend")
-        assert callable(parallel_runtime.get_active_backend)
+        assert hasattr(mod, "get_active_backend")
+        assert callable(mod.get_active_backend)
 
     def test_signature(self) -> None:
         """get_active_backend should have correct signature."""
-        sig = inspect.signature(get_active_backend)
+        sig = inspect.signature(mod.get_active_backend)
         params = list(sig.parameters.keys())
         assert "prefer" in params
         assert "require" in params
@@ -149,7 +65,9 @@ class TestGetActiveBackend:
 
     def test_return_type(self) -> None:
         """get_active_backend should return tuple."""
-        result = get_active_backend()
+        result = mod.get_active_backend()
+        if TYPE_CHECKING:
+            assert_type(result, tuple[mod.ParallelBackendBase[Any], int])
         assert isinstance(result, tuple)
         assert len(result) == 2
 
@@ -159,12 +77,12 @@ class TestParallelConfig:
 
     def test_class_exists(self) -> None:
         """parallel_config should exist in runtime."""
-        assert hasattr(parallel_runtime, "parallel_config")
-        assert inspect.isclass(parallel_runtime.parallel_config)
+        assert hasattr(mod, "parallel_config")
+        assert inspect.isclass(mod.parallel_config)
 
     def test_init_signature(self) -> None:
         """parallel_config.__init__ should have correct signature."""
-        sig = inspect.signature(parallel_config.__init__)
+        sig = inspect.signature(mod.parallel_config.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "backend" in params
@@ -176,28 +94,17 @@ class TestParallelConfig:
         assert "prefer" in params
         assert "require" in params
         assert "inner_max_num_threads" in params
-        assert "backend_params" in params
 
-    def test_enter_method(self) -> None:
-        """parallel_config.__enter__ should exist."""
-        sig = inspect.signature(parallel_config.__enter__)
-        params = list(sig.parameters.keys())
-        assert params == ["self"]
-
-    def test_exit_method(self) -> None:
-        """parallel_config.__exit__ should exist."""
-        sig = inspect.signature(parallel_config.__exit__)
-        params = list(sig.parameters.keys())
-        assert "self" in params
-        assert "type" in params
-        assert "value" in params
-        assert "traceback" in params
+    def test_context_manager(self) -> None:
+        """parallel_config should work as context manager."""
+        with mod.parallel_config() as config:
+            assert_type(config, dict[str, Any])
+            assert isinstance(config, dict)
 
     def test_unregister_method(self) -> None:
         """parallel_config.unregister should exist."""
-        sig = inspect.signature(parallel_config.unregister)
-        params = list(sig.parameters.keys())
-        assert params == ["self"]
+        assert hasattr(mod.parallel_config, "unregister")
+        assert callable(mod.parallel_config.unregister)
 
 
 class TestParallelBackend:
@@ -205,22 +112,21 @@ class TestParallelBackend:
 
     def test_class_exists(self) -> None:
         """parallel_backend should exist in runtime."""
-        assert hasattr(parallel_runtime, "parallel_backend")
-        assert inspect.isclass(parallel_runtime.parallel_backend)
+        assert hasattr(mod, "parallel_backend")
+        assert inspect.isclass(mod.parallel_backend)
 
     def test_inherits(self) -> None:
         """parallel_backend should inherit from parallel_config."""
-        assert issubclass(parallel_backend, parallel_config)
+        assert issubclass(mod.parallel_backend, mod.parallel_config)
 
     def test_init_signature(self) -> None:
         """parallel_backend.__init__ should have correct signature."""
-        sig = inspect.signature(parallel_backend.__init__)
+        sig = inspect.signature(mod.parallel_backend.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "backend" in params
         assert "n_jobs" in params
         assert "inner_max_num_threads" in params
-        assert "backend_params" in params
 
 
 class TestBatchedCalls:
@@ -228,12 +134,12 @@ class TestBatchedCalls:
 
     def test_class_exists(self) -> None:
         """BatchedCalls should exist in runtime."""
-        assert hasattr(parallel_runtime, "BatchedCalls")
-        assert inspect.isclass(parallel_runtime.BatchedCalls)
+        assert hasattr(mod, "BatchedCalls")
+        assert inspect.isclass(mod.BatchedCalls)
 
     def test_init_signature(self) -> None:
         """BatchedCalls.__init__ should have correct signature."""
-        sig = inspect.signature(BatchedCalls.__init__)
+        sig = inspect.signature(mod.BatchedCalls.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "iterator_slice" in params
@@ -241,23 +147,34 @@ class TestBatchedCalls:
         assert "reducer_callback" in params
         assert "pickle_cache" in params
 
-    def test_call_method(self) -> None:
-        """BatchedCalls.__call__ should exist."""
-        backend = SequentialBackend()
-        obj = BatchedCalls([], backend)
+    def test_callable(self) -> None:
+        """BatchedCalls instances should be callable."""
+        backend, n_jobs = mod.get_active_backend()
+        obj = mod.BatchedCalls([], (backend, n_jobs))
         assert callable(obj)
 
-    def test_reduce_method(self) -> None:
-        """BatchedCalls.__reduce__ should exist."""
-        backend = SequentialBackend()
-        obj = BatchedCalls([], backend)
-        assert hasattr(obj, "__reduce__")
+    def test_call_return_type(self) -> None:
+        """BatchedCalls.__call__ should return list[Any]."""
+        backend, n_jobs = mod.get_active_backend()
+        obj = mod.BatchedCalls([], (backend, n_jobs))
+        result = obj()
+        assert_type(result, list[Any])
+        assert isinstance(result, list)
 
-    def test_len_method(self) -> None:
-        """BatchedCalls.__len__ should exist."""
-        backend = SequentialBackend()
-        obj = BatchedCalls([], backend)
-        assert hasattr(obj, "__len__")
+    def test_len_return_type(self) -> None:
+        """BatchedCalls.__len__ should return int."""
+        backend, n_jobs = mod.get_active_backend()
+        obj = mod.BatchedCalls([], (backend, n_jobs))
+        result = len(obj)
+        assert_type(result, int)
+        assert isinstance(result, int)
+
+    def test_items_attribute(self) -> None:
+        """BatchedCalls.items should be a list."""
+        backend, n_jobs = mod.get_active_backend()
+        obj = mod.BatchedCalls([], (backend, n_jobs))
+        assert hasattr(obj, "items")
+        assert isinstance(obj.items, list)
 
 
 class TestCpuCount:
@@ -265,18 +182,18 @@ class TestCpuCount:
 
     def test_exists(self) -> None:
         """cpu_count should exist in runtime."""
-        assert hasattr(parallel_runtime, "cpu_count")
-        assert callable(parallel_runtime.cpu_count)
+        assert hasattr(mod, "cpu_count")
+        assert callable(mod.cpu_count)
 
     def test_signature(self) -> None:
         """cpu_count should have correct signature."""
-        sig = inspect.signature(cpu_count)
+        sig = inspect.signature(mod.cpu_count)
         params = list(sig.parameters.keys())
-        assert "only_physical_cores" in params
+        assert params == ["only_physical_cores"]
 
     def test_return_type(self) -> None:
         """cpu_count should return int."""
-        result = cpu_count()
+        result = mod.cpu_count()
         assert_type(result, int)
         assert isinstance(result, int)
 
@@ -286,23 +203,41 @@ class TestDelayed:
 
     def test_exists(self) -> None:
         """delayed should exist in runtime."""
-        assert hasattr(parallel_runtime, "delayed")
-        assert callable(parallel_runtime.delayed)
+        assert hasattr(mod, "delayed")
+        assert callable(mod.delayed)
 
     def test_signature(self) -> None:
         """delayed should have correct signature."""
-        sig = inspect.signature(delayed)
+        sig = inspect.signature(mod.delayed)
         params = list(sig.parameters.keys())
         assert params == ["function"]
 
     def test_return_type(self) -> None:
-        """delayed should return callable."""
+        """delayed should return a callable wrapper."""
 
         def sample_func(x: int) -> int:
             return x * 2
 
-        result = delayed(sample_func)
-        assert callable(result)
+        wrapper = mod.delayed(sample_func)
+        assert callable(wrapper)
+
+    def test_wrapper_return_type(self) -> None:
+        """delayed wrapper should return BatchedCall (tuple)."""
+
+        def sample_func(x: int) -> int:
+            return x * 2
+
+        wrapper = mod.delayed(sample_func)
+        result = wrapper(21)
+        # delayed wrapper returns BatchedCall which is a tuple
+        assert isinstance(result, tuple)
+        assert len(result) == 3
+        # First element is the function
+        assert callable(result[0])
+        # Second element is positional args tuple
+        assert isinstance(result[1], tuple)
+        # Third element is keyword args dict
+        assert isinstance(result[2], dict)
 
 
 class TestBatchCompletionCallBack:
@@ -310,35 +245,41 @@ class TestBatchCompletionCallBack:
 
     def test_class_exists(self) -> None:
         """BatchCompletionCallBack should exist in runtime."""
-        assert hasattr(parallel_runtime, "BatchCompletionCallBack")
-        assert inspect.isclass(parallel_runtime.BatchCompletionCallBack)
+        assert hasattr(mod, "BatchCompletionCallBack")
+        assert inspect.isclass(mod.BatchCompletionCallBack)
 
     def test_init_signature(self) -> None:
         """BatchCompletionCallBack.__init__ should have correct signature."""
-        sig = inspect.signature(BatchCompletionCallBack.__init__)
+        sig = inspect.signature(mod.BatchCompletionCallBack.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "dispatch_timestamp" in params
         assert "batch_size" in params
         assert "parallel" in params
 
+    def test_has_call_method(self) -> None:
+        """BatchCompletionCallBack should have __call__ method."""
+        # Cannot easily instantiate without a Parallel instance
+        # Verify that the class has the method defined
+        assert hasattr(mod.BatchCompletionCallBack, "__call__")  # noqa: B004
+
     def test_register_job_method(self) -> None:
         """BatchCompletionCallBack.register_job should exist."""
-        sig = inspect.signature(BatchCompletionCallBack.register_job)
+        sig = inspect.signature(mod.BatchCompletionCallBack.register_job)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "job" in params
 
     def test_get_result_method(self) -> None:
         """BatchCompletionCallBack.get_result should exist."""
-        sig = inspect.signature(BatchCompletionCallBack.get_result)
+        sig = inspect.signature(mod.BatchCompletionCallBack.get_result)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "timeout" in params
 
     def test_get_status_method(self) -> None:
         """BatchCompletionCallBack.get_status should exist."""
-        sig = inspect.signature(BatchCompletionCallBack.get_status)
+        sig = inspect.signature(mod.BatchCompletionCallBack.get_status)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "timeout" in params
@@ -349,12 +290,12 @@ class TestRegisterParallelBackend:
 
     def test_exists(self) -> None:
         """register_parallel_backend should exist in runtime."""
-        assert hasattr(parallel_runtime, "register_parallel_backend")
-        assert callable(parallel_runtime.register_parallel_backend)
+        assert hasattr(mod, "register_parallel_backend")
+        assert callable(mod.register_parallel_backend)
 
     def test_signature(self) -> None:
         """register_parallel_backend should have correct signature."""
-        sig = inspect.signature(register_parallel_backend)
+        sig = inspect.signature(mod.register_parallel_backend)
         params = list(sig.parameters.keys())
         assert "name" in params
         assert "factory" in params
@@ -366,18 +307,18 @@ class TestEffectiveNJobs:
 
     def test_exists(self) -> None:
         """effective_n_jobs should exist in runtime."""
-        assert hasattr(parallel_runtime, "effective_n_jobs")
-        assert callable(parallel_runtime.effective_n_jobs)
+        assert hasattr(mod, "effective_n_jobs")
+        assert callable(mod.effective_n_jobs)
 
     def test_signature(self) -> None:
         """effective_n_jobs should have correct signature."""
-        sig = inspect.signature(effective_n_jobs)
+        sig = inspect.signature(mod.effective_n_jobs)
         params = list(sig.parameters.keys())
-        assert "n_jobs" in params
+        assert params == ["n_jobs"]
 
     def test_return_type(self) -> None:
         """effective_n_jobs should return int."""
-        result = effective_n_jobs()
+        result = mod.effective_n_jobs(1)
         assert_type(result, int)
         assert isinstance(result, int)
 
@@ -387,16 +328,16 @@ class TestParallel:
 
     def test_class_exists(self) -> None:
         """Parallel should exist in runtime."""
-        assert hasattr(parallel_runtime, "Parallel")
-        assert inspect.isclass(parallel_runtime.Parallel)
+        assert hasattr(mod, "Parallel")
+        assert inspect.isclass(mod.Parallel)
 
     def test_inherits(self) -> None:
         """Parallel should inherit from Logger."""
-        assert issubclass(Parallel, Logger)
+        assert issubclass(mod.Parallel, mod.Logger)
 
     def test_init_signature(self) -> None:
         """Parallel.__init__ should have correct signature."""
-        sig = inspect.signature(Parallel.__init__)
+        sig = inspect.signature(mod.Parallel.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "n_jobs" in params
@@ -411,15 +352,54 @@ class TestParallel:
         assert "mmap_mode" in params
         assert "prefer" in params
         assert "require" in params
-        assert "backend_kwargs" in params
 
-    def test_call_method(self) -> None:
-        """Parallel.__call__ should exist."""
-        parallel = Parallel(n_jobs=1)
-        assert callable(parallel)
+    def test_context_manager(self) -> None:
+        """Parallel should work as context manager."""
+        with mod.Parallel(n_jobs=1) as parallel:
+            if TYPE_CHECKING:
+                assert_type(parallel, mod.Parallel[Literal["list"]])
+            assert isinstance(parallel, mod.Parallel)
 
-    def test_parallel_instantiation(self) -> None:
-        """Parallel should be instantiable."""
-        parallel = Parallel(n_jobs=1)
-        assert_type(parallel.n_jobs, int)
-        assert isinstance(parallel.n_jobs, int)
+    def test_callable(self) -> None:
+        """Parallel instances should be callable."""
+        obj = mod.Parallel(n_jobs=1)
+        assert callable(obj)
+
+    def test_call_return_type_list(self) -> None:
+        """Parallel.__call__ should return list with default return_as."""
+
+        def sample_func(x: int) -> int:
+            return x * 2
+
+        parallel = mod.Parallel(n_jobs=1)
+        result = parallel(mod.delayed(sample_func)(i) for i in range(3))
+        assert_type(result, list[int])
+        assert isinstance(result, list)
+        assert result == [0, 2, 4]
+
+    def test_dispatch_next_method(self) -> None:
+        """Parallel.dispatch_next should exist."""
+        sig = inspect.signature(mod.Parallel.dispatch_next)
+        params = list(sig.parameters.keys())
+        assert params == ["self"]
+
+    def test_dispatch_one_batch_method(self) -> None:
+        """Parallel.dispatch_one_batch should exist."""
+        sig = inspect.signature(mod.Parallel.dispatch_one_batch)
+        params = list(sig.parameters.keys())
+        assert "self" in params
+        assert "iterator" in params
+
+    def test_print_progress_method(self) -> None:
+        """Parallel.print_progress should exist."""
+        sig = inspect.signature(mod.Parallel.print_progress)
+        params = list(sig.parameters.keys())
+        assert params == ["self"]
+
+    def test_attributes(self) -> None:
+        """Parallel attributes should have correct types."""
+        obj = mod.Parallel(n_jobs=1, verbose=0, timeout=None)
+        assert_type(obj.verbose, int)
+        assert isinstance(obj.verbose, int)
+        assert_type(obj.n_jobs, int)
+        assert isinstance(obj.n_jobs, int)

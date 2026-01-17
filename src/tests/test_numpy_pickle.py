@@ -5,17 +5,8 @@ from __future__ import annotations
 import inspect
 from typing import assert_type
 
-import joblib.numpy_pickle as numpy_pickle_runtime
-from joblib.numpy_pickle import (
-    NUMPY_ARRAY_ALIGNMENT_BYTES,
-    NumpyArrayWrapper,
-    NumpyPickler,
-    NumpyUnpickler,
-    dump,
-    load,
-    load_temporary_memmap,
-)
-from joblib.numpy_pickle_utils import Pickler, Unpickler
+import joblib.numpy_pickle as mod
+from joblib import numpy_pickle_utils
 
 
 class TestConstants:
@@ -23,12 +14,12 @@ class TestConstants:
 
     def test_numpy_array_alignment_bytes_exists(self) -> None:
         """NUMPY_ARRAY_ALIGNMENT_BYTES should exist in runtime."""
-        assert hasattr(numpy_pickle_runtime, "NUMPY_ARRAY_ALIGNMENT_BYTES")
+        assert hasattr(mod, "NUMPY_ARRAY_ALIGNMENT_BYTES")
 
     def test_numpy_array_alignment_bytes_type(self) -> None:
         """NUMPY_ARRAY_ALIGNMENT_BYTES should be an int."""
-        assert_type(NUMPY_ARRAY_ALIGNMENT_BYTES, int)
-        assert isinstance(NUMPY_ARRAY_ALIGNMENT_BYTES, int)
+        assert_type(mod.NUMPY_ARRAY_ALIGNMENT_BYTES, int)
+        assert isinstance(mod.NUMPY_ARRAY_ALIGNMENT_BYTES, int)
 
 
 class TestNumpyArrayWrapper:
@@ -36,12 +27,12 @@ class TestNumpyArrayWrapper:
 
     def test_class_exists(self) -> None:
         """NumpyArrayWrapper should exist in runtime."""
-        assert hasattr(numpy_pickle_runtime, "NumpyArrayWrapper")
-        assert inspect.isclass(numpy_pickle_runtime.NumpyArrayWrapper)
+        assert hasattr(mod, "NumpyArrayWrapper")
+        assert inspect.isclass(mod.NumpyArrayWrapper)
 
     def test_init_signature(self) -> None:
         """NumpyArrayWrapper.__init__ should have correct signature."""
-        sig = inspect.signature(NumpyArrayWrapper.__init__)
+        sig = inspect.signature(mod.NumpyArrayWrapper.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "subclass" in params
@@ -53,13 +44,14 @@ class TestNumpyArrayWrapper:
 
     def test_safe_get_numpy_array_alignment_bytes_method(self) -> None:
         """NumpyArrayWrapper.safe_get_numpy_array_alignment_bytes should exist."""
-        sig = inspect.signature(NumpyArrayWrapper.safe_get_numpy_array_alignment_bytes)
+        method = mod.NumpyArrayWrapper.safe_get_numpy_array_alignment_bytes
+        sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         assert params == ["self"]
 
     def test_write_array_method(self) -> None:
         """NumpyArrayWrapper.write_array should exist."""
-        sig = inspect.signature(NumpyArrayWrapper.write_array)
+        sig = inspect.signature(mod.NumpyArrayWrapper.write_array)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "array" in params
@@ -67,7 +59,7 @@ class TestNumpyArrayWrapper:
 
     def test_read_array_method(self) -> None:
         """NumpyArrayWrapper.read_array should exist."""
-        sig = inspect.signature(NumpyArrayWrapper.read_array)
+        sig = inspect.signature(mod.NumpyArrayWrapper.read_array)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "unpickler" in params
@@ -75,14 +67,14 @@ class TestNumpyArrayWrapper:
 
     def test_read_mmap_method(self) -> None:
         """NumpyArrayWrapper.read_mmap should exist."""
-        sig = inspect.signature(NumpyArrayWrapper.read_mmap)
+        sig = inspect.signature(mod.NumpyArrayWrapper.read_mmap)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "unpickler" in params
 
     def test_read_method(self) -> None:
         """NumpyArrayWrapper.read should exist."""
-        sig = inspect.signature(NumpyArrayWrapper.read)
+        sig = inspect.signature(mod.NumpyArrayWrapper.read)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "unpickler" in params
@@ -94,16 +86,16 @@ class TestNumpyPickler:
 
     def test_class_exists(self) -> None:
         """NumpyPickler should exist in runtime."""
-        assert hasattr(numpy_pickle_runtime, "NumpyPickler")
-        assert inspect.isclass(numpy_pickle_runtime.NumpyPickler)
+        assert hasattr(mod, "NumpyPickler")
+        assert inspect.isclass(mod.NumpyPickler)
 
     def test_inherits(self) -> None:
         """NumpyPickler should inherit from Pickler."""
-        assert issubclass(NumpyPickler, Pickler)
+        assert issubclass(mod.NumpyPickler, numpy_pickle_utils.Pickler)
 
     def test_init_signature(self) -> None:
         """NumpyPickler.__init__ should have correct signature."""
-        sig = inspect.signature(NumpyPickler.__init__)
+        sig = inspect.signature(mod.NumpyPickler.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "fp" in params
@@ -111,7 +103,7 @@ class TestNumpyPickler:
 
     def test_save_method(self) -> None:
         """NumpyPickler.save should exist."""
-        sig = inspect.signature(NumpyPickler.save)
+        sig = inspect.signature(mod.NumpyPickler.save)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "obj" in params
@@ -122,16 +114,16 @@ class TestNumpyUnpickler:
 
     def test_class_exists(self) -> None:
         """NumpyUnpickler should exist in runtime."""
-        assert hasattr(numpy_pickle_runtime, "NumpyUnpickler")
-        assert inspect.isclass(numpy_pickle_runtime.NumpyUnpickler)
+        assert hasattr(mod, "NumpyUnpickler")
+        assert inspect.isclass(mod.NumpyUnpickler)
 
     def test_inherits(self) -> None:
         """NumpyUnpickler should inherit from Unpickler."""
-        assert issubclass(NumpyUnpickler, Unpickler)
+        assert issubclass(mod.NumpyUnpickler, numpy_pickle_utils.Unpickler)
 
     def test_init_signature(self) -> None:
         """NumpyUnpickler.__init__ should have correct signature."""
-        sig = inspect.signature(NumpyUnpickler.__init__)
+        sig = inspect.signature(mod.NumpyUnpickler.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "filename" in params
@@ -141,7 +133,7 @@ class TestNumpyUnpickler:
 
     def test_load_build_method(self) -> None:
         """NumpyUnpickler.load_build should exist."""
-        sig = inspect.signature(NumpyUnpickler.load_build)
+        sig = inspect.signature(mod.NumpyUnpickler.load_build)
         params = list(sig.parameters.keys())
         assert params == ["self"]
 
@@ -151,12 +143,12 @@ class TestDump:
 
     def test_exists(self) -> None:
         """dump should exist in runtime."""
-        assert hasattr(numpy_pickle_runtime, "dump")
-        assert callable(numpy_pickle_runtime.dump)
+        assert hasattr(mod, "dump")
+        assert callable(mod.dump)
 
     def test_signature(self) -> None:
         """dump should have correct signature."""
-        sig = inspect.signature(dump)
+        sig = inspect.signature(mod.dump)
         params = list(sig.parameters.keys())
         assert "value" in params
         assert "filename" in params
@@ -169,12 +161,12 @@ class TestLoadTemporaryMemmap:
 
     def test_exists(self) -> None:
         """load_temporary_memmap should exist in runtime."""
-        assert hasattr(numpy_pickle_runtime, "load_temporary_memmap")
-        assert callable(numpy_pickle_runtime.load_temporary_memmap)
+        assert hasattr(mod, "load_temporary_memmap")
+        assert callable(mod.load_temporary_memmap)
 
     def test_signature(self) -> None:
         """load_temporary_memmap should have correct signature."""
-        sig = inspect.signature(load_temporary_memmap)
+        sig = inspect.signature(mod.load_temporary_memmap)
         params = list(sig.parameters.keys())
         assert "filename" in params
         assert "mmap_mode" in params
@@ -186,12 +178,12 @@ class TestLoad:
 
     def test_exists(self) -> None:
         """load should exist in runtime."""
-        assert hasattr(numpy_pickle_runtime, "load")
-        assert callable(numpy_pickle_runtime.load)
+        assert hasattr(mod, "load")
+        assert callable(mod.load)
 
     def test_signature(self) -> None:
         """load should have correct signature."""
-        sig = inspect.signature(load)
+        sig = inspect.signature(mod.load)
         params = list(sig.parameters.keys())
         assert "filename" in params
         assert "mmap_mode" in params

@@ -5,18 +5,8 @@ from __future__ import annotations
 import inspect
 from typing import assert_type
 
-import joblib.numpy_pickle_compat as numpy_pickle_compat_runtime
-from joblib.numpy_pickle_compat import (
-    NDArrayWrapper,
-    ZipNumpyUnpickler,
-    ZNDArrayWrapper,
-    asbytes,
-    hex_str,
-    load_compatibility,
-    read_zfile,
-    write_zfile,
-)
-from joblib.numpy_pickle_utils import Unpickler
+import joblib.numpy_pickle_compat as mod
+from joblib import numpy_pickle_utils
 
 
 class TestHexStr:
@@ -24,18 +14,18 @@ class TestHexStr:
 
     def test_exists(self) -> None:
         """hex_str should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "hex_str")
-        assert callable(numpy_pickle_compat_runtime.hex_str)
+        assert hasattr(mod, "hex_str")
+        assert callable(mod.hex_str)
 
     def test_signature(self) -> None:
         """hex_str should have correct signature."""
-        sig = inspect.signature(hex_str)
+        sig = inspect.signature(mod.hex_str)
         params = list(sig.parameters.keys())
         assert params == ["an_int"]
 
     def test_return_type(self) -> None:
         """hex_str should return str."""
-        result = hex_str(255)
+        result = mod.hex_str(255)
         assert_type(result, str)
         assert isinstance(result, str)
 
@@ -45,18 +35,18 @@ class TestAsbytes:
 
     def test_exists(self) -> None:
         """asbytes should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "asbytes")
-        assert callable(numpy_pickle_compat_runtime.asbytes)
+        assert hasattr(mod, "asbytes")
+        assert callable(mod.asbytes)
 
     def test_signature(self) -> None:
         """asbytes should have correct signature."""
-        sig = inspect.signature(asbytes)
+        sig = inspect.signature(mod.asbytes)
         params = list(sig.parameters.keys())
         assert params == ["s"]
 
     def test_return_type(self) -> None:
         """asbytes should return bytes."""
-        result = asbytes("test")
+        result = mod.asbytes("test")
         assert_type(result, bytes)
         assert isinstance(result, bytes)
 
@@ -66,12 +56,12 @@ class TestReadZfile:
 
     def test_exists(self) -> None:
         """read_zfile should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "read_zfile")
-        assert callable(numpy_pickle_compat_runtime.read_zfile)
+        assert hasattr(mod, "read_zfile")
+        assert callable(mod.read_zfile)
 
     def test_signature(self) -> None:
         """read_zfile should have correct signature."""
-        sig = inspect.signature(read_zfile)
+        sig = inspect.signature(mod.read_zfile)
         params = list(sig.parameters.keys())
         assert params == ["file_handle"]
 
@@ -81,12 +71,12 @@ class TestWriteZfile:
 
     def test_exists(self) -> None:
         """write_zfile should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "write_zfile")
-        assert callable(numpy_pickle_compat_runtime.write_zfile)
+        assert hasattr(mod, "write_zfile")
+        assert callable(mod.write_zfile)
 
     def test_signature(self) -> None:
         """write_zfile should have correct signature."""
-        sig = inspect.signature(write_zfile)
+        sig = inspect.signature(mod.write_zfile)
         params = list(sig.parameters.keys())
         assert "file_handle" in params
         assert "data" in params
@@ -98,12 +88,12 @@ class TestNDArrayWrapper:
 
     def test_class_exists(self) -> None:
         """NDArrayWrapper should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "NDArrayWrapper")
-        assert inspect.isclass(numpy_pickle_compat_runtime.NDArrayWrapper)
+        assert hasattr(mod, "NDArrayWrapper")
+        assert inspect.isclass(mod.NDArrayWrapper)
 
     def test_init_signature(self) -> None:
         """NDArrayWrapper.__init__ should have correct signature."""
-        sig = inspect.signature(NDArrayWrapper.__init__)
+        sig = inspect.signature(mod.NDArrayWrapper.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "filename" in params
@@ -112,7 +102,7 @@ class TestNDArrayWrapper:
 
     def test_read_method(self) -> None:
         """NDArrayWrapper.read should exist."""
-        sig = inspect.signature(NDArrayWrapper.read)
+        sig = inspect.signature(mod.NDArrayWrapper.read)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "unpickler" in params
@@ -123,16 +113,16 @@ class TestZNDArrayWrapper:
 
     def test_class_exists(self) -> None:
         """ZNDArrayWrapper should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "ZNDArrayWrapper")
-        assert inspect.isclass(numpy_pickle_compat_runtime.ZNDArrayWrapper)
+        assert hasattr(mod, "ZNDArrayWrapper")
+        assert inspect.isclass(mod.ZNDArrayWrapper)
 
     def test_inherits(self) -> None:
         """ZNDArrayWrapper should inherit from NDArrayWrapper."""
-        assert issubclass(ZNDArrayWrapper, NDArrayWrapper)
+        assert issubclass(mod.ZNDArrayWrapper, mod.NDArrayWrapper)
 
     def test_init_signature(self) -> None:
         """ZNDArrayWrapper.__init__ should have correct signature."""
-        sig = inspect.signature(ZNDArrayWrapper.__init__)
+        sig = inspect.signature(mod.ZNDArrayWrapper.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "filename" in params
@@ -141,7 +131,7 @@ class TestZNDArrayWrapper:
 
     def test_read_method(self) -> None:
         """ZNDArrayWrapper.read should exist."""
-        sig = inspect.signature(ZNDArrayWrapper.read)
+        sig = inspect.signature(mod.ZNDArrayWrapper.read)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "unpickler" in params
@@ -152,16 +142,16 @@ class TestZipNumpyUnpickler:
 
     def test_class_exists(self) -> None:
         """ZipNumpyUnpickler should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "ZipNumpyUnpickler")
-        assert inspect.isclass(numpy_pickle_compat_runtime.ZipNumpyUnpickler)
+        assert hasattr(mod, "ZipNumpyUnpickler")
+        assert inspect.isclass(mod.ZipNumpyUnpickler)
 
     def test_inherits(self) -> None:
         """ZipNumpyUnpickler should inherit from Unpickler."""
-        assert issubclass(ZipNumpyUnpickler, Unpickler)
+        assert issubclass(mod.ZipNumpyUnpickler, numpy_pickle_utils.Unpickler)
 
     def test_init_signature(self) -> None:
         """ZipNumpyUnpickler.__init__ should have correct signature."""
-        sig = inspect.signature(ZipNumpyUnpickler.__init__)
+        sig = inspect.signature(mod.ZipNumpyUnpickler.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "filename" in params
@@ -170,7 +160,7 @@ class TestZipNumpyUnpickler:
 
     def test_load_build_method(self) -> None:
         """ZipNumpyUnpickler.load_build should exist."""
-        sig = inspect.signature(ZipNumpyUnpickler.load_build)
+        sig = inspect.signature(mod.ZipNumpyUnpickler.load_build)
         params = list(sig.parameters.keys())
         assert params == ["self"]
 
@@ -180,11 +170,11 @@ class TestLoadCompatibility:
 
     def test_exists(self) -> None:
         """load_compatibility should exist in runtime."""
-        assert hasattr(numpy_pickle_compat_runtime, "load_compatibility")
-        assert callable(numpy_pickle_compat_runtime.load_compatibility)
+        assert hasattr(mod, "load_compatibility")
+        assert callable(mod.load_compatibility)
 
     def test_signature(self) -> None:
         """load_compatibility should have correct signature."""
-        sig = inspect.signature(load_compatibility)
+        sig = inspect.signature(mod.load_compatibility)
         params = list(sig.parameters.keys())
         assert params == ["filename"]

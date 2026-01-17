@@ -5,9 +5,7 @@ from __future__ import annotations
 import inspect
 from typing import assert_type
 
-import joblib.hashing as hashing_runtime
-from joblib.hashing import Hasher, NumpyHasher
-from joblib.hashing import hash as hash_func
+import joblib.hashing as mod
 
 
 class TestPickler:
@@ -15,7 +13,7 @@ class TestPickler:
 
     def test_exists(self) -> None:
         """Pickler should exist in runtime."""
-        assert hasattr(hashing_runtime, "Pickler")
+        assert hasattr(mod, "Pickler")
 
 
 class TestHasher:
@@ -23,24 +21,24 @@ class TestHasher:
 
     def test_class_exists(self) -> None:
         """Hasher should exist in runtime."""
-        assert hasattr(hashing_runtime, "Hasher")
-        assert inspect.isclass(hashing_runtime.Hasher)
+        assert hasattr(mod, "Hasher")
+        assert inspect.isclass(mod.Hasher)
 
     def test_init_signature(self) -> None:
         """Hasher.__init__ should have correct signature."""
-        sig = inspect.signature(Hasher.__init__)
+        sig = inspect.signature(mod.Hasher.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "hash_name" in params
 
     def test_attributes(self) -> None:
         """Hasher attributes should have correct types."""
-        obj = Hasher()
+        obj = mod.Hasher()
         assert hasattr(obj, "stream")
 
     def test_hash_method(self) -> None:
         """Hasher.hash should have correct signature."""
-        sig = inspect.signature(Hasher.hash)
+        sig = inspect.signature(mod.Hasher.hash)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "obj" in params
@@ -48,28 +46,28 @@ class TestHasher:
 
     def test_hash_return_type(self) -> None:
         """Hasher.hash should return str."""
-        hasher = Hasher()
+        hasher = mod.Hasher()
         result = hasher.hash("test")
         assert_type(result, str)
         assert isinstance(result, str)
 
     def test_save_method(self) -> None:
         """Hasher.save should exist."""
-        sig = inspect.signature(Hasher.save)
+        sig = inspect.signature(mod.Hasher.save)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "obj" in params
 
     def test_memoize_method(self) -> None:
         """Hasher.memoize should exist."""
-        sig = inspect.signature(Hasher.memoize)
+        sig = inspect.signature(mod.Hasher.memoize)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "obj" in params
 
     def test_save_global_method(self) -> None:
         """Hasher.save_global should exist."""
-        sig = inspect.signature(Hasher.save_global)
+        sig = inspect.signature(mod.Hasher.save_global)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "obj" in params
@@ -78,7 +76,7 @@ class TestHasher:
 
     def test_save_set_method(self) -> None:
         """Hasher.save_set should exist."""
-        sig = inspect.signature(Hasher.save_set)
+        sig = inspect.signature(mod.Hasher.save_set)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "set_items" in params
@@ -89,16 +87,16 @@ class TestNumpyHasher:
 
     def test_class_exists(self) -> None:
         """NumpyHasher should exist in runtime."""
-        assert hasattr(hashing_runtime, "NumpyHasher")
-        assert inspect.isclass(hashing_runtime.NumpyHasher)
+        assert hasattr(mod, "NumpyHasher")
+        assert inspect.isclass(mod.NumpyHasher)
 
     def test_inherits(self) -> None:
         """NumpyHasher should inherit from Hasher."""
-        assert issubclass(NumpyHasher, Hasher)
+        assert issubclass(mod.NumpyHasher, mod.Hasher)
 
     def test_init_signature(self) -> None:
         """NumpyHasher.__init__ should have correct signature."""
-        sig = inspect.signature(NumpyHasher.__init__)
+        sig = inspect.signature(mod.NumpyHasher.__init__)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "hash_name" in params
@@ -106,14 +104,14 @@ class TestNumpyHasher:
 
     def test_attributes(self) -> None:
         """NumpyHasher attributes should have correct types."""
-        obj = NumpyHasher()
+        obj = mod.NumpyHasher()
         assert_type(obj.coerce_mmap, bool)
         assert isinstance(obj.coerce_mmap, bool)
         assert hasattr(obj, "np")
 
     def test_save_method(self) -> None:
         """NumpyHasher.save should exist."""
-        sig = inspect.signature(NumpyHasher.save)
+        sig = inspect.signature(mod.NumpyHasher.save)
         params = list(sig.parameters.keys())
         assert "self" in params
         assert "obj" in params
@@ -124,12 +122,12 @@ class TestHashFunction:
 
     def test_exists(self) -> None:
         """hash function should exist in runtime."""
-        assert hasattr(hashing_runtime, "hash")
-        assert callable(hashing_runtime.hash)
+        assert hasattr(mod, "hash")
+        assert callable(mod.hash)
 
     def test_signature(self) -> None:
         """hash should have correct signature."""
-        sig = inspect.signature(hash_func)
+        sig = inspect.signature(mod.hash)
         params = list(sig.parameters.keys())
         assert "obj" in params
         assert "hash_name" in params
@@ -137,6 +135,6 @@ class TestHashFunction:
 
     def test_return_type(self) -> None:
         """hash should return str."""
-        result = hash_func("test")
+        result = mod.hash("test")
         assert_type(result, str)
         assert isinstance(result, str)
