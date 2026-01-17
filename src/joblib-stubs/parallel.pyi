@@ -36,7 +36,6 @@ _T = TypeVar("_T")
 _P = ParamSpec("_P")
 _R = TypeVar("_R", default=Literal["list"], bound=ReturnAs)
 
-IS_PYPY: bool
 BACKENDS: dict[str, type[ParallelBackendBase[Any]]]
 DEFAULT_BACKEND: str
 DEFAULT_THREAD_BACKEND: str
