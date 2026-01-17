@@ -3,5 +3,6 @@
     "mypy-type-checker.args": [
         "--config-file=pyproject.toml"
     ],
-    "mypy-type-checker.preferDaemon": true
+    "mypy-type-checker.preferDaemon": true,
+    "chat.useAgentSkills": true
 }
