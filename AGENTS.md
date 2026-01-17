@@ -32,6 +32,8 @@ src/
 4. Define internal types in `_typeshed.pyi`
 5. Avoid `Incomplete` - use concrete types
 
+**⚠️ Updating Stubs**: For stub updates or new module additions, use the `joblib-stub-updater` skill located in `.github/skills/joblib-stub-updater/SKILL.md`
+
 ```python
 def func(param: str, optional: int = ...) -> bool: ...
 
@@ -47,6 +49,26 @@ class Example:
 | Mypy | strict | See pyproject.toml for disabled error codes |
 | Pyright | strict | See pyrightconfig.json |
 | Ruff | ALL | Python 3.11 target |
+
+## Important Notes
+
+### Python Execution
+
+**⚠️ Always use `uv run python` instead of `python`**
+
+This project uses `uv` for dependency management. Running Python scripts directly will fail due to missing dependencies.
+
+```bash
+# ✓ Correct
+uv run python -c "import joblib; print(joblib.__version__)"
+uv run python script.py
+
+# ✗ Wrong - dependencies not available
+python -c "import joblib; print(joblib.__version__)"
+python script.py
+```
+
+All Python commands in this document follow this convention.
 
 ---
 
