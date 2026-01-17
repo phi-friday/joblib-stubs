@@ -16,12 +16,6 @@ Type stubs for the [joblib](https://github.com/joblib/joblib) library.
 pip install joblib-stubs
 ```
 
-## Features
-
-- Complete type coverage for the `joblib` public API
-- Includes stubs for `joblib.externals` (cloudpickle, loky)
-- Compatible with mypy, pyright.
-
 ## Usage
 
 Once installed, type checkers will automatically discover and use these stubs when analyzing code that uses `joblib`:
