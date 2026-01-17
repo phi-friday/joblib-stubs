@@ -1,6 +1,7 @@
 {
     "mypy-type-checker.importStrategy": "fromEnvironment",
     "mypy-type-checker.args": [
+        "--strict",
         "--config-file=pyproject.toml"
     ],
     "mypy-type-checker.preferDaemon": true,

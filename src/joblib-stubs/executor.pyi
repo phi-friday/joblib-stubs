@@ -1,3 +1,4 @@
+# pyright: reportUnnecessaryTypeIgnoreComment=false
 from collections.abc import Callable
 from concurrent import futures
 from typing import Any
@@ -12,7 +13,7 @@ from joblib.externals.loky.reusable_executor import _ReusablePoolExecutor
 
 def get_memmapping_executor(n_jobs: int, **kwargs: Any) -> futures.Executor: ...
 
-class MemmappingExecutor(_ReusablePoolExecutor):
+class MemmappingExecutor(_ReusablePoolExecutor):  # type: ignore[misc]
     @classmethod
     def get_memmapping_executor(
         cls,
