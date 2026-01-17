@@ -82,8 +82,11 @@ from __future__ import annotations
 import inspect
 from typing import assert_type
 
-import joblib.<module> as module_runtime
-from joblib.<module> import ClassName, function_name
+import joblib.<module> as mod
+
+# ⚠️ IMPORTANT: Use ONLY the module alias for all access
+# ❌ WRONG: from joblib.<module> import ClassName, function_name
+# ✅ CORRECT: Access via mod.ClassName, mod.function_name
 
 # For EVERY class, test in this order:
 class TestClassName:
@@ -92,25 +95,25 @@ class TestClassName:
     # 1. Existence (runtime only)
     def test_class_exists(self) -> None:
         """ClassName should exist in runtime."""
-        assert hasattr(module_runtime, "ClassName")
-        assert inspect.isclass(module_runtime.ClassName)
+        assert hasattr(mod, "ClassName")
+        assert inspect.isclass(mod.ClassName)
     
     # 2. Inheritance (runtime only) - if applicable
     def test_inherits(self) -> None:
         """ClassName should inherit from ParentClass."""
-        assert issubclass(ClassName, ParentClass)
+        assert issubclass(mod.ClassName, mod.ParentClass)
     
     # 3. Signature (runtime only) - ALWAYS test __init__ for consistency
     def test_init_signature(self) -> None:
         """ClassName.__init__ should have correct signature."""
-        sig = inspect.signature(ClassName.__init__)
+        sig = inspect.signature(mod.ClassName.__init__)
         params = list(sig.parameters.keys())
         assert params == ["self", "param1", "param2"]  # or ["self"] if no params
     
     # 4. Attributes (BOTH assert_type + runtime)
     def test_attributes(self) -> None:
         """ClassName attributes should have correct types."""
-        obj = ClassName()
+        obj = mod.ClassName()
         # Type check (what type checker infers)
         assert_type(obj.attr, int)
         # Runtime check (actual value)
@@ -122,21 +125,91 @@ class TestFunctionName:
     
     # 1. Existence
     def test_exists(self) -> None:
-        assert hasattr(module_runtime, "function_name")
-        assert callable(module_runtime.function_name)
+        assert hasattr(mod, "function_name")
+        assert callable(mod.function_name)
     
     # 2. Signature
     def test_signature(self) -> None:
-        sig = inspect.signature(function_name)
+        sig = inspect.signature(mod.function_name)
         params = list(sig.parameters.keys())
         assert "param1" in params
         assert "param2" in params
     
     # 3. Return type (BOTH assert_type + runtime)
     def test_return_type(self) -> None:
-        result = function_name(...)
+        result = mod.function_name(...)
         assert_type(result, ExpectedType)
         assert isinstance(result, ExpectedType)
+```
+
+### Import Rules
+
+**Single Module Alias Only**: Import the module once with an alias, then access everything through it.
+
+```python
+# ✅ CORRECT - Single import, use module alias everywhere
+import joblib.memory as mod
+
+def test_class_exists(self) -> None:
+    assert hasattr(mod, "Memory")
+    assert inspect.isclass(mod.Memory)
+
+def test_instantiation(self) -> None:
+    obj = mod.Memory("/tmp")
+    assert_type(obj, mod.Memory)
+
+# ❌ WRONG - Redundant imports
+import joblib.memory as memory_runtime
+from joblib.memory import Memory, MemorizedFunc  # Redundant!
+```
+
+**Exception**: When importing from a DIFFERENT module (e.g., parent class for inheritance check):
+
+```python
+import joblib.memory as mod
+from joblib.logger import Logger  # OK - different module for inheritance check
+
+def test_inherits(self) -> None:
+    assert issubclass(mod.Memory, Logger)
+```
+
+### Callable Objects and Return Types
+
+**Always test return types of callable objects**: If a class or function returns a callable object (like `delayed`, factory functions), test both the callable itself AND its return value type.
+
+```python
+# For factory functions / decorators that return callables:
+class TestDelayed:
+    """Test delayed function type hints."""
+    
+    def test_exists(self) -> None:
+        assert hasattr(mod, "delayed")
+        assert callable(mod.delayed)
+    
+    def test_return_type(self) -> None:
+        """delayed should return a callable that produces BatchedCall."""
+        def sample_func(x: int) -> int:
+            return x * 2
+        
+        # Test the wrapper is callable
+        wrapper = mod.delayed(sample_func)
+        assert callable(wrapper)
+        
+        # Test the wrapper's return type when called
+        result = wrapper(42)
+        assert_type(result, mod.BatchedCall[..., int])  # or appropriate type
+        assert isinstance(result, tuple)  # BatchedCall is typically a tuple
+
+# For callable classes (classes with __call__):
+class TestBatchedCalls:
+    """Test BatchedCalls type hints."""
+    
+    def test_call_return_type(self) -> None:
+        """BatchedCalls.__call__ should return list[Any]."""
+        obj = mod.BatchedCalls([], backend)
+        result = obj()
+        assert_type(result, list[Any])
+        assert isinstance(result, list)
 ```
 
 ### When to Use `assert_type` vs Runtime Checks
@@ -174,10 +247,13 @@ assert isinstance(obj.attr, int)  # Then validates runtime
 
 When writing tests for a module, ensure:
 
+- [ ] **Single import**: Use `import joblib.<module> as mod`, access all via `mod.X`
+- [ ] **No redundant imports**: Do NOT also `from joblib.<module> import X`
 - [ ] **Every** public class has: exists → inherits → init_signature → attributes tests
 - [ ] **Every** class with `__init__` has signature test (even if just `["self"]`)
 - [ ] **Every** class attribute uses `assert_type` + `isinstance`
 - [ ] **Every** function has: exists → signature → return_type tests
+- [ ] **Every** callable's return type is tested (factories, decorators, `__call__` methods)
 - [ ] All tests in the file follow the same pattern and naming
 - [ ] Test class names match stub class names: `TestClassName` for `ClassName`
 
