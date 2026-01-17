@@ -497,8 +497,13 @@ def analyze_all_changes(
     all_changes: list[Change] = []
 
     for file_path in sorted(all_files):
-        # Skip test files and internal files
-        if "/tests/" in file_path or "/_" in file_path.replace("/__init__", ""):
+        # Skip test files and truly internal files (starts with _)
+        if "/tests/" in file_path:
+            continue
+        # Only skip files that start with underscore (like _types.py, _internal.py)
+        # but not async_client.py or base_server.py
+        file_name = file_path.split("/")[-1]
+        if file_name.startswith("_") and file_name != "__init__.py":
             continue
 
         changes = analyze_module_changes(repo_path, old_version, new_version, file_path)
