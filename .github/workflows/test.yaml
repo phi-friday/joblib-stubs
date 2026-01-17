@@ -1,24 +1,39 @@
-name: lint
+name: test
 
 on:
   push:
     branches: [main]
     paths:
       - "**.py"
-      - ".github/workflows/lint.yaml"
+      - "**.pyi"
+      - ".github/workflows/test.yaml"
       - "pyproject.toml"
       - "ruff.toml"
       - "pyrightconfig.json"
-      - ".pre-commit-config.yaml"
   pull_request:
     branches: [main]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        task:
+          - name: lint
+            cmd: uv run poe lint
+          - name: mypy
+            cmd: uv run poe mypy
+          - name: pyright
+            cmd: uv run poe pyright
+          - name: pytest
+            cmd: uv run pytest src/tests/ -v
+    
     env:
       PYTHON_VERSION: "3.11"
       UV_CACHE_DIR: /tmp/.uv-cache
+
+    name: ${{ matrix.task.name }}
 
     steps:
       - uses: actions/checkout@v6
@@ -50,15 +65,8 @@ jobs:
         if: steps.uv-cache.outputs.cache-hit != 'true'
         run: uv sync
 
-      - name: Restore prek cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/prek
-          key: prek-${{ steps.setup-python.outputs.PY }}-${{ hashFiles('.pre-commit-config.yaml') }}
-
-      - name: Code checks
-        run: |
-          uv run prek run --all-files --show-diff-on-failure
+      - name: Run ${{ matrix.task.name }}
+        run: ${{ matrix.task.cmd }}
 
       - name: Minimize uv cache
         run: uv cache prune --ci
