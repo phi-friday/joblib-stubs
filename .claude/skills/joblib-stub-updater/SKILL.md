@@ -28,8 +28,8 @@ First, determine what versions we're working with:
 # Check currently stubbed version (from pyproject.toml or installed)
 uv run python -c "import joblib; print(joblib.__version__)"
 
-# Check latest available version
-uv pip index versions joblib
+# Check latest available version from PyPI
+curl -s https://pypi.org/pypi/joblib/json | python3 -c "import sys, json; print(json.load(sys.stdin)['info']['version'])"
 ```
 
 ## Step 2: Clone Joblib and Generate Diff
@@ -37,8 +37,12 @@ uv pip index versions joblib
 Clone the joblib repository and generate a diff between versions:
 
 ```bash
-# Clone joblib to a temp directory if not exists
-git clone --depth=100 https://github.com/joblib/joblib.git /tmp/joblib-source 2>/dev/null || true
+# Clone joblib to a temp directory (skip if already exists)
+if [ ! -d /tmp/joblib-source ]; then
+    git clone --depth=100 https://github.com/joblib/joblib.git /tmp/joblib-source
+fi
+
+# Navigate to the repository and update tags
 cd /tmp/joblib-source
 git fetch --tags
 
@@ -72,15 +76,18 @@ The script will output:
 If the script is unavailable, manually analyze the diff:
 
 ```bash
+# Navigate to joblib source (assumes Step 2 completed)
+cd /tmp/joblib-source
+
 # Focus on public API changes
-git diff <OLD>..<NEW> -- joblib/__init__.py
+git diff <OLD_TAG>..<NEW_TAG> -- joblib/__init__.py
 
 # Check specific module changes
-git diff <OLD>..<NEW> -- joblib/memory.py
-git diff <OLD>..<NEW> -- joblib/parallel.py
+git diff <OLD_TAG>..<NEW_TAG> -- joblib/memory.py
+git diff <OLD_TAG>..<NEW_TAG> -- joblib/parallel.py
 
 # Look for signature changes (def lines)
-git diff <OLD>..<NEW> -- 'joblib/*.py' | grep -E '^\+.*def |^\-.*def '
+git diff <OLD_TAG>..<NEW_TAG> -- 'joblib/*.py' | grep -E '^\+.*def |^\-.*def '
 ```
 
 ## Step 4: Update Stub Files
@@ -154,10 +161,12 @@ uv run pytest src/tests/test_<module>.py -v
 ### Scenario: Update from joblib 1.3.2 to 1.4.0
 
 ```bash
-# 1. Setup
-cd /tmp
-git clone https://github.com/joblib/joblib.git joblib-source
-cd joblib-source
+# 1. Setup - Clone joblib repository
+if [ ! -d /tmp/joblib-source ]; then
+    git clone --depth=100 https://github.com/joblib/joblib.git /tmp/joblib-source
+fi
+cd /tmp/joblib-source
+git fetch --tags
 
 # 2. Generate diff
 git diff 1.3.2..1.4.0 -- 'joblib/*.py' > /tmp/joblib-diff.patch
@@ -169,7 +178,8 @@ git diff 1.3.2..1.4.0 -- joblib/parallel.py | head -100
 # 4. Check new function signatures
 git show 1.4.0:joblib/parallel.py | grep -A 20 "def new_function"
 
-# 5. Update stub
+# 5. Update stub - Navigate back to stub repository
+cd /home/phi/git/python/repo/joblib-stubs
 # Edit src/joblib-stubs/parallel.pyi to add new_function
 
 # 6. Validate
