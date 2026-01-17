@@ -50,7 +50,6 @@ dev = [
     "pyright==1.1.408",
     "poethepoet>=0.40.0",
     "joblib-stubs[mypy-strict]",
-    "prek>=0.2.24",
 ]
 
 [tool.uv]
@@ -63,7 +62,7 @@ lint = ["_lint:check", "_lint:format"]
 "_lint:format" = "ruff format src"
 mypy = "mypy src --strict"
 pyright = "pyright src"
-check = "prek run --all-files --show-diff-on-failure"
+check = ["lint", "mypy", "pyright"]
 
 [build-system]
 requires = ["hatchling"]
