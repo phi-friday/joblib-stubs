@@ -168,4 +168,3 @@ cython_debug/
 # uv
 requirements.lock
 requirements-dev.lock
-uv.lock
