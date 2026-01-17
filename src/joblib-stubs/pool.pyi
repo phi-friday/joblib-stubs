@@ -59,7 +59,6 @@ class MemmappingPool(PicklingPool):
         forward_reducers: dict[type[Any], Reducer[Any]] | None = ...,
         backward_reducers: dict[type[Any], Reducer[Any]] | None = ...,
         verbose: int = ...,
-        context_id: tuple[str, ...] | None = ...,
         prewarm: bool | str = ...,
         **kwargs: Any,
     ) -> None: ...
