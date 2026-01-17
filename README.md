@@ -34,8 +34,6 @@ assert_type(results, list[float])
 ## TODO
 
 * [ ] Remove all `Incomplete` type annotations
-* [ ] Improve `np.memmap` type hints
-* [ ] Add comprehensive tests
 
 ## License
 
