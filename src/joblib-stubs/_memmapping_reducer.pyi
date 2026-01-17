@@ -7,7 +7,6 @@ from joblib._typeshed import ArrayMemmapForwardReducerReduceKwargs, MmapMode
 from joblib._typeshed import WindowsError as WindowsError
 from joblib.backports import make_memmap as make_memmap
 from joblib.disk import delete_folder as delete_folder
-from joblib.externals.loky.backend import resource_tracker as resource_tracker
 from joblib.numpy_pickle import dump as dump
 from joblib.numpy_pickle import load as load
 from joblib.numpy_pickle import load_temporary_memmap as load_temporary_memmap

@@ -9,11 +9,6 @@ from typing import Any, ClassVar, Generic, Literal, NoReturn
 from joblib._multiprocessing_helpers import mp as mp
 from joblib._typeshed import AnyContainer, Prefer, Require, ReturnAs
 from joblib.executor import get_memmapping_executor as get_memmapping_executor
-from joblib.externals.loky import cpu_count as cpu_count
-from joblib.externals.loky import process_executor as process_executor
-from joblib.externals.loky.process_executor import (
-    ShutdownExecutorError as ShutdownExecutorError,
-)
 from joblib.parallel import Parallel as Parallel
 from joblib.pool import MemmappingPool as MemmappingPool
 from typing_extensions import TypeVar, deprecated

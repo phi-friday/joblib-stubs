@@ -27,7 +27,6 @@ from joblib._typeshed import (
 from joblib._utils import _Sentinel
 from joblib._utils import eval_expr as eval_expr
 from joblib.disk import memstr_to_bytes as memstr_to_bytes
-from joblib.externals import loky as loky
 from joblib.logger import Logger as Logger
 from joblib.logger import short_format_time as short_format_time
 from typing_extensions import ParamSpec, TypeVar
