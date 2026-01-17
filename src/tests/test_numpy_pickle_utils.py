@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pickle
 from typing import assert_type
 
 import joblib.numpy_pickle_utils as mod
@@ -14,6 +15,11 @@ class TestPickler:
         """Pickler should exist in runtime."""
         assert hasattr(mod, "Pickler")
 
+    def test_type(self) -> None:
+        """Pickler should be pickle._Pickler."""
+        assert_type(mod.Pickler, type[pickle._Pickler])  # noqa: SLF001
+        assert mod.Pickler is pickle._Pickler  # noqa: SLF001
+
 
 class TestUnpickler:
     """Test Unpickler type alias."""
@@ -21,6 +27,11 @@ class TestUnpickler:
     def test_exists(self) -> None:
         """Unpickler should exist in runtime."""
         assert hasattr(mod, "Unpickler")
+
+    def test_type(self) -> None:
+        """Unpickler should be pickle._Unpickler."""
+        assert_type(mod.Unpickler, type[pickle._Unpickler])  # noqa: SLF001
+        assert mod.Unpickler is pickle._Unpickler  # noqa: SLF001
 
 
 class TestXrange:
@@ -30,8 +41,9 @@ class TestXrange:
         """xrange should exist in runtime."""
         assert hasattr(mod, "xrange")
 
-    def test_xrange_is_range(self) -> None:
-        """xrange should be range in Python 3."""
+    def test_type(self) -> None:
+        """xrange should be range."""
+        assert_type(mod.xrange, type[range])
         assert mod.xrange is range
 
 

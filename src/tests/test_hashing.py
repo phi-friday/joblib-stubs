@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+import pickle
 from typing import assert_type
 
 import joblib.hashing as mod
@@ -14,6 +15,11 @@ class TestPickler:
     def test_exists(self) -> None:
         """Pickler should exist in runtime."""
         assert hasattr(mod, "Pickler")
+
+    def test_type(self) -> None:
+        """Pickler should be pickle._Pickler."""
+        assert_type(mod.Pickler, type[pickle._Pickler])  # noqa: SLF001
+        assert mod.Pickler is pickle._Pickler  # noqa: SLF001
 
 
 class TestHasher:

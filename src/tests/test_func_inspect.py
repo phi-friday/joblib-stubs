@@ -3,27 +3,167 @@
 from __future__ import annotations
 
 import inspect
+from inspect import FullArgSpec
 from types import FunctionType
-from typing import assert_type
+from typing import Any, assert_type
 
 import joblib.func_inspect as mod
 
 
-class TestConstants:
-    """Test module-level constants."""
+class TestFullArgSpecFields:
+    """Test full_argspec_fields constant."""
 
-    def test_full_argspec_fields_exists(self) -> None:
+    def test_exists(self) -> None:
         """full_argspec_fields should exist in runtime."""
         assert hasattr(mod, "full_argspec_fields")
 
-    def test_full_argspec_fields_type(self) -> None:
+    def test_type(self) -> None:
         """full_argspec_fields should be a str."""
         assert_type(mod.full_argspec_fields, str)
         assert isinstance(mod.full_argspec_fields, str)
 
-    def test_full_argspec_type_exists(self) -> None:
+
+class TestFullArgSpecType:
+    """Test full_argspec_type (custom NamedTuple)."""
+
+    def test_exists(self) -> None:
         """full_argspec_type should exist in runtime."""
         assert hasattr(mod, "full_argspec_type")
+
+    def test_is_namedtuple(self) -> None:
+        """full_argspec_type should be a NamedTuple."""
+        assert hasattr(mod.full_argspec_type, "_fields")
+        assert issubclass(mod.full_argspec_type, tuple)
+
+    def test_fields(self) -> None:
+        """full_argspec_type should have correct fields."""
+        expected_fields = (
+            "args",
+            "varargs",
+            "varkw",
+            "defaults",
+            "kwonlyargs",
+            "kwonlydefaults",
+            "annotations",
+        )
+        assert mod.full_argspec_type._fields == expected_fields
+
+    def test_type_annotation(self) -> None:
+        """full_argspec_type should be typed as FullArgSpec."""
+        # Stub defines it as inspect.FullArgSpec for type checking purposes
+        assert_type(mod.full_argspec_type, type[FullArgSpec])
+
+    def test_instance_creation(self) -> None:
+        """full_argspec_type instances should be creatable."""
+        instance = mod.full_argspec_type(
+            args=["x", "y"],
+            varargs=None,
+            varkw=None,
+            defaults=(1,),
+            kwonlyargs=[],
+            kwonlydefaults=None,
+            annotations={},
+        )
+        assert isinstance(instance, tuple)
+        assert len(instance) == 7
+
+    def test_instance_args_attribute(self) -> None:
+        """full_argspec_type.args should have correct type."""
+        instance = mod.full_argspec_type(
+            args=["x", "y"],
+            varargs=None,
+            varkw=None,
+            defaults=None,
+            kwonlyargs=[],
+            kwonlydefaults=None,
+            annotations={},
+        )
+        assert_type(instance.args, list[str])
+        assert instance.args == ["x", "y"]
+
+    def test_instance_varargs_attribute(self) -> None:
+        """full_argspec_type.varargs should have correct type."""
+        instance = mod.full_argspec_type(
+            args=[],
+            varargs="args",
+            varkw=None,
+            defaults=None,
+            kwonlyargs=[],
+            kwonlydefaults=None,
+            annotations={},
+        )
+        assert_type(instance.varargs, str | None)
+        assert instance.varargs == "args"
+
+    def test_instance_varkw_attribute(self) -> None:
+        """full_argspec_type.varkw should have correct type."""
+        instance = mod.full_argspec_type(
+            args=[],
+            varargs=None,
+            varkw="kwargs",
+            defaults=None,
+            kwonlyargs=[],
+            kwonlydefaults=None,
+            annotations={},
+        )
+        assert_type(instance.varkw, str | None)
+        assert instance.varkw == "kwargs"
+
+    def test_instance_defaults_attribute(self) -> None:
+        """full_argspec_type.defaults should have correct type."""
+        instance = mod.full_argspec_type(
+            args=["x"],
+            varargs=None,
+            varkw=None,
+            defaults=(1, "default"),
+            kwonlyargs=[],
+            kwonlydefaults=None,
+            annotations={},
+        )
+        assert_type(instance.defaults, tuple[Any, ...] | None)
+        assert instance.defaults == (1, "default")
+
+    def test_instance_kwonlyargs_attribute(self) -> None:
+        """full_argspec_type.kwonlyargs should have correct type."""
+        instance = mod.full_argspec_type(
+            args=[],
+            varargs=None,
+            varkw=None,
+            defaults=None,
+            kwonlyargs=["kw1", "kw2"],
+            kwonlydefaults=None,
+            annotations={},
+        )
+        assert_type(instance.kwonlyargs, list[str])
+        assert instance.kwonlyargs == ["kw1", "kw2"]
+
+    def test_instance_kwonlydefaults_attribute(self) -> None:
+        """full_argspec_type.kwonlydefaults should have correct type."""
+        instance = mod.full_argspec_type(
+            args=[],
+            varargs=None,
+            varkw=None,
+            defaults=None,
+            kwonlyargs=["kw1"],
+            kwonlydefaults={"kw1": 42},
+            annotations={},
+        )
+        assert_type(instance.kwonlydefaults, dict[str, Any] | None)
+        assert instance.kwonlydefaults == {"kw1": 42}
+
+    def test_instance_annotations_attribute(self) -> None:
+        """full_argspec_type.annotations should have correct type."""
+        instance = mod.full_argspec_type(
+            args=["x"],
+            varargs=None,
+            varkw=None,
+            defaults=None,
+            kwonlyargs=[],
+            kwonlydefaults=None,
+            annotations={"x": int, "return": str},
+        )
+        assert_type(instance.annotations, dict[str, Any])
+        assert instance.annotations == {"x": int, "return": str}
 
 
 class TestGetFuncCode:
@@ -46,9 +186,8 @@ class TestGetFuncCode:
         def sample_func() -> None:
             pass
 
-        result = mod.get_func_code(
-            FunctionType(sample_func.__code__, sample_func.__globals__)
-        )
+        func = FunctionType(sample_func.__code__, sample_func.__globals__)
+        result = mod.get_func_code(func)
         assert_type(result, tuple[str, str, int])
         assert isinstance(result, tuple)
         assert len(result) == 3
