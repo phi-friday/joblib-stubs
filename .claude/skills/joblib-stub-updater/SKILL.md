@@ -29,7 +29,7 @@ First, determine what versions we're working with:
 uv run python -c "import joblib; print(joblib.__version__)"
 
 # Check latest available version from PyPI
-curl -s https://pypi.org/pypi/joblib/json | python3 -c "import sys, json; print(json.load(sys.stdin)['info']['version'])"
+curl -s https://pypi.org/pypi/joblib/json | uv run python -c "import sys, json; print(json.load(sys.stdin)['info']['version'])"
 ```
 
 ## Step 2: Clone Joblib and Generate Diff
