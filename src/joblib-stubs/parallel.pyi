@@ -29,10 +29,8 @@ from joblib._utils import eval_expr as eval_expr
 from joblib.disk import memstr_to_bytes as memstr_to_bytes
 from joblib.logger import Logger as Logger
 from joblib.logger import short_format_time as short_format_time
-from typing_extensions import ParamSpec, TypeVar
+from typing_extensions import TypeVar
 
-_T = TypeVar("_T")
-_P = ParamSpec("_P")
 _R = TypeVar("_R", default=Literal["list"], bound=ReturnAs)
 
 BACKENDS: dict[str, type[ParallelBackendBase[Any]]]
@@ -119,19 +117,19 @@ TASK_ERROR: Literal["Error"]
 TASK_PENDING: Literal["Pending"]
 
 def cpu_count(only_physical_cores: bool = ...) -> int: ...
-def delayed(function: Callable[_P, _T]) -> Callable[_P, BatchedCall[_P, _T]]: ...
+def delayed[**P, T](function: Callable[P, T]) -> Callable[P, BatchedCall[P, T]]: ...
 
-class BatchCompletionCallBack(Generic[_T]):
+class BatchCompletionCallBack[T]:
     dispatch_timestamp: float
     batch_size: int
     parallel: Parallel
     parallel_call_id: tuple[str, ...]
-    job: futures.Future[_T] | AsyncResult[_T] | None
+    job: futures.Future[T] | AsyncResult[T] | None
     status: str
     def __init__(
         self, dispatch_timestamp: float, batch_size: int, parallel: Parallel
     ) -> None: ...
-    def register_job(self, job: futures.Future[_T] | AsyncResult[_T]) -> None: ...
+    def register_job(self, job: futures.Future[T] | AsyncResult[T]) -> None: ...
     def get_result(self, timeout: float) -> Any: ...
     def get_status(self, timeout: float) -> str: ...
     def __call__(self, *args: Any, **kwargs: Any) -> None: ...
@@ -276,27 +274,27 @@ class Parallel(Logger, Generic[_R]):
     def dispatch_one_batch(self, iterator: Iterable[BatchedCall[..., Any]]) -> bool: ...
     def print_progress(self) -> None: ...
     @overload
-    def __call__(
-        self: Parallel[ReturnList], iterable: Iterable[BatchedCall[..., _T]]
-    ) -> list[_T]: ...
+    def __call__[T](
+        self: Parallel[ReturnList], iterable: Iterable[BatchedCall[..., T]]
+    ) -> list[T]: ...
     @overload
-    def __call__(
-        self: Parallel[ReturnGererator], iterable: Iterable[BatchedCall[..., _T]]
-    ) -> Generator[_T, None, None]: ...
+    def __call__[T](
+        self: Parallel[ReturnGererator], iterable: Iterable[BatchedCall[..., T]]
+    ) -> Generator[T, None, None]: ...
     @overload
-    def __call__(
+    def __call__[T](
         self: Parallel[ReturnGereratorUnordered],
-        iterable: Iterable[BatchedCall[..., _T]],
-    ) -> Generator[_T, None, None]: ...
+        iterable: Iterable[BatchedCall[..., T]],
+    ) -> Generator[T, None, None]: ...
     @overload
-    def __call__(
-        self: Parallel[ReturnUnknown], iterable: Iterable[BatchedCall[..., _T]]
-    ) -> list[_T] | Generator[_T, None, None]: ...
+    def __call__[T](
+        self: Parallel[ReturnUnknown], iterable: Iterable[BatchedCall[..., T]]
+    ) -> list[T] | Generator[T, None, None]: ...
     @overload
-    def __call__(
-        self: Parallel[Any], iterable: Iterable[BatchedCall[..., _T]]
-    ) -> list[_T] | Generator[_T, None, None]: ...
+    def __call__[T](
+        self: Parallel[Any], iterable: Iterable[BatchedCall[..., T]]
+    ) -> list[T] | Generator[T, None, None]: ...
     @overload
-    def __call__(
-        self, iterable: Iterable[BatchedCall[..., _T]]
-    ) -> list[_T] | Generator[_T, None, None]: ...
+    def __call__[T](
+        self, iterable: Iterable[BatchedCall[..., T]]
+    ) -> list[T] | Generator[T, None, None]: ...

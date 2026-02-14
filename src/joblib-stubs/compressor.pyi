@@ -2,14 +2,11 @@ import bz2
 import io
 import lzma
 from io import BufferedIOBase as BufferedIOBase
-from typing import Any, BinaryIO, ClassVar, Generic, Literal
+from typing import Any, BinaryIO, ClassVar, Literal
 
 from _typeshed import ReadableBuffer, WriteableBuffer
 from joblib.backports import LooseVersion as LooseVersion
 from lz4.frame import LZ4FrameFile  # type: ignore[import-not-found]
-from typing_extensions import TypeVar
-
-_BufferedIOBaseT = TypeVar("_BufferedIOBaseT", bound=BufferedIOBase)
 
 LZ4_NOT_INSTALLED_ERROR: str
 
@@ -17,15 +14,13 @@ def register_compressor(
     compressor_name: str, compressor: CompressorWrapper[Any], force: bool = ...
 ) -> None: ...
 
-class CompressorWrapper(Generic[_BufferedIOBaseT]):
-    fileobj_factory: type[_BufferedIOBaseT]
+class CompressorWrapper[B: BufferedIOBase]:
+    fileobj_factory: type[B]
     prefix: bytes
     extension: str
     def __init__(self, obj: Any, prefix: bytes = ..., extension: str = ...) -> None: ...
-    def compressor_file(
-        self, fileobj: Any, compresslevel: int | None = ...
-    ) -> _BufferedIOBaseT: ...
-    def decompressor_file(self, fileobj: Any) -> _BufferedIOBaseT: ...
+    def compressor_file(self, fileobj: Any, compresslevel: int | None = ...) -> B: ...
+    def decompressor_file(self, fileobj: Any) -> B: ...
 
 class BZ2CompressorWrapper(CompressorWrapper[bz2.BZ2File]):
     def __init__(self) -> None: ...

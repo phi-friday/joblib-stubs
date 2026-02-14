@@ -13,10 +13,9 @@ from joblib.parallel import Parallel as Parallel
 from joblib.pool import MemmappingPool as MemmappingPool
 from typing_extensions import TypeVar, deprecated
 
-_T = TypeVar("_T")
 _R = TypeVar("_R", default=Literal["list"], bound=ReturnAs)
 
-class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):
+class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):  # noqa: UP046 (default: +3.13)
     default_n_jobs: ClassVar[int]
     supports_inner_max_num_threads: ClassVar[bool]
     supports_retrieve_callback: ClassVar[bool]
@@ -38,23 +37,23 @@ class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):
     @abstractmethod
     def effective_n_jobs(self, n_jobs: int) -> int: ...
     @deprecated("implement `submit` instead.")
-    def apply_async(
+    def apply_async[T](
         self,
-        func: Callable[[], _T],
-        callback: Callable[[AnyContainer[_T]], Any] | None = ...,
-    ) -> AnyContainer[_T]: ...
-    def submit(
+        func: Callable[[], T],
+        callback: Callable[[AnyContainer[T]], Any] | None = ...,
+    ) -> AnyContainer[T]: ...
+    def submit[T](
         self,
-        func: Callable[[], _T],
-        callback: Callable[[AnyContainer[_T]], Any] | None = ...,
-    ) -> AnyContainer[_T]: ...
-    def retrieve_result_callback(
-        self, out: futures.Future[_T] | AsyncResult[_T]
-    ) -> _T: ...
+        func: Callable[[], T],
+        callback: Callable[[AnyContainer[T]], Any] | None = ...,
+    ) -> AnyContainer[T]: ...
+    def retrieve_result_callback[T](
+        self, out: futures.Future[T] | AsyncResult[T]
+    ) -> T: ...
     parallel: Parallel[_R]
-    def retrieve_result(
-        self, out: futures.Future[_T] | AsyncResult[_T], timeout: float | None = ...
-    ) -> _T: ...
+    def retrieve_result[T](
+        self, out: futures.Future[T] | AsyncResult[T], timeout: float | None = ...
+    ) -> T: ...
     def configure(
         self,
         n_jobs: int = ...,
@@ -90,11 +89,11 @@ class SequentialBackend(ParallelBackendBase[_R], Generic[_R]):
 class PoolManagerMixin:
     def effective_n_jobs(self, n_jobs: int) -> int: ...
     def terminate(self) -> None: ...
-    def submit(
+    def submit[T](
         self,
-        func: Callable[[], _T],
-        callback: Callable[[AsyncResult[_T]], Any] | None = ...,
-    ) -> AsyncResult[_T]: ...
+        func: Callable[[], T],
+        callback: Callable[[AsyncResult[T]], Any] | None = ...,
+    ) -> AsyncResult[T]: ...
     def retrieve_result_callback(self, out: Any) -> Any: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
 
@@ -146,11 +145,11 @@ class LokyBackend(AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]):
     ) -> int: ...
     def terminate(self) -> None: ...
     def abort_everything(self, ensure_ready: bool = ...) -> None: ...
-    def submit(
+    def submit[T](
         self,
-        func: Callable[[], _T],
-        callback: Callable[[futures.Future[_T]], Any] | None = ...,
-    ) -> futures.Future[_T]: ...
+        func: Callable[[], T],
+        callback: Callable[[futures.Future[T]], Any] | None = ...,
+    ) -> futures.Future[T]: ...
     # mypy
     def effective_n_jobs(self, n_jobs: int) -> int: ...
 

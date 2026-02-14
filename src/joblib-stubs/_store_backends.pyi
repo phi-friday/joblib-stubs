@@ -10,9 +10,6 @@ from joblib.disk import memstr_to_bytes as memstr_to_bytes
 from joblib.disk import mkdirp as mkdirp
 from joblib.disk import rm_subdirs as rm_subdirs
 from joblib.logger import format_time as format_time
-from typing_extensions import TypeVar
-
-_T = TypeVar("_T")
 
 class CacheItemInfo(NamedTuple):
     path: str
@@ -21,8 +18,8 @@ class CacheItemInfo(NamedTuple):
 
 class CacheWarning(Warning): ...
 
-def concurrency_safe_write(
-    object_to_write: _T, filename: str, write_func: Callable[[_T, str], Any]
+def concurrency_safe_write[T](
+    object_to_write: T, filename: str, write_func: Callable[[T, str], Any]
 ) -> str: ...
 
 class StoreBackendBase(metaclass=ABCMeta):

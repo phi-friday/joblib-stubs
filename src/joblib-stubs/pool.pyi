@@ -15,9 +15,6 @@ from joblib._multiprocessing_helpers import assert_spawning as assert_spawning
 from joblib._multiprocessing_helpers import mp as mp
 from joblib._typeshed import MmapMode, Reducer
 from joblib._typeshed import WindowsError as WindowsError
-from typing_extensions import TypeVar
-
-_T = TypeVar("_T")
 
 class CustomizablePickler(Pickler):
     # dispatch: dict[type[typing.Any], _Dispatch[typing.Any]]  # noqa: ERA001
@@ -28,10 +25,10 @@ class CustomizablePickler(Pickler):
         reducers: dict[type[Any], Reducer[Any]] | None = ...,
         protocol: int = ...,
     ) -> None: ...
-    def register(
+    def register[T](
         self,
-        type: type[_T],  # noqa: A002
-        reduce_func: Reducer[_T],
+        type: type[T],  # noqa: A002
+        reduce_func: Reducer[T],
     ) -> None: ...
 
 class CustomizablePicklingQueue:

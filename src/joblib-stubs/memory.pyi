@@ -1,7 +1,7 @@
 from collections.abc import Awaitable, Callable, Coroutine
 from datetime import timedelta
 from pathlib import Path
-from typing import Any, Generic, overload
+from typing import Any, overload
 
 from joblib import hashing as hashing
 from joblib._store_backends import CacheWarning as CacheWarning
@@ -16,10 +16,6 @@ from joblib.func_inspect import get_func_name as get_func_name
 from joblib.logger import Logger as Logger
 from joblib.logger import format_time as format_time
 from joblib.logger import pformat as pformat
-from typing_extensions import ParamSpec, TypeVar
-
-_T = TypeVar("_T")
-_P = ParamSpec("_P")
 
 FIRST_LINE_TEXT: str
 
@@ -31,7 +27,7 @@ def register_store_backend(
     backend_name: str, backend: type[StoreBackendBase]
 ) -> None: ...
 
-class MemorizedResult(Logger, Generic[_T]):
+class MemorizedResult[T](Logger):
     store_backend: StoreBackendBase
     mmap_mode: MmapMode
     metadata: dict[str, Any]
@@ -56,42 +52,40 @@ class MemorizedResult(Logger, Generic[_T]):
     def args_id(self) -> str: ...
     @property
     def argument_hash(self) -> str: ...
-    def get(self) -> _T: ...
+    def get(self) -> T: ...
     def clear(self) -> None: ...
 
-class NotMemorizedResult(Generic[_T]):
-    value: _T
+class NotMemorizedResult[T]:
+    value: T
     valid: bool
-    def __init__(self, value: _T) -> None: ...
-    def get(self) -> _T: ...
+    def __init__(self, value: T) -> None: ...
+    def get(self) -> T: ...
     def clear(self) -> None: ...
 
-class NotMemorizedFunc(Generic[_P, _T]):
-    func: Callable[_P, _T]
-    def __init__(self, func: Callable[_P, _T]) -> None: ...
-    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _T: ...
+class NotMemorizedFunc[**P, T]:
+    func: Callable[P, T]
+    def __init__(self, func: Callable[P, T]) -> None: ...
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T: ...
     def call_and_shelve(
-        self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> NotMemorizedResult[_T]: ...
+        self, *args: P.args, **kwargs: P.kwargs
+    ) -> NotMemorizedResult[T]: ...
     def clear(self, warn: bool = ...) -> None: ...
-    def call(
-        self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> tuple[_T, dict[Any, Any]]: ...
+    def call(self, *args: P.args, **kwargs: P.kwargs) -> tuple[T, dict[Any, Any]]: ...
     def check_call_in_cache(self, *args: Any, **kwargs: Any) -> bool: ...
 
-class AsyncNotMemorizedFunc(NotMemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]):
-    func: Callable[_P, Awaitable[_T]]
-    def __init__(self, func: Callable[_P, Awaitable[_T]]) -> None: ...
-    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> Awaitable[_T]: ...
+class AsyncNotMemorizedFunc[**P, T](NotMemorizedFunc[P, Awaitable[T]]):
+    func: Callable[P, Awaitable[T]]
+    def __init__(self, func: Callable[P, Awaitable[T]]) -> None: ...
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> Awaitable[T]: ...
     async def call_and_shelve(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> NotMemorizedResult[_T]: ...
-    def call(self) -> tuple[Awaitable[_T], dict[Any, Any]]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+        self, *args: P.args, **kwargs: P.kwargs
+    ) -> NotMemorizedResult[T]: ...
+    def call(self) -> tuple[Awaitable[T], dict[Any, Any]]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
 
-class MemorizedFunc(Logger, Generic[_P, _T]):
+class MemorizedFunc[**P, T](Logger):
     mmap_mode: MmapMode
     compress: bool | int
-    func: Callable[_P, _T]
+    func: Callable[P, T]
     cache_validation_callback: Callable[..., Any] | None
     func_id: str
     ignore: list[str]
@@ -100,7 +94,7 @@ class MemorizedFunc(Logger, Generic[_P, _T]):
     __doc__: str
     def __init__(
         self,
-        func: Callable[_P, _T],
+        func: Callable[P, T],
         location: str,
         backend: str = ...,
         ignore: list[str] | None = ...,
@@ -113,20 +107,18 @@ class MemorizedFunc(Logger, Generic[_P, _T]):
     @property
     def func_code_info(self) -> tuple[Any, ...]: ...
     def call_and_shelve(
-        self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> MemorizedResult[_T] | NotMemorizedResult[_T]: ...
-    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _T: ...
-    def check_call_in_cache(self, *args: _P.args, **kwargs: _P.kwargs) -> bool: ...
+        self, *args: P.args, **kwargs: P.kwargs
+    ) -> MemorizedResult[T] | NotMemorizedResult[T]: ...
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T: ...
+    def check_call_in_cache(self, *args: P.args, **kwargs: P.kwargs) -> bool: ...
     def clear(self, warn: bool = ...) -> None: ...
-    def call(
-        self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> tuple[_T, dict[str, Any]]: ...
+    def call(self, *args: P.args, **kwargs: P.kwargs) -> tuple[T, dict[str, Any]]: ...
 
-class AsyncMemorizedFunc(MemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]):
-    func: Callable[_P, Awaitable[_T]]
+class AsyncMemorizedFunc[**P, T](MemorizedFunc[P, Awaitable[T]]):
+    func: Callable[P, Awaitable[T]]
     def __init__(
         self,
-        func: Callable[_P, Awaitable[_T]],
+        func: Callable[P, Awaitable[T]],
         location: str,
         backend: str = ...,
         ignore: list[str] | None = ...,
@@ -136,13 +128,13 @@ class AsyncMemorizedFunc(MemorizedFunc[_P, Awaitable[_T]], Generic[_P, _T]):
         timestamp: float | None = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> None: ...
-    async def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _T: ...
+    async def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T: ...
     async def call_and_shelve(  # pyright: ignore[reportIncompatibleVariableOverride,reportIncompatibleMethodOverride]
-        self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> MemorizedResult[_T] | NotMemorizedResult[_T]: ...
+        self, *args: P.args, **kwargs: P.kwargs
+    ) -> MemorizedResult[T] | NotMemorizedResult[T]: ...
     async def call(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, *args: _P.args, **kwargs: _P.kwargs
-    ) -> tuple[_T, dict[str, Any]]: ...
+        self, *args: P.args, **kwargs: P.kwargs
+    ) -> tuple[T, dict[str, Any]]: ...
 
 class Memory(Logger):
     mmap_mode: MmapMode
@@ -171,23 +163,23 @@ class Memory(Logger):
         cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> MemoryCacheFunc: ...
     @overload
-    def cache(
+    def cache[**P, T](
         self,
-        func: Callable[_P, Awaitable[_T]],
+        func: Callable[P, Awaitable[T]],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> AsyncMemorizedFunc[_P, _T]: ...
+    ) -> AsyncMemorizedFunc[P, T]: ...
     @overload
-    def cache(
+    def cache[**P, T](
         self,
-        func: Callable[_P, _T],
+        func: Callable[P, T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> MemorizedFunc[_P, _T]: ...
+    ) -> MemorizedFunc[P, T]: ...
     def clear(self, warn: bool = ...) -> None: ...
     def reduce_size(
         self,
@@ -198,13 +190,13 @@ class Memory(Logger):
     # awaitble -> awaitable
     # non-awaitable -> non-awaitable
     @overload
-    def eval(
-        self, func: Callable[_P, Awaitable[_T]], *args: _P.args, **kwargs: _P.kwargs
-    ) -> Coroutine[Any, Any, _T]: ...
+    def eval[**P, T](
+        self, func: Callable[P, Awaitable[T]], *args: P.args, **kwargs: P.kwargs
+    ) -> Coroutine[Any, Any, T]: ...
     @overload
-    def eval(
-        self, func: Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs
-    ) -> _T: ...
+    def eval[**P, T](
+        self, func: Callable[P, T], *args: P.args, **kwargs: P.kwargs
+    ) -> T: ...
 
 def expires_after(
     days: int = ...,
