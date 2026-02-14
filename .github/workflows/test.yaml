@@ -30,7 +30,7 @@ jobs:
             cmd: uv run pytest src/tests/ -v
     
     env:
-      PYTHON_VERSION: "3.11"
+      PYTHON_VERSION: "3.12"
       UV_CACHE_DIR: /tmp/.uv-cache
 
     name: ${{ matrix.task.name }}

@@ -47,7 +47,7 @@ class Example:
 |------|------|-------|
 | Mypy | strict | See pyproject.toml for disabled error codes |
 | Pyright | strict | See pyrightconfig.json |
-| Ruff | ALL | Python 3.11 target |
+| Ruff | ALL | Python 3.12 target |
 
 ## Important Notes
 

@@ -6,7 +6,7 @@ description: >
   Use when joblib releases a new version and stubs need to be synchronized, or when the user 
   mentions "update stubs", "joblib upgrade", "sync stubs with joblib", or "check joblib changes".
 license: MIT
-compatibility: Requires git, uv, and Python 3.11+. Internet access needed to fetch joblib releases.
+compatibility: Requires git, uv, and Python 3.12+. Internet access needed to fetch joblib releases.
 allowed-tools: Bash(git:*) Bash(uv:*) Read Write
 ---
 
