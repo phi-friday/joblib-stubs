@@ -7,13 +7,14 @@ from multiprocessing.pool import AsyncResult as AsyncResult
 from typing import Any, ClassVar, Generic, Literal, NoReturn
 
 from joblib._multiprocessing_helpers import mp as mp
-from joblib._typeshed import AnyContainer, Prefer, Require, ReturnAs
+from joblib._typeshed import Prefer, Require, ReturnAs
 from joblib.executor import get_memmapping_executor as get_memmapping_executor
 from joblib.parallel import Parallel as Parallel
 from joblib.pool import MemmappingPool as MemmappingPool
 from typing_extensions import TypeVar, deprecated
 
 _R = TypeVar("_R", default=Literal["list"], bound=ReturnAs)
+type _AnyContainer[T] = futures.Future[T] | AsyncResult[T]
 
 class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):  # noqa: UP046 (default: +3.13)
     default_n_jobs: ClassVar[int]
@@ -40,13 +41,13 @@ class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):  # noqa: UP046 (defau
     def apply_async[T](
         self,
         func: Callable[[], T],
-        callback: Callable[[AnyContainer[T]], Any] | None = ...,
-    ) -> AnyContainer[T]: ...
+        callback: Callable[[_AnyContainer[T]], Any] | None = ...,
+    ) -> _AnyContainer[T]: ...
     def submit[T](
         self,
         func: Callable[[], T],
-        callback: Callable[[AnyContainer[T]], Any] | None = ...,
-    ) -> AnyContainer[T]: ...
+        callback: Callable[[_AnyContainer[T]], Any] | None = ...,
+    ) -> _AnyContainer[T]: ...
     def retrieve_result_callback[T](
         self, out: futures.Future[T] | AsyncResult[T]
     ) -> T: ...

@@ -6,8 +6,6 @@ from joblib.memory import AsyncMemorizedFunc as AsyncMemorizedFunc
 from joblib.memory import MemorizedFunc as MemorizedFunc
 from typing_extensions import TypedDict
 
-class AnyContainer[T](Protocol): ...  # mypy override error
-
 class EmptyCellValueClass:
     @classmethod
     def __reduce__(cls) -> str: ...  # pyright: ignore[reportIncompatibleMethodOverride]
