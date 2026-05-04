@@ -4,7 +4,13 @@
         "--strict",
         "--config-file=pyproject.toml"
     ],
+    "mypy-type-checker.path": [
+        "uv",
+        "run",
+        "mypy"
+    ],
     "mypy-type-checker.preferDaemon": true,
+    "mypy-type-checker.reportingScope": "workspace",
     "chat.useAgentSkills": true,
     "pyrefly.lspPath": ".venv/bin/pyrefly",
 }
