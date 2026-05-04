@@ -52,11 +52,11 @@ class MemoryCacheFunc(Protocol):
         cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> MemorizedFunc[P, T]: ...
 
-type RebuildExc[_BaseExceptionT: BaseException] = Callable[
-    [_BaseExceptionT, str], _BaseExceptionT
+type RebuildExc[BaseExceptionT: BaseException] = Callable[
+    [BaseExceptionT, str], BaseExceptionT
 ]
 WindowsError: type[OSError | None]
-type DaskTaskItem[**_P, _T] = tuple[Callable[_P, _T], list[Any], dict[str, Any]]
+type DaskTaskItem[**P, T] = tuple[Callable[P, T], list[Any], dict[str, Any]]
 type DaskScatterIterItem = list[Any] | dict[Any, Any]
 type Prefer = Literal["processes", "threads"]
 type Require = Literal["sharedmem"]
@@ -64,11 +64,11 @@ type HashType = Literal["md5", "sha1"]
 type MmapMode = Literal[
     "readonly", "r", "copyonwrite", "c", "readwrite", "r+", "write", "w+"
 ]
-type Reducer[_T] = Callable[Concatenate[type[_T], ...], Any]
-type Dispatch[_T] = Callable[[Unpickler, _T], None]
+type Reducer[T] = Callable[Concatenate[type[T], ...], Any]
+type Dispatch[T] = Callable[[Unpickler, T], None]
 type ReturnList = Literal["list"]
 type ReturnGererator = Literal["generator"]
 type ReturnGereratorUnordered = Literal["generator_unordered"]
 type ReturnUnknown = str
 type ReturnAs = ReturnList | ReturnGererator | ReturnGereratorUnordered | ReturnUnknown
-type BatchedCall[**_P, _T] = tuple[Callable[_P, _T], tuple[Any, ...], dict[str, Any]]
+type BatchedCall[**P, T] = tuple[Callable[P, T], tuple[Any, ...], dict[str, Any]]

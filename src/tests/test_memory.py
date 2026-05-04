@@ -387,8 +387,8 @@ class TestMemory:
         with tempfile.TemporaryDirectory() as tmpdir:
             mem = mod.Memory(tmpdir)
             cached = mem.cache(sample_func)
-            # MemorizedFunc has ParamSpec, exact type assertion is complex
-            # Type checker verifies the return type matches MemorizedFunc
+            # The cached wrapper preserves the callable signature, so the
+            # exact generic type assertion is left to the type checker.
             assert isinstance(cached, mod.MemorizedFunc)
             # Verify the callable works correctly
             result = cached(42)

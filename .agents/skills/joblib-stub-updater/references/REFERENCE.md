@@ -67,26 +67,33 @@ def process(data: str | bytes | list[int]) -> str | bytes | list[int]: ...
 
 ### Generic Types
 
+Prefer Python 3.12 type parameter syntax over explicit `TypeVar`/`ParamSpec`
+imports. Use `TypeVar`/`ParamSpec` only when the 3.12 syntax cannot express the
+required behavior; the common case is `typing_extensions.TypeVar(..., default=...)`
+because type parameter defaults require Python 3.13 syntax. In 3.12 type
+parameter syntax, prefer non-underscored names (`T`, `P`); keep underscored
+names (`_T`, `_P`) for direct `TypeVar`/`ParamSpec` declarations.
+
 ```python
-from typing import TypeVar, Generic
 from collections.abc import Callable, Iterator
 
-T = TypeVar("T")
-T_co = TypeVar("T_co", covariant=True)
-
-class Container(Generic[T]):
+class Container[T]:
     def get(self) -> T: ...
     def set(self, value: T) -> None: ...
 
 # Callable types
 def apply(func: Callable[[int, str], bool], x: int, y: str) -> bool: ...
 
-# With ParamSpec for decorators
-from typing import ParamSpec, Concatenate
+# Preserve callable signatures with 3.12 parameter syntax
+def decorator[**P, T](func: Callable[P, T]) -> Callable[P, T]: ...
 
-P = ParamSpec("P")
+# Use TypeVar only when necessary, such as defaulted type parameters in 3.12
+from typing import Generic, Literal
+from typing_extensions import TypeVar
 
-def decorator(func: Callable[P, T]) -> Callable[P, T]: ...
+_R = TypeVar("_R", default=Literal["list"], bound=str)
+
+class Result(Generic[_R]): ...
 ```
 
 ## Module Organization
@@ -163,14 +170,10 @@ def func(hasher: HashFunc, mmap_mode: MmapMode) -> None: ...
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
 from pathlib import Path
-from typing import Any, Generic, overload
+from typing import Any, overload
 
 from joblib._typeshed import MemoryCacheFunc, MmapMode
 from joblib.logger import Logger
-from typing_extensions import ParamSpec, TypeVar
-
-_T = TypeVar("_T")
-_P = ParamSpec("_P")
 
 class Memory(Logger):
     mmap_mode: MmapMode
@@ -202,23 +205,23 @@ class Memory(Logger):
         cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> MemoryCacheFunc: ...
     @overload
-    def cache(
+    def cache[**P, T](
         self,
-        func: Callable[_P, Awaitable[_T]],
+        func: Callable[P, Awaitable[T]],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> AsyncMemorizedFunc[_P, _T]: ...
+    ) -> AsyncMemorizedFunc[P, T]: ...
     @overload
-    def cache(
+    def cache[**P, T](
         self,
-        func: Callable[_P, _T],
+        func: Callable[P, T],
         ignore: list[str] | None = ...,
         verbose: int | None = ...,
         mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
-    ) -> MemorizedFunc[_P, _T]: ...
+    ) -> MemorizedFunc[P, T]: ...
     
     def clear(self, warn: bool = ...) -> None: ...
     def reduce_size(
@@ -292,13 +295,11 @@ class Parallel(Logger, Generic[ReturnAs]):
 # Necessary imports (absolute paths)
 from collections.abc import Callable
 from joblib._typeshed import BatchedCall
-from typing_extensions import ParamSpec, TypeVar
-
-_T = TypeVar("_T")
-_P = ParamSpec("_P")
 
 # Simple single signature in actual stubs
-def delayed(function: Callable[_P, _T]) -> Callable[_P, BatchedCall[_P, _T]]: ...
+def delayed[**P, T](
+    function: Callable[P, T],
+) -> Callable[P, BatchedCall[P, T]]: ...
 ```
 
 **Note**: The actual implementation is simpler than you might expect. `BatchedCall` is defined in `_typeshed.pyi` to represent the delayed call tuple structure.
@@ -335,8 +336,11 @@ from typing import (
     overload,
 )
 
-# Use typing_extensions for ParamSpec, TypeVar (for compatibility)
-from typing_extensions import ParamSpec, TypeVar
+# Use typing_extensions.TypeVar only when Python 3.12 syntax is insufficient,
+# such as defaulted type parameters. Prefer `def f[**P, T]` / `class C[T]`
+# instead of importing ParamSpec or plain TypeVar. Use non-underscored names
+# for 3.12 type parameters, but keep `_T`/`_P` for direct TypeVar/ParamSpec.
+from typing_extensions import TypeVar
 
 # Absolute imports from joblib modules
 from joblib._typeshed import CustomType  # Internal types
@@ -348,17 +352,16 @@ from joblib.module import SomeClass
 from collections.abc import Awaitable, Callable, Coroutine
 from datetime import timedelta
 from pathlib import Path
-from typing import Any, Generic, overload
+from typing import Any, overload
 
 from joblib import hashing as hashing
 from joblib._store_backends import StoreBackendBase
 from joblib._typeshed import MemoryCacheFunc, MmapMode
 from joblib.func_inspect import filter_args, format_call
 from joblib.logger import Logger
-from typing_extensions import ParamSpec, TypeVar
-
-_T = TypeVar("_T")
-_P = ParamSpec("_P")
+# Prefer 3.12 type parameter syntax in real stubs:
+# class MemorizedFunc[**P, T](Logger): ...
+# def cache[**P, T](...) -> MemorizedFunc[P, T]: ...
 ```
 
 ## Deprecation Handling

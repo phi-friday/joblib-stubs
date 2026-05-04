@@ -30,6 +30,8 @@ src/
 3. Use `as` syntax for re-exports: `from mod import X as X`
 4. Define internal types in `_typeshed.pyi`
 5. Avoid `Incomplete` - use concrete types
+6. Prefer Python 3.12 type parameter syntax (`class C[T]`, `def f[**P, T](...)`) over `TypeVar`/`ParamSpec`; only use `TypeVar`/`ParamSpec` when required, especially `typing_extensions.TypeVar(..., default=...)` because type parameter defaults need Python 3.13 syntax
+7. For Python 3.12 type parameter syntax, prefer non-underscored names (`T`, `P`); when `TypeVar`/`ParamSpec` must be declared directly, prefer underscored names (`_T`, `_P`)
 
 **⚠️ Updating Stubs**: For stub updates or new module additions, use the `joblib-stub-updater` skill located in `.github/skills/joblib-stub-updater/SKILL.md`
 
