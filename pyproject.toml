@@ -3,9 +3,7 @@ name = "joblib-stubs"
 version = "0.0.0"
 description = "joblib stubs"
 authors = [{ name = "phi", email = "phi.friday@gmail.com" }]
-dependencies = [
-    "typing-extensions>=4.4.0",
-]
+dependencies = ["typing-extensions>=4.4.0"]
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -25,13 +23,8 @@ classifiers = [
 Repository = "https://github.com/phi-friday/joblib-stubs"
 
 [project.optional-dependencies]
-mypy = [
-    "mypy>=1.19.1",
-]
-mypy-strict = [
-    "mypy==1.19.1",
-    "joblib-stubs[mypy]",
-]
+mypy = ["mypy>=1.19.1"]
+mypy-strict = ["mypy==1.19.1", "joblib-stubs[mypy]"]
 
 [dependency-groups]
 joblib-dependencies = [
@@ -40,16 +33,13 @@ joblib-dependencies = [
     "dask>=2025.12.0",
     "distributed>=2025.12.0",
 ]
-test = [
-    { include-group = "joblib-dependencies" },
-    "pytest>=9.0.2",
-]
+test = [{ include-group = "joblib-dependencies" }, "pytest>=9.0.2"]
 dev = [
     { include-group = "joblib-dependencies" },
     "ruff==0.14.13",
-    "pyright==1.1.408",
     "poethepoet>=0.40.0",
     "joblib-stubs[mypy-strict]",
+    "pyrefly==0.63.1",
 ]
 
 [tool.uv]
@@ -61,8 +51,8 @@ lint = ["_lint:check", "_lint:format"]
 "_lint:check" = "ruff check src --fix"
 "_lint:format" = "ruff format src"
 mypy = "mypy src --strict"
-pyright = "pyright src"
-check = ["lint", "mypy", "pyright"]
+pyre = "pyrefly check src .claude"
+check = ["lint", "mypy", "pyre"]
 
 [build-system]
 requires = ["hatchling"]
