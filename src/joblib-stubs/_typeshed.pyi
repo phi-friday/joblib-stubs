@@ -8,7 +8,7 @@ from typing_extensions import TypedDict
 
 class EmptyCellValueClass:
     @classmethod
-    def __reduce__(cls) -> str: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __reduce__(cls) -> str: ...
 
 class Process(Protocol):
     pid: int

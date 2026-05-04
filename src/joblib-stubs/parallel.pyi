@@ -83,7 +83,7 @@ class parallel_backend(parallel_config, Generic[_R]):  # noqa: N801
         inner_max_num_threads: int | None = ...,
         **backend_params: Any,
     ) -> None: ...
-    def __enter__(self) -> tuple[ParallelBackendBase[_R], int]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __enter__(self) -> tuple[ParallelBackendBase[_R], int]: ...
 
 DEFAULT_MP_CONTEXT: BaseContext | None
 method: str | None

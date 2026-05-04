@@ -48,9 +48,9 @@ class DaskDistributedBackend(
         **submit_kwargs: Any,
     ) -> None: ...
     def __reduce__(self) -> tuple[type[DaskDistributedBackend], tuple[()]]: ...
-    def get_nested_backend(self) -> tuple[DaskDistributedBackend, Literal[-1]]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+    def get_nested_backend(self) -> tuple[DaskDistributedBackend, Literal[-1]]: ...
     parallel: Parallel[_R]
-    def configure(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def configure(
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,

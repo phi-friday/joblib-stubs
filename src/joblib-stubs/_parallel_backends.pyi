@@ -78,7 +78,7 @@ class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):  # noqa: UP046 (defau
 
 class SequentialBackend(ParallelBackendBase[_R], Generic[_R]):
     uses_threads: ClassVar[bool]
-    supports_timeout: ClassVar[bool]  # pyright: ignore[reportIncompatibleMethodOverride]
+    supports_timeout: ClassVar[bool]
     supports_retrieve_callback: ClassVar[bool]
     supports_sharedmem: ClassVar[bool]
     def submit(
@@ -111,7 +111,7 @@ class ThreadingBackend(PoolManagerMixin, ParallelBackendBase[_R], Generic[_R]):
     supports_retrieve_callback: ClassVar[bool]
     uses_threads: ClassVar[bool]
     supports_sharedmem: ClassVar[bool]
-    def configure(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def configure(
         self,
         n_jobs: int = ...,
         parallel: Parallel[_R] | None = ...,
@@ -122,7 +122,7 @@ class MultiprocessingBackend(
     PoolManagerMixin, AutoBatchingMixin[_R], ParallelBackendBase[_R], Generic[_R]
 ):
     supports_retrieve_callback: ClassVar[bool]
-    supports_return_generator: ClassVar[bool]  # pyright: ignore[reportIncompatibleMethodOverride]
+    supports_return_generator: ClassVar[bool]
     def configure(
         self,
         n_jobs: int = ...,
