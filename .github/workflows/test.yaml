@@ -25,7 +25,7 @@ jobs:
           - name: mypy
             cmd: uv run poe mypy
           - name: pyrefly
-            cmd: uv run poe pyre
+            cmd: uv run poe pyrefly
           - name: pytest
             cmd: uv run pytest src/tests/ -v
 
