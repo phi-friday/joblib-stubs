@@ -77,9 +77,11 @@ class AsyncNotMemorizedFunc[**P, T](NotMemorizedFunc[P, Awaitable[T]]):
     func: Callable[P, Awaitable[T]]
     def __init__(self, func: Callable[P, Awaitable[T]]) -> None: ...
     def __call__(self, *args: P.args, **kwargs: P.kwargs) -> Awaitable[T]: ...
+    # pyrefly: ignore [bad-override]
     async def call_and_shelve(
         self, *args: P.args, **kwargs: P.kwargs
     ) -> NotMemorizedResult[T]: ...
+    # pyrefly: ignore [bad-override]
     def call(self) -> tuple[Awaitable[T], dict[Any, Any]]: ...
 
 class MemorizedFunc[**P, T](Logger):
@@ -91,7 +93,6 @@ class MemorizedFunc[**P, T](Logger):
     ignore: list[str]
     store_backend: StoreBackendBase
     timestamp: float
-    __doc__: str
     def __init__(
         self,
         func: Callable[P, T],
@@ -129,9 +130,11 @@ class AsyncMemorizedFunc[**P, T](MemorizedFunc[P, Awaitable[T]]):
         cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> None: ...
     async def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T: ...
+    # pyrefly: ignore [bad-override]
     async def call_and_shelve(
         self, *args: P.args, **kwargs: P.kwargs
     ) -> MemorizedResult[T] | NotMemorizedResult[T]: ...
+    # pyrefly: ignore [bad-override]
     async def call(
         self, *args: P.args, **kwargs: P.kwargs
     ) -> tuple[T, dict[str, Any]]: ...

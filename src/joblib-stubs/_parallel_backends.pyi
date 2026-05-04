@@ -20,10 +20,8 @@ class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):  # noqa: UP046 (defau
     default_n_jobs: ClassVar[int]
     supports_inner_max_num_threads: ClassVar[bool]
     supports_retrieve_callback: ClassVar[bool]
-    @property
-    def supports_return_generator(self) -> bool: ...
-    @property
-    def supports_timeout(self) -> bool: ...
+    supports_return_generator: ClassVar[bool]
+    supports_timeout: ClassVar[bool]
     nesting_level: int | None
     inner_max_num_threads: int
     backend_kwargs: dict[str, Any]
@@ -111,6 +109,7 @@ class ThreadingBackend(PoolManagerMixin, ParallelBackendBase[_R], Generic[_R]):
     supports_retrieve_callback: ClassVar[bool]
     uses_threads: ClassVar[bool]
     supports_sharedmem: ClassVar[bool]
+    # pyrefly: ignore [bad-override]
     def configure(
         self,
         n_jobs: int = ...,
