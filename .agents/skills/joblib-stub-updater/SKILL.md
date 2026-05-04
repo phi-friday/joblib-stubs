@@ -58,7 +58,7 @@ git diff <OLD_TAG>..<NEW_TAG> -- joblib/*.py joblib/**/*.py
 Run the analysis script to identify what changed:
 
 ```bash
-uv run python skills/joblib-stub-updater/scripts/analyze_changes.py \
+uv run python .agents/skills/joblib-stub-updater/scripts/analyze_changes.py \
     --old-version <OLD_TAG> \
     --new-version <NEW_TAG> \
     --joblib-path /tmp/joblib-source

@@ -1,7 +1,7 @@
 project-includes = [
     "src/joblib-stubs",
     "src/tests",
-    ".claude/skills/joblib-stub-updater/**/*.py",
+    ".agents/skills/joblib-stub-updater/**/*.py",
 ]
 python-platform = "linux"
 python-version = "3.12"

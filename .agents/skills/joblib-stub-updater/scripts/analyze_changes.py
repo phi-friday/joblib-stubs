@@ -5,7 +5,8 @@ This script compares two versions of joblib and outputs a structured report
 of API changes that need to be reflected in the stub files.
 
 Usage:
-    python analyze_changes.py --old-version 1.3.2 --new-version 1.4.0 \
+    uv run .agents/skills/joblib-stub-updater/scripts/analyze_changes.py \
+        --old-version 1.3.2 --new-version 1.4.0 \
         --joblib-path /tmp/joblib-source
 
 Output:
