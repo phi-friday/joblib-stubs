@@ -51,8 +51,9 @@ lint = ["_lint:check", "_lint:format"]
 "_lint:check" = "ruff check src --fix"
 "_lint:format" = "ruff format src"
 mypy = "mypy src --strict"
-pyre = "pyrefly check src .claude"
-check = ["lint", "mypy", "pyre"]
+pyrefly = "pyrefly check src .claude"
+pyre.ref = "pyrefly"
+check = ["lint", "mypy", "pyrefly"]
 
 [build-system]
 requires = ["hatchling"]

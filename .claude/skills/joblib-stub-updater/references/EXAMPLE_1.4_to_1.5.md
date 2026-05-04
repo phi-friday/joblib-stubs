@@ -184,7 +184,7 @@ cd /home/phi/git/python/repo/joblib-stubs
 uv run poe lint
 
 # Type check with both checkers
-uv run poe pyright
+uv run poe pyrefly
 uv run poe mypy
 
 # Run affected tests
@@ -225,7 +225,7 @@ class TestDump:
 | `memory.pyi` | Remove `bytes_limit` from `Memory.__init__` | ☐ |
 | `numpy_pickle.pyi` | Remove `cache_size` from `dump` | ☐ |
 | Tests | Update signature tests | ☐ |
-| Validate | `uv run poe lint && uv run poe pyright && uv run poe mypy` | ☐ |
+| Validate | `uv run poe lint && uv run poe pyrefly && uv run poe mypy` | ☐ |
 
 ## Complete Workflow Summary
 
@@ -254,5 +254,5 @@ less /tmp/joblib-1.4.2-to-1.5.0.diff
 
 # 5. Validate
 cd /home/phi/git/python/repo/joblib-stubs
-uv run poe lint && uv run poe pyright && uv run poe mypy && uv run pytest src/tests/ -v
+uv run poe lint && uv run poe pyrefly && uv run poe mypy && uv run pytest src/tests/ -v
 ```

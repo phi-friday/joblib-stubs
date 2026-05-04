@@ -149,7 +149,7 @@ cd /path/to/joblib-stubs
 uv run poe lint
 
 # Type check with both checkers
-uv run poe pyright
+uv run poe pyrefly
 uv run poe mypy
 
 # Run affected tests
@@ -183,7 +183,7 @@ cd /home/phi/git/python/repo/joblib-stubs
 # Edit src/joblib-stubs/parallel.pyi to add new_function
 
 # 6. Validate
-uv run poe lint && uv run poe pyright && uv run poe mypy
+uv run poe lint && uv run poe pyrefly && uv run poe mypy
 ```
 
 ## Change Categories & Actions

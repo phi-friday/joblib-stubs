@@ -5,5 +5,6 @@
         "--config-file=pyproject.toml"
     ],
     "mypy-type-checker.preferDaemon": true,
-    "chat.useAgentSkills": true
+    "chat.useAgentSkills": true,
+    "pyrefly.lspPath": ".venv/bin/pyrefly",
 }

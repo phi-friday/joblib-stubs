@@ -1,4 +1,3 @@
-# pyright: reportUnnecessaryTypeIgnoreComment=false
 from collections.abc import Callable
 from concurrent import futures
 from typing import Any

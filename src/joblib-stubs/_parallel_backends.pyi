@@ -1,4 +1,3 @@
-# pyright: reportUnnecessaryTypeIgnoreComment=false
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable
 from concurrent import futures

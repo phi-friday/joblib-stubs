@@ -2,16 +2,16 @@ name: test
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
       - "**.py"
       - "**.pyi"
       - ".github/workflows/test.yaml"
       - "pyproject.toml"
       - "ruff.toml"
-      - "pyrightconfig.json"
+      - "pyrefly.toml"
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   test:
@@ -24,11 +24,11 @@ jobs:
             cmd: uv run poe lint
           - name: mypy
             cmd: uv run poe mypy
-          - name: pyright
-            cmd: uv run poe pyright
+          - name: pyrefly
+            cmd: uv run poe pyre
           - name: pytest
             cmd: uv run pytest src/tests/ -v
-    
+
     env:
       PYTHON_VERSION: "3.12"
       UV_CACHE_DIR: /tmp/.uv-cache
@@ -60,7 +60,7 @@ jobs:
           restore-keys: |
             uv-${{ steps.setup-python.outputs.PY }}-${{ hashFiles('uv.lock') }}
             uv-${{ steps.setup-python.outputs.PY }}
-  
+
       - name: Install dependencies
         if: steps.uv-cache.outputs.cache-hit != 'true'
         run: uv sync

@@ -417,8 +417,8 @@ def process_data(
 
 After updating stubs:
 
-1. [ ] `uv run poe lint` - passes
-2. [ ] `uv run poe pyright` - passes
-3. [ ] `uv run poe mypy` - passes
+1. [ ] `uv run poe lint`    - passes
+2. [ ] `uv run poe pyrefly` - passes
+3. [ ] `uv run poe mypy`    - passes
 4. [ ] Tests added/updated for new APIs
 5. [ ] `assert_type` checks match runtime behavior
