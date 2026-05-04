@@ -33,13 +33,15 @@ src/
 6. Prefer Python 3.12 type parameter syntax (`class C[T]`, `def f[**P, T](...)`) over `TypeVar`/`ParamSpec`; only use `TypeVar`/`ParamSpec` when required, especially `typing_extensions.TypeVar(..., default=...)` because type parameter defaults need Python 3.13 syntax
 7. For Python 3.12 type parameter syntax, prefer non-underscored names (`T`, `P`); when `TypeVar`/`ParamSpec` must be declared directly, prefer underscored names (`_T`, `_P`)
 
-**⚠️ Updating Stubs**: For stub updates or new module additions, use the `joblib-stub-updater` skill located in `.github/skills/joblib-stub-updater/SKILL.md`
+**⚠️ Updating Stubs**: For stub updates or new module additions, use the `joblib-stub-updater` skill located in `.agents/skills/joblib-stub-updater/SKILL.md`
 
 ```python
 def func(param: str, optional: int = ...) -> bool: ...
 
+
 class Example:
     attr: ClassVar[int]
+
     def method(self) -> None: ...
 ```
 
@@ -133,7 +135,7 @@ class TestClassName:
 
     def test_attributes(self) -> None:
         obj = mod.ClassName(...)
-        assert_type(obj.attr, int)       # stub check FIRST
+        assert_type(obj.attr, int)  # stub check FIRST
         assert isinstance(obj.attr, int)  # runtime check SECOND
 ```
 
@@ -156,7 +158,7 @@ class TestFunctionName:
 
     def test_return_type(self) -> None:
         result = mod.function_name(...)
-        assert_type(result, ExpectedType)       # stub check FIRST
+        assert_type(result, ExpectedType)  # stub check FIRST
         assert isinstance(result, ExpectedType)  # runtime check SECOND
 ```
 
