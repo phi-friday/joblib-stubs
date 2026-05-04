@@ -15,7 +15,7 @@ from typing_extensions import TypeVar, deprecated
 _R = TypeVar("_R", default=Literal["list"], bound=ReturnAs)
 type _AnyContainer[T] = futures.Future[T] | AsyncResult[T]
 
-class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):  # noqa: UP046 (default: +3.13)
+class ParallelBackendBase(Generic[_R], metaclass=ABCMeta):
     default_n_jobs: ClassVar[int]
     supports_inner_max_num_threads: ClassVar[bool]
     supports_retrieve_callback: ClassVar[bool]

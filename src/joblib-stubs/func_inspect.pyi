@@ -4,9 +4,6 @@ from types import FunctionType
 from typing import Any
 
 from joblib.logger import pformat as pformat
-from typing_extensions import ParamSpec
-
-_P = ParamSpec("_P")
 
 full_argspec_fields: str
 full_argspec_type = FullArgSpec
@@ -21,8 +18,8 @@ def filter_args(
     args: tuple[Any, ...] = ...,
     kwargs: dict[str, Any] = ...,
 ) -> dict[str, Any]: ...
-def format_signature(
-    func: Callable[_P, Any], *args: _P.args, **kwargs: _P.kwargs
+def format_signature[**P](
+    func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs
 ) -> tuple[list[str], str]: ...
 def format_call(
     func: Callable[..., Any],
