@@ -23,8 +23,8 @@ classifiers = [
 Repository = "https://github.com/phi-friday/joblib-stubs"
 
 [project.optional-dependencies]
-mypy = ["mypy>=1.19.1"]
-mypy-strict = ["mypy==1.19.1", "joblib-stubs[mypy]"]
+mypy = ["mypy>=1.20.2"]
+mypy-strict = ["mypy==1.20.2", "joblib-stubs[mypy]"]
 
 [dependency-groups]
 joblib-dependencies = [
@@ -36,8 +36,8 @@ joblib-dependencies = [
 test = [{ include-group = "joblib-dependencies" }, "pytest>=9.0.2"]
 dev = [
     { include-group = "joblib-dependencies" },
-    "ruff==0.14.13",
-    "poethepoet>=0.40.0",
+    "ruff==0.15.12",
+    "poethepoet>=0.45.0",
     "joblib-stubs[mypy-strict]",
     "pyrefly==0.63.1",
 ]
