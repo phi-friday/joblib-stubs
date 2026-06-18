@@ -23,8 +23,8 @@ classifiers = [
 Repository = "https://github.com/phi-friday/joblib-stubs"
 
 [project.optional-dependencies]
-mypy = ["mypy>=1.20.2"]
-mypy-strict = ["mypy==1.20.2", "joblib-stubs[mypy]"]
+mypy = ["mypy>=2.1.0"]
+mypy-strict = ["mypy==2.1.0", "joblib-stubs[mypy]"]
 
 [dependency-groups]
 joblib-dependencies = [
