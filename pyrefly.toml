@@ -12,7 +12,6 @@ strict-callable-subtyping = true
 
 [errors]
 abstract-method-call = "error"
-annotation-mismatch = "error"
 bad-argument-count = "error"
 bad-argument-type = "error"
 bad-assignment = "error"

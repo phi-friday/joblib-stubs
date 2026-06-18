@@ -36,15 +36,20 @@ joblib-dependencies = [
 test = [{ include-group = "joblib-dependencies" }, "pytest>=9.0.2"]
 dev = [
     { include-group = "joblib-dependencies" },
-    "ruff==0.15.12",
+    "ruff==0.15.17",
     "poethepoet>=0.45.0",
     "joblib-stubs[mypy-strict]",
-    "pyrefly==0.63.1",
+    "pyrefly==1.1.0",
 ]
 
 [tool.uv]
 managed = true
 default-groups = ["dev", "test"]
+exclude-newer = "3 days"
+
+[tool.uv.exclude-newer-package]
+pyrefly = false
+ruff = false
 
 [tool.poe.tasks]
 lint = ["_lint:check", "_lint:format"]
