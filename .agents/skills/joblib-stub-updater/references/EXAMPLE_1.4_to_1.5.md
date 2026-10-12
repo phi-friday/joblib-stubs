@@ -106,6 +106,7 @@ from typing import Any
 from joblib._typeshed import MmapMode
 from joblib.logger import Logger
 
+
 # Before (1.4.2 stub)
 class Memory(Logger):
     def __init__(
@@ -118,6 +119,7 @@ class Memory(Logger):
         bytes_limit: int | str | None = ...,  # REMOVE THIS LINE
         backend_options: dict[str, Any] | None = ...,
     ) -> None: ...
+
 
 # After (1.5.0 stub)
 class Memory(Logger):
@@ -154,6 +156,7 @@ git diff 1.4.2..1.5.0 -- joblib/numpy_pickle.py | grep -E "def dump" -A 10
 from pathlib import Path
 from typing import IO, Any
 
+
 # Before (1.4.2 stub)
 def dump(
     value: Any,
@@ -162,6 +165,7 @@ def dump(
     protocol: int | None = ...,
     cache_size: int | None = ...,  # REMOVE THIS LINE
 ) -> list[str]: ...
+
 
 # After (1.5.0 stub)
 def dump(
@@ -206,6 +210,7 @@ class TestMemory:
         # bytes_limit should NOT be in parameters anymore
         assert "bytes_limit" not in params
         assert "backend_options" in params
+
 
 # In src/tests/test_numpy_pickle.py
 class TestDump:

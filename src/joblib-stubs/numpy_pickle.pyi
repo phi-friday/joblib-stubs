@@ -61,7 +61,7 @@ class NumpyPickler(Pickler):
     def save(self, obj: Any) -> None: ...
 
 class NumpyUnpickler(Unpickler):
-    # dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]  # noqa: ERA001, E501
+    # dispatch: typing.ClassVar[dict[type[typing.Any], Dispatch[typing.Any]]]  # noqa: ERA001
     mmap_mode: MmapMode
     file_handle: BinaryIO
     filename: str

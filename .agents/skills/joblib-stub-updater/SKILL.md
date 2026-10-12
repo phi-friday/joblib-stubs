@@ -99,10 +99,7 @@ For each identified change, update the corresponding `.pyi` file:
 ```python
 # In src/joblib-stubs/<module>.pyi
 def new_function(
-    param1: str,
-    param2: int = ...,
-    *,
-    keyword_only: bool = ...,
+    param1: str, param2: int = ..., *, keyword_only: bool = ...
 ) -> ReturnType: ...
 ```
 
@@ -126,7 +123,7 @@ When a function signature changes:
 ```python
 @overload
 def func(x: int) -> int: ...
-@overload  
+@overload
 def func(x: str) -> str: ...
 def func(x: int | str) -> int | str: ...
 ```

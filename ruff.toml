@@ -34,6 +34,7 @@ ignore = [
     "FIX",     # flake8-fixme
     "D413",    # blank-line-after-last-section 
     "PLR2044", # empty-comment
+    "CPY001",  # missing-copyright-notice
     # ruff format
     "W191",   # tab-indentation
     "E111",   # indentation-with-invalid-multiple

@@ -56,7 +56,7 @@ lint = ["_lint:check", "_lint:format"]
 "_lint:check" = "ruff check src --fix"
 "_lint:format" = "ruff format src"
 mypy = "mypy src --strict"
-pyrefly = "pyrefly check src .agents"
+pyrefly = "pyrefly check --config pyrefly.toml src .agents"
 pyre.ref = "pyrefly"
 check = ["lint", "mypy", "pyrefly"]
 

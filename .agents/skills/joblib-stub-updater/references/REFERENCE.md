@@ -10,14 +10,18 @@ Detailed conventions for writing and maintaining joblib type stubs.
 # Simple function
 def func(param: str, count: int = ...) -> bool: ...
 
+
 # Optional parameter (default is None)
 def func(param: str | None = ...) -> str: ...
+
 
 # With *args and **kwargs
 def func(*args: Any, **kwargs: Any) -> Result: ...
 
+
 # Keyword-only parameters
 def func(pos_arg: int, *, keyword_only: str = ...) -> None: ...
+
 
 # Positional-only parameters (Python 3.8+)
 def func(pos_only: int, /, normal: str) -> None: ...
@@ -28,22 +32,23 @@ def func(pos_only: int, /, normal: str) -> None: ...
 ```python
 from typing import ClassVar, Self
 
+
 class MyClass:
     # Class variable
     class_attr: ClassVar[int]
-    
+
     # Instance variable (declared without assignment)
     instance_attr: str
-    
+
     def __init__(self, value: str) -> None: ...
-    
+
     # Method returning same type
     def copy(self) -> Self: ...
-    
+
     # Property
     @property
     def computed(self) -> int: ...
-    
+
     # Setter
     @computed.setter
     def computed(self, value: int) -> None: ...
@@ -55,6 +60,7 @@ Use `@overload` when a function's return type depends on input types:
 
 ```python
 from typing import overload
+
 
 @overload
 def process(data: str) -> str: ...
@@ -77,21 +83,26 @@ names (`_T`, `_P`) for direct `TypeVar`/`ParamSpec` declarations.
 ```python
 from collections.abc import Callable, Iterator
 
+
 class Container[T]:
     def get(self) -> T: ...
     def set(self, value: T) -> None: ...
 
+
 # Callable types
 def apply(func: Callable[[int, str], bool], x: int, y: str) -> bool: ...
 
+
 # Preserve callable signatures with 3.12 parameter syntax
 def decorator[**P, T](func: Callable[P, T]) -> Callable[P, T]: ...
+
 
 # Use TypeVar only when necessary, such as defaulted type parameters in 3.12
 from typing import Generic, Literal
 from typing_extensions import TypeVar
 
 _R = TypeVar("_R", default=Literal["list"], bound=str)
+
 
 class Result(Generic[_R]): ...
 ```
@@ -103,10 +114,7 @@ class Result(Generic[_R]): ...
 ```python
 # Use absolute imports (not relative)
 # Re-export with explicit `as` syntax
-from joblib.module import (
-    PublicClass as PublicClass,
-    public_function as public_function,
-)
+from joblib.module import PublicClass as PublicClass, public_function as public_function
 
 # Define __all__ if the source does
 __all__ = ["PublicClass", "public_function"]
@@ -147,6 +155,7 @@ from collections.abc import Callable
 HashFunc: TypeAlias = Callable[[bytes], bytes]
 MmapMode: TypeAlias = str | None
 
+
 # Protocols for duck typing
 class Hasher(Protocol):
     def update(self, data: bytes) -> None: ...
@@ -157,6 +166,7 @@ class Hasher(Protocol):
 ```python
 # In src/joblib-stubs/memory.pyi
 from joblib._typeshed import HashFunc, MmapMode  # Absolute import
+
 
 def func(hasher: HashFunc, mmap_mode: MmapMode) -> None: ...
 ```
@@ -175,6 +185,7 @@ from typing import Any, overload
 from joblib._typeshed import MemoryCacheFunc, MmapMode
 from joblib.logger import Logger
 
+
 class Memory(Logger):
     mmap_mode: MmapMode
     verbose: int
@@ -183,7 +194,7 @@ class Memory(Logger):
     compress: bool | int
     backend_options: dict[str, Any]
     location: str | Path
-    
+
     def __init__(
         self,
         location: str | Path | None = ...,
@@ -193,7 +204,7 @@ class Memory(Logger):
         verbose: int = ...,
         backend_options: dict[str, Any] | None = ...,
     ) -> None: ...
-    
+
     # Decorator pattern with overloads
     @overload
     def cache(
@@ -222,7 +233,7 @@ class Memory(Logger):
         mmap_mode: MmapMode | bool = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
     ) -> MemorizedFunc[P, T]: ...
-    
+
     def clear(self, warn: bool = ...) -> None: ...
     def reduce_size(
         self,
@@ -249,6 +260,7 @@ from joblib._typeshed import (
     ReturnGererator,
 )
 from joblib.logger import Logger
+
 
 class Parallel(Logger, Generic[ReturnAs]):
     # Use overloads for different return types
@@ -284,7 +296,7 @@ class Parallel(Logger, Generic[ReturnAs]):
         prefer: Prefer | None = ...,
         require: Require | None = ...,
     ) -> Parallel[ReturnGererator]: ...
-    
+
     # The actual __call__ signature is complex - see parallel.pyi
     def __call__(self, iterable: Iterable[Any]) -> Any: ...
 ```
@@ -296,10 +308,9 @@ class Parallel(Logger, Generic[ReturnAs]):
 from collections.abc import Callable
 from joblib._typeshed import BatchedCall
 
+
 # Simple single signature in actual stubs
-def delayed[**P, T](
-    function: Callable[P, T],
-) -> Callable[P, BatchedCall[P, T]]: ...
+def delayed[**P, T](function: Callable[P, T]) -> Callable[P, BatchedCall[P, T]]: ...
 ```
 
 **Note**: The actual implementation is simpler than you might expect. `BatchedCall` is defined in `_typeshed.pyi` to represent the delayed call tuple structure.
@@ -372,6 +383,7 @@ When something is deprecated but still present:
 from typing import deprecated
 from warnings import deprecated  # Python 3.13+
 
+
 @deprecated("Use new_function instead")
 def old_function(x: int) -> int: ...
 ```
@@ -408,11 +420,9 @@ def process_data(data, *, normalize=True, fill_value=0):
 ```python
 from numpy.typing import ArrayLike, NDArray
 
+
 def process_data(
-    data: ArrayLike,
-    *,
-    normalize: bool = ...,
-    fill_value: int | float = ...,
+    data: ArrayLike, *, normalize: bool = ..., fill_value: int | float = ...
 ) -> NDArray[Any]: ...
 ```
 

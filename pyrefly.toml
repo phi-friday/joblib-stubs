@@ -6,40 +6,19 @@ project-includes = [
 python-platform = "linux"
 python-version = "3.12"
 min-severity = "warn"
+preset = "strict"
 check-unannotated-defs = true
 infer-return-types = "checked"
 strict-callable-subtyping = true
 
 [errors]
-abstract-method-call = "error"
-bad-argument-count = "error"
-bad-argument-type = "error"
-bad-assignment = "error"
-bad-class-definition = "error"
-bad-context-manager = "error"
+unused-ignore = "error"
+unused-type-ignore = "ignore"
 deprecated = "warn"
-implicit-abstract-class = "error"
-implicit-any = "error"
-implicit-import = "error"
-implicitly-defined-attribute = "error"
-non-exhaustive-match = "error"
-not-required-key-access = "error"
-open-unpacking = "error"
-redundant-cast = "error"
-redundant-condition = "error"
-reveal-type = "warn"
-unannotated-attribute = "error"
-unannotated-parameter = "error"
-unannotated-protocol-member = "error"
-unannotated-return = "error"
-unnecessary-comparison = "error"
-unreachable = "error"
-
-# Keep third-party stub noise out unless we explicitly decide to enforce it.
 untyped-import = "ignore"
 unresolvable-dunder-all = "warn"
-unused-ignore = "error"
 variance-mismatch = "warn"
+implicit-any-lambda = "ignore"
 
 # stub only
 missing-source = "ignore"
