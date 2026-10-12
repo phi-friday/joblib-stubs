@@ -1,0 +1,9 @@
+servers:
+  pyrefly:
+    command: uv
+    args: ["run", "pyrefly", "lsp"]
+    fileTypes: [".py", ".pyi"]
+    rootMarkers: ["pyproject.toml", "pyrefly.toml", ".git"]
+    initOptions:
+      pyrefly:
+        typeCheckingMode: default
