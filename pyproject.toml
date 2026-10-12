@@ -23,23 +23,23 @@ classifiers = [
 Repository = "https://github.com/phi-friday/joblib-stubs"
 
 [project.optional-dependencies]
-mypy = ["mypy>=2.1.0"]
-mypy-strict = ["mypy==2.1.0", "joblib-stubs[mypy]"]
+mypy = ["mypy>=2.4.0"]
+mypy-strict = ["mypy==2.4.0", "joblib-stubs[mypy]"]
 
 [dependency-groups]
 joblib-dependencies = [
-    "joblib>=1.5.3",
-    "numpy>=2.4.0",
-    "dask>=2025.12.0",
-    "distributed>=2025.12.0",
+    "joblib>=1.6.0",
+    "numpy>=2.5.3",
+    "dask>=2026.8.0",
+    "distributed>=2026.8.0",
 ]
-test = [{ include-group = "joblib-dependencies" }, "pytest>=9.0.2"]
+test = [{ include-group = "joblib-dependencies" }, "pytest>=9.1.1"]
 dev = [
     { include-group = "joblib-dependencies" },
-    "ruff==0.15.17",
-    "poethepoet>=0.45.0",
+    "ruff==0.17.0",
+    "poethepoet>=0.48.0",
     "joblib-stubs[mypy-strict]",
-    "pyrefly==1.1.1",
+    "pyrefly==1.3.2",
 ]
 
 [tool.uv]
