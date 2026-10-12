@@ -281,7 +281,9 @@ class TestMemorizedFunc:
             return x
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            obj = mod.MemorizedFunc(sample_func, tmpdir)
+            obj = mod.MemorizedFunc(sample_func, tmpdir, compress=("gzip", 3))
+            assert_type(obj.compress, bool | int | tuple[str, int])
+            assert isinstance(obj.compress, tuple)
             assert callable(obj)
 
     def test_call_return_type(self) -> None:
@@ -329,6 +331,13 @@ class TestAsyncMemorizedFunc:
         """AsyncMemorizedFunc should exist in runtime."""
         assert hasattr(mod, "AsyncMemorizedFunc")
         assert inspect.isclass(mod.AsyncMemorizedFunc)
+        if TYPE_CHECKING:
+
+            async def sample_func(value: int) -> int:
+                return value
+
+            obj = mod.AsyncMemorizedFunc(sample_func, "cache", compress=("gzip", 3))
+            assert_type(obj.compress, bool | int | tuple[str, int])
 
     def test_inherits(self) -> None:
         """AsyncMemorizedFunc should inherit from MemorizedFunc."""
@@ -428,7 +437,9 @@ class TestMemory:
     def test_memory_instantiation(self) -> None:
         """Memory should be instantiable."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            mem = mod.Memory(tmpdir)
+            mem = mod.Memory(tmpdir, compress=("gzip", 3))
+            assert_type(mem.compress, bool | int | tuple[str, int])
+            assert isinstance(mem.compress, tuple)
             assert_type(mem.location, str | Path)
             assert isinstance(mem.location, (str, Path))
 

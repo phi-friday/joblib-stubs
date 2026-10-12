@@ -72,7 +72,7 @@ class StoreBackendMixin:
     ) -> None: ...
 
 class FileSystemStoreBackend(StoreBackendBase, StoreBackendMixin):
-    compress: bool
+    compress: bool | int | tuple[str, int]
     mmap_mode: MmapMode
     verbose: int
     # mypy

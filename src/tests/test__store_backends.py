@@ -5,6 +5,7 @@ from __future__ import annotations
 import inspect
 from abc import ABCMeta
 from datetime import datetime
+from typing import TYPE_CHECKING, assert_type
 
 import joblib._store_backends as mod
 
@@ -139,6 +140,10 @@ class TestFileSystemStoreBackend:
     def test_is_class(self) -> None:
         """FileSystemStoreBackend should be a class."""
         assert inspect.isclass(mod.FileSystemStoreBackend)
+        if TYPE_CHECKING:
+            obj = mod.FileSystemStoreBackend()
+            assert_type(obj.compress, bool | int | tuple[str, int])
+            obj.compress = ("gzip", 3)
 
     def test_inherits(self) -> None:
         """FileSystemStoreBackend should inherit from correct bases."""

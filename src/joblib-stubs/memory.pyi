@@ -86,7 +86,7 @@ class AsyncNotMemorizedFunc[**P, T](NotMemorizedFunc[P, Awaitable[T]]):
 
 class MemorizedFunc[**P, T](Logger):
     mmap_mode: MmapMode
-    compress: bool | int
+    compress: bool | int | tuple[str, int]
     func: Callable[P, T]
     cache_validation_callback: Callable[..., Any] | None
     func_id: str
@@ -100,7 +100,7 @@ class MemorizedFunc[**P, T](Logger):
         backend: str = ...,
         ignore: list[str] | None = ...,
         mmap_mode: MmapMode | None = ...,
-        compress: bool | int = ...,
+        compress: bool | int | tuple[str, int] = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
@@ -124,7 +124,7 @@ class AsyncMemorizedFunc[**P, T](MemorizedFunc[P, Awaitable[T]]):
         backend: str = ...,
         ignore: list[str] | None = ...,
         mmap_mode: MmapMode | None = ...,
-        compress: bool | int = ...,
+        compress: bool | int | tuple[str, int] = ...,
         verbose: int = ...,
         timestamp: float | None = ...,
         cache_validation_callback: Callable[..., Any] | None = ...,
@@ -143,7 +143,7 @@ class Memory(Logger):
     mmap_mode: MmapMode
     timestamp: float
     backend: str
-    compress: bool | int
+    compress: bool | int | tuple[str, int]
     backend_options: dict[str, Any]
     location: str | Path
     store_backend: StoreBackendBase
@@ -152,7 +152,7 @@ class Memory(Logger):
         location: str | Path | None = ...,
         backend: str = ...,
         mmap_mode: MmapMode | None = ...,
-        compress: bool | int = ...,
+        compress: bool | int | tuple[str, int] = ...,
         verbose: int = ...,
         backend_options: dict[str, Any] | None = ...,
     ) -> None: ...

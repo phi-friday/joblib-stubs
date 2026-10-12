@@ -3,10 +3,20 @@
 from __future__ import annotations
 
 import inspect
-from typing import assert_type
+from os import PathLike
+from pathlib import PurePath
+from typing import TYPE_CHECKING, Any, assert_type
 
 import joblib.numpy_pickle as mod
 from joblib import numpy_pickle_utils
+
+
+class _BytesPathLike(PathLike[bytes]):
+    def __init__(self, path: bytes) -> None:
+        self.path = path
+
+    def __fspath__(self) -> bytes:
+        return self.path
 
 
 class TestConstants:
@@ -145,6 +155,9 @@ class TestDump:
         """dump should exist in runtime."""
         assert hasattr(mod, "dump")
         assert callable(mod.dump)
+        if TYPE_CHECKING:
+            result = mod.dump(42, PurePath("data.pkl"))
+            assert_type(result, list[str] | None)
 
     def test_signature(self) -> None:
         """dump should have correct signature."""
@@ -180,6 +193,9 @@ class TestLoad:
         """load should exist in runtime."""
         assert hasattr(mod, "load")
         assert callable(mod.load)
+        if TYPE_CHECKING:
+            assert_type(mod.load(PurePath("data.pkl")), Any)
+            assert_type(mod.load(_BytesPathLike(b"data.pkl")), Any)
 
     def test_signature(self) -> None:
         """load should have correct signature."""

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import inspect
+from concurrent.futures import Future
+from typing import TYPE_CHECKING, assert_type
 
 import joblib._dask as mod
 from joblib._parallel_backends import AutoBatchingMixin, ParallelBackendBase
@@ -82,5 +84,9 @@ class TestDaskDistributedBackend:
         assert hasattr(mod.DaskDistributedBackend, "__reduce__")
         assert hasattr(mod.DaskDistributedBackend, "get_nested_backend")
         assert hasattr(mod.DaskDistributedBackend, "configure")
-        assert hasattr(mod.DaskDistributedBackend, "apply_async")
+        assert hasattr(mod.DaskDistributedBackend, "submit")
         assert hasattr(mod.DaskDistributedBackend, "effective_n_jobs")
+        if TYPE_CHECKING:
+            backend = mod.DaskDistributedBackend()
+            result = backend.submit(lambda: 42, callback=lambda value: value + 1)
+            assert_type(result, Future[int])

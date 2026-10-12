@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from inspect import FullArgSpec
-from types import FunctionType
+from types import CodeType, FunctionType
 from typing import Any
 
 from joblib.logger import pformat as pformat
@@ -8,6 +8,7 @@ from joblib.logger import pformat as pformat
 full_argspec_fields: str
 full_argspec_type = FullArgSpec
 
+def _code_fingerprint(code: CodeType) -> str: ...
 def get_func_code(func: FunctionType) -> tuple[str, str, int]: ...
 def get_func_name(
     func: Callable[..., Any], resolv_alias: bool = ..., win_characters: bool = ...

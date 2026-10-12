@@ -310,3 +310,17 @@ class TestFormatCall:
         result = mod.format_call(sample_func, (1,), {})
         assert_type(result, str)
         assert isinstance(result, str)
+
+
+class TestCodeFingerprint:
+    """Test _code_fingerprint type hints."""
+
+    def test_return_type(self) -> None:
+        """_code_fingerprint accepts a code object and returns str."""
+
+        def sample_func() -> int:
+            return 42
+
+        result = mod._code_fingerprint(sample_func.__code__)  # noqa: SLF001
+        assert_type(result, str)
+        assert isinstance(result, str)
